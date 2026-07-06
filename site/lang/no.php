@@ -53,7 +53,7 @@ return array_replace_recursive($en, [
             ['q' => 'Hvordan bestiller jeg nettbutikk {in_country}?', 'a' => 'Åpne bestillingssiden eller kontaktskjema med nisje, språk og betalingsløsninger. Vi svarer med tilbud, tidsplan og valgfritt MySQL / fraktomfang.'],
             ['q' => 'Er Shop CMS bare for Norge?', 'a' => 'Skriptet er bygget i Norge med NOK-demo, Vipps og Posten-sporing — men vi deployer også for Ukraina og Europa med lokal valuta og SEO.'],
             ['q' => 'Kan jeg starte fra live demo?', 'a' => 'Ja. Demoen på /shop/ viser katalog, handlekurv, admin og checkout. Vi tilpasser denne kodebasen — ikke SaaS-lås.'],
-            ['q' => 'Hvilken versjon er i produksjon?', 'a' => 'Gjeldende produksjonsversjon er v1.3.0 — samme versjon i admin, produktside og demo-pakke.'],
+            ['q' => 'Hvilken versjon er i produksjon?', 'a' => 'Gjeldende produksjonsversjon er v1.3.5 — samme versjon i admin, produktside og demo-pakke.'],
         ],
     ],
     'features_showcase' => [
@@ -135,7 +135,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Klar for å bestille nettbutikk?',
-        'text' => 'Fortell oss om nisjen din {in_country} — mote, elektronikk, mat, B2B eller markedsplass. Vi tilpasser Shop CMS v1.3 og lanserer på ditt domene.',
+        'text' => 'Fortell oss om nisjen din {in_country} — mote, elektronikk, mat, B2B eller markedsplass. Vi tilpasser Shop CMS v1.3.5 og lanserer på ditt domene.',
         'btn' => 'Bestill utvikling',
     ],
     'crosslinks' => [
@@ -184,6 +184,15 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Endringslogg',
     ],
     'changelog_items' => [
+        '1.3.5' => [
+            'Nova Poshta-integrasjon — admin-fane, API, sporingside og oversettelser',
+            'Produkteditor — én rullbar side med SEO-sjekkliste',
+            'AI-assistent — én generer-knapp, SEO-tips, meta description 120–160 tegn',
+            'Produktside — full i18n, meta 150–160, Schema.org, OG/Twitter, hreflang',
+            'Designgenerator flyttet til Design (AI-blokker med maler)',
+            'SEO-analyse — produktfiltre og sidesjekkliste i Markedsføring',
+            'Versjon 1.3.5 synkronisert i admin, produktside og GitHub-demo',
+        ],
         '1.3.0' => [
             'Flerspråklig AI — legg til språk og AI-oversett produkttekst i admin',
             'Butikkinnstillinger: valuta, produktkort-brytere, GA4 og Meta Pixel',

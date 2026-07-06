@@ -2,10 +2,10 @@
 
 Universal **PHP e-commerce script** for any online store — fashion, electronics, food, B2B catalogues, marketplaces and more. Multilingual storefront, session cart, Schema.org SEO, AI automation out of the box, and a full admin panel. Portfolio project by [Ruslan Bilohash](https://bilohash.com/).
 
-**Version (this repo):** 1.3.0 · **Readme languages:** [English](README.md) · [Norsk](README-no.md) · [Svenska](README-sv.md) · [Lietuvių](README-lt.md) · [Українська](README-uk.md)
+**Version (this repo):** 1.3.5 · **Readme languages:** [English](README.md) · [Norsk](README-no.md) · [Svenska](README-sv.md) · [Lietuvių](README-lt.md) · [Українська](README-uk.md)
 
 ![PHP](https://img.shields.io/badge/PHP-8%2B-777BB4?logo=php&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.3.0-blue)
+![Version](https://img.shields.io/badge/version-1.3.5-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![i18n](https://img.shields.io/badge/languages-NO%20%7C%20EN%20%7C%20UA%20%7C%20RU%20%7C%20SV%20%7C%20LT-green)
 ![AI](https://img.shields.io/badge/AI-built--in-purple)
@@ -23,6 +23,8 @@ Universal **PHP e-commerce script** for any online store — fashion, electronic
 > - Contact: **rbilohash@gmail.com**
 
 **Commercial use without written consent from the author is prohibited.** See [LICENSE](LICENSE).
+
+**Changelog:** [CHANGELOG.md](CHANGELOG.md) · **Latest:** v1.3.5 (2026-07-06)
 
 ---
 
@@ -75,10 +77,10 @@ Demo mode works **without an API key** — sample templates are applied locally 
 ### Admin panel
 - **Dashboard** — products, categories, cart stats, charts
 - **Catalog** — products, drag-sort categories, quick leads
-- **Content** — homepage blocks, AI block builder, service pages, footer & header links
-- **Design** — colours, product card layout, quick buy
-- **Marketing** — global SEO, Schema.org, XML sitemap, analytics pixels
-- **Integrations** — AI assistant, public chat, reCAPTCHA, customer auth, payments (PayPal, Stripe, Vipps, COD, Google/Apple Pay), Bring tracking
+- **Content** — homepage blocks, service pages, footer & header links
+- **Design** — appearance, AI design generator (block builder), product card layout
+- **Marketing** — global SEO, SEO analysis (product filters & pages checklist), Schema.org, XML sitemap, analytics pixels
+- **Integrations** — AI assistant, public chat, reCAPTCHA, customer auth, payments (PayPal, Stripe, Vipps, COD, Google/Apple Pay), Bring & Nova Poshta tracking
 - **Advanced** — maintenance mode, GDPR, default language, developer errors toggle
 - **Code editor** — syntax-highlighted HTML/JS editor
 - Multilingual admin UI

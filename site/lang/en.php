@@ -64,7 +64,7 @@ return [
             ['q' => 'How do I order an online shop {in_country}?', 'a' => 'Open the order page or contact form with your niche, languages and payment providers. We reply with quote, timeline and optional MySQL / shipping scope.'],
             ['q' => 'Is Shop CMS only for Norway?', 'a' => 'The script is built in Norway with NOK demo, Vipps and Posten tracking — but we deploy for Ukraine, Scandinavia and wider Europe with local currency and SEO.'],
             ['q' => 'Can I start from the live demo?', 'a' => 'Yes. The demo at /shop/ shows catalog, cart, admin and checkout. We adapt that codebase — not a SaaS lock-in.'],
-            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.3.0 — same version in admin, product site and demo package.'],
+            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.3.5 — same version in admin, product site and demo package.'],
         ],
     ],
     'features_showcase' => [
@@ -85,10 +85,10 @@ return [
             ['icon' => 'globe', 'title' => 'Multilingual AI', 'desc' => 'NO, EN, SV, UA, RU, LT built-in — add languages and AI-translate products or entire lang files.'],
             ['icon' => 'wand-magic-sparkles', 'title' => 'AI automation', 'desc' => 'Grok/OpenAI: product copy, SEO meta, categories, homepage blocks, block builder and public chat.'],
             ['icon' => 'user-lock', 'title' => 'Customer sign-in', 'desc' => 'Phone login plus Google and Apple OAuth — demo buttons without keys in demo mode.'],
-            ['icon' => 'palette', 'title' => 'Design & homepage', 'desc' => 'Colours, product cards, drag-sort homepage blocks, AI block builder and header menu editor.'],
+            ['icon' => 'palette', 'title' => 'Design & homepage', 'desc' => 'Colours, product cards, drag-sort homepage blocks, AI design generator and header menu editor.'],
             ['icon' => 'credit-card', 'title' => 'Payments', 'desc' => 'Stripe, PayPal, Vipps, COD, Google Pay and Apple Pay — per-market toggles in admin.'],
-            ['icon' => 'truck', 'title' => 'Shipping & tracking', 'desc' => 'Bring/Posten parcel API, editable delivery/payment service pages and footer link columns.'],
-            ['icon' => 'chart-line', 'title' => 'SEO & Schema.org', 'desc' => 'OG, Twitter, Product/Breadcrumb/ItemList schema, XML sitemap, llms.txt, PageSpeed 99+ demo.'],
+            ['icon' => 'truck', 'title' => 'Shipping & tracking', 'desc' => 'Bring/Posten and Nova Poshta parcel APIs, delivery/payment service pages and footer links.'],
+            ['icon' => 'chart-line', 'title' => 'SEO & Schema.org', 'desc' => 'SEO analysis dashboard, OG/Twitter, Product schema, XML sitemap, llms.txt, PageSpeed 99+ demo.'],
             ['icon' => 'comments', 'title' => 'Public AI chat', 'desc' => 'Floating sales assistant on storefront — separate widget colour and instructions from admin AI.'],
             ['icon' => 'shield-halved', 'title' => 'Security & GDPR', 'desc' => 'reCAPTCHA, cookie consent, maintenance mode, custom head HTML and footer JS code editor.'],
             ['icon' => 'sun', 'title' => 'Light responsive UI', 'desc' => 'Mobile burger, language dropdown, vertical SEO pages and clean footer without clutter.'],
@@ -113,7 +113,6 @@ return [
                 'title' => 'Content',
                 'items' => [
                     'Homepage blocks — enable, reorder, multilingual copy',
-                    'AI block builder — prompts → HTML blocks for homepage or pages',
                     'Service pages editor (delivery, privacy, cookies, custom)',
                     'Footer & header link editors with multilingual labels',
                 ],
@@ -123,8 +122,8 @@ return [
                 'title' => 'Design & store',
                 'items' => [
                     'Appearance — colours, typography, product card toggles',
+                    'AI design generator — prompts, presets and HTML blocks',
                     'Store settings — currency, languages, shop open/closed',
-                    'Quick buy toggle, GA4 and Meta Pixel',
                     'Code editor — syntax-highlighted custom head HTML & footer JS',
                 ],
             ],
@@ -135,14 +134,14 @@ return [
                     'AI assistant (Grok/OpenAI) — products, translate, SEO',
                     'Public chat widget design and instructions',
                     'Payments: PayPal, Stripe, Vipps, COD, Google/Apple Pay',
-                    'Customer auth, reCAPTCHA, Bring/Posten tracking API',
+                    'Customer auth, reCAPTCHA, Bring/Posten and Nova Poshta tracking',
                 ],
             ],
             [
                 'icon' => 'gears',
                 'title' => 'SEO & advanced',
                 'items' => [
-                    'Global SEO, Schema.org toggles, sitemap generator',
+                    'Global SEO, SEO analysis (filters & pages checklist), sitemap',
                     'Multilingual language manager with AI translate from EN',
                     'Maintenance mode, cookie consent, developer errors toggle',
                     'Version badge in admin — matches product site release',
@@ -249,7 +248,7 @@ return [
     ],
     'cta' => [
         'title' => 'Ready to order your online shop?',
-        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.3 and launch on your domain.',
+        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.3.5 and launch on your domain.',
         'btn'   => 'Order development',
     ],
     'crosslinks' => [
@@ -300,6 +299,15 @@ return [
         'older_versions' => 'Older versions (%d)',
     ],
     'changelog_items' => [
+        '1.3.5' => [
+            'Nova Poshta integration — admin tab, API settings, parcel tracking page and translations',
+            'Product editor — single scrollable page (general, names, SEO) with live SEO checklist',
+            'AI product assistant — one generate button, SEO tips panel, meta description 120–160 chars',
+            'Product site (/shop/site/) — full i18n, meta 150–160, Schema.org, OG/Twitter, hreflang, crosslinks',
+            'Design generator moved to Design tab (AI block builder with presets)',
+            'SEO analysis — product filters, issue types, pages checklist in Marketing',
+            'Version 1.3.5 synced across admin badge, product site and GitHub demo',
+        ],
         '1.3.0' => [
             'Multilingual AI — add languages and AI-translate product copy in admin',
             'Store settings: site currency, product card toggles, GA4 & Meta Pixel',

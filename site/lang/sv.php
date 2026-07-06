@@ -50,7 +50,7 @@ return array_replace_recursive($en, [
             ['q' => 'Hur beställer jag webbutik {in_country}?', 'a' => 'Öppna beställningssidan eller kontaktformuläret med nisch, språk och betalningslösningar. Vi svarar med offert, tidsplan och valfritt MySQL / fraktomfång.'],
             ['q' => 'Är Shop CMS bara för Norge?', 'a' => 'Skriptet byggdes i Norge med NOK-demo och Vipps — men vi deployer för Sverige, Ukraina och Europa med lokal valuta och SEO.'],
             ['q' => 'Kan jag börja från live demo?', 'a' => 'Ja. Demon på /shop/ visar katalog, varukorg, admin och checkout. Vi anpassar denna kodbas — inte SaaS-lås.'],
-            ['q' => 'Vilken version är i produktion?', 'a' => 'Aktuell produktionsversion är v1.3.0 — samma version i admin, produktsida och demo-paket.'],
+            ['q' => 'Vilken version är i produktion?', 'a' => 'Aktuell produktionsversion är v1.3.5 — samma version i admin, produktsida och demo-paket.'],
         ],
     ],
     'features_showcase' => [
@@ -132,7 +132,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Redo att beställa webbutik?',
-        'text' => 'Berätta om din nisch {in_country} — mode, elektronik, mat, B2B eller marknadsplats. Vi anpassar Shop CMS v1.3 och lanserar på din domän.',
+        'text' => 'Berätta om din nisch {in_country} — mode, elektronik, mat, B2B eller marknadsplats. Vi anpassar Shop CMS v1.3.5 och lanserar på din domän.',
         'btn' => 'Beställ utveckling',
     ],
     'crosslinks' => [
@@ -183,6 +183,15 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Ändringslogg',
     ],
     'changelog_items' => [
+        '1.3.5' => [
+            'Nova Poshta-integration — admin-flik, API, spårningssida och översättningar',
+            'Produktredigerare — en rullbar sida med SEO-checklista',
+            'AI-assistent — en genereringsknapp, SEO-tips, meta description 120–160 tecken',
+            'Produktsida — full i18n, meta 150–160, Schema.org, OG/Twitter, hreflang',
+            'Designgenerator flyttad till Design (AI-block med mallar)',
+            'SEO-analys — produktfilter och sidchecklista i Marknadsföring',
+            'Version 1.3.5 synkad i admin, produktsida och GitHub-demo',
+        ],
         '1.3.0' => [
             'Flerspråkig AI — lägg till språk och AI-översätt produkttext i admin',
             'Butiksinställningar: valuta, produktkort-brytare, GA4 och Meta Pixel',
