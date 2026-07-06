@@ -177,12 +177,7 @@ function sh_store_settings_apply_post(array $post, array $settings): array
 
     if (is_file(__DIR__ . '/shop-mode.php')) {
         require_once __DIR__ . '/shop-mode.php';
-        if (array_key_exists('shop_open', $post)) {
-            $settings = sh_shop_mode_apply_post($post, $settings);
-        }
-        if (array_key_exists('shop_dev_errors', $post)) {
-            $settings['shop_dev_errors'] = !empty($post['shop_dev_errors']);
-        }
+        $settings = sh_shop_mode_apply_post($post, $settings);
     }
 
     $defaultLang = strtolower(trim((string) ($post['site_default_lang'] ?? 'no')));

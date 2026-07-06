@@ -33,6 +33,7 @@ $presetMatch = isset($currencyPresets[$currentCurrency]);
                 </div>
                 <div class="adm-store-status-actions">
                     <label class="adm-toggle adm-toggle--lg" title="<?= htmlspecialchars(sh_settings_admin_label('store_open_toggle', $ta)) ?>">
+                        <input type="hidden" name="shop_open" value="0">
                         <input type="checkbox" name="shop_open" value="1" id="shShopOpenToggle" <?= $shopOpen ? 'checked' : '' ?>>
                         <span class="adm-toggle-track"><span class="adm-toggle-thumb"></span></span>
                         <span class="adm-toggle-label"><?= htmlspecialchars(sh_settings_admin_label('store_open_toggle', $ta)) ?></span>

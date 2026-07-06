@@ -18,6 +18,9 @@ $contextModels = [
 ];
 $aiModelUseDefault = sh_settings_admin_label('ai_model_use_default', $ta);
 $aiModelCustomOption = sh_settings_admin_label('ai_model_custom_option', $ta);
+$aiContextAdvice = sh_ai_context_advice_labels($ta);
+$aiModelMeta = sh_ai_model_meta_for_admin($ta);
+$aiRecommendedLabel = sh_settings_admin_label('ai_model_recommended_for', $ta);
 ?>
 <form method="post" class="adm-settings-form" id="sh-ai-settings-form">
     <?php sh_admin_section_open($tab, 'ai-connection', $sections['ai-connection'] ?? sh_settings_admin_label('ai_section_connection', $ta), 'plug', $ta); ?>
@@ -81,6 +84,10 @@ $aiModelCustomOption = sh_settings_admin_label('ai_model_custom_option', $ta);
 
     <?php sh_admin_section_open($tab, 'ai-models', $sections['ai-models'] ?? sh_settings_admin_label('ai_section_models', $ta), 'microchip', $ta); ?>
             <p class="adm-help adm-help-compact"><?= htmlspecialchars(sh_settings_admin_label('ai_model_context_hint', $ta)) ?></p>
+            <div class="adm-alert adm-alert-info adm-alert-compact adm-ai-models-guide">
+                <i class="fas fa-lightbulb"></i>
+                <?= htmlspecialchars(sh_settings_admin_label('ai_models_guide', $ta)) ?>
+            </div>
             <div class="adm-ai-model-grid">
                 <?php foreach ($contextModels as $ctx => $meta):
                     $fieldKey = $meta['key'];
@@ -89,6 +96,9 @@ $aiModelCustomOption = sh_settings_admin_label('ai_model_custom_option', $ta);
                     ?>
                 <div class="adm-ai-model-row sh-ai-model-field" data-context="<?= htmlspecialchars($ctx) ?>">
                     <label class="adm-ai-model-label"><?= htmlspecialchars($meta['label']) ?></label>
+                    <?php if (!empty($aiContextAdvice[$ctx])): ?>
+                    <p class="adm-ai-context-advice"><?= htmlspecialchars($aiContextAdvice[$ctx]) ?></p>
+                    <?php endif; ?>
                     <select class="sh-ai-model-select adm-select" data-context="<?= htmlspecialchars($ctx) ?>" aria-label="<?= htmlspecialchars($meta['label']) ?>"></select>
                     <input type="text" class="sh-ai-model-custom adm-input-model" data-context="<?= htmlspecialchars($ctx) ?>"
                            value="<?= htmlspecialchars($displayModel) ?>"
@@ -96,6 +106,7 @@ $aiModelCustomOption = sh_settings_admin_label('ai_model_custom_option', $ta);
                            autocomplete="off" spellcheck="false" hidden>
                     <input type="hidden" name="<?= htmlspecialchars($fieldKey) ?>" class="sh-ai-model-value" data-context="<?= htmlspecialchars($ctx) ?>"
                            value="<?= htmlspecialchars($displayModel) ?>">
+                    <small class="adm-field-hint sh-ai-model-hint" data-context="<?= htmlspecialchars($ctx) ?>" hidden></small>
                     <?php if ($ctx !== 'default'): ?>
                     <small class="adm-field-hint"><?= htmlspecialchars(sh_settings_admin_label('ai_model_context_empty', $ta)) ?></small>
                     <?php endif; ?>
@@ -150,5 +161,7 @@ window.SH_AI_PROVIDERS = <?= json_encode($providers, JSON_UNESCAPED_UNICODE) ?>;
 window.SH_AI_LABELS = <?= json_encode([
     'use_default' => $aiModelUseDefault,
     'custom_option' => $aiModelCustomOption,
+    'recommended_for' => $aiRecommendedLabel,
 ], JSON_UNESCAPED_UNICODE) ?>;
+window.SH_AI_MODEL_META = <?= json_encode($aiModelMeta, JSON_UNESCAPED_UNICODE) ?>;
 </script>

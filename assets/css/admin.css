@@ -808,6 +808,9 @@ body.adm-modal-open { overflow: hidden; }
 }
 .adm-ai-model-row { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .adm-ai-model-label { font-size: 13px; font-weight: 600; color: var(--adm-text); }
+.adm-ai-context-advice { margin: 0; font-size: 12px; line-height: 1.45; color: var(--adm-muted, #64748b); }
+.adm-ai-models-guide { margin-bottom: 12px; }
+.sh-ai-model-hint:not([hidden]) { color: #1d4ed8; font-weight: 500; }
 .adm-ai-model-row .sh-ai-model-custom:not([hidden]) { margin-top: 4px; }
 .adm-ai-generate-panel {
     display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start;

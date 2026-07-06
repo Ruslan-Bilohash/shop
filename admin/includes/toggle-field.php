@@ -15,6 +15,7 @@ function sh_admin_toggle_label(string $name, string $label, bool $checked): void
 {
     ?>
     <label class="adm-toggle adm-toggle--compact" title="<?= htmlspecialchars($label) ?>">
+        <input type="hidden" name="<?= htmlspecialchars($name) ?>" value="0">
         <input type="checkbox" name="<?= htmlspecialchars($name) ?>" value="1" <?= $checked ? 'checked' : '' ?>>
         <span class="adm-toggle-track"><span class="adm-toggle-thumb"></span></span>
         <span class="adm-toggle-label"><?= htmlspecialchars($label) ?></span>

@@ -1,18 +1,99 @@
 <?php
 
+/**
+ * Model catalog: hint translation key + contexts where the model shines.
+ *
+ * @return array<string, array{hint:string,contexts:list<string>}>
+ */
+function sh_ai_model_catalog(): array
+{
+    return [
+        'gpt-4o-mini' => ['hint' => 'ai_model_hint_gpt_4o_mini', 'contexts' => ['product', 'chat', 'seo']],
+        'gpt-4.1-mini' => ['hint' => 'ai_model_hint_gpt_4_1_mini', 'contexts' => ['product', 'chat', 'news', 'seo']],
+        'gpt-4.1-nano' => ['hint' => 'ai_model_hint_gpt_4_1_nano', 'contexts' => ['chat', 'seo']],
+        'gpt-4o' => ['hint' => 'ai_model_hint_gpt_4o', 'contexts' => ['product', 'news', 'seo']],
+        'gpt-4.1' => ['hint' => 'ai_model_hint_gpt_4_1', 'contexts' => ['product', 'news', 'seo']],
+        'o4-mini' => ['hint' => 'ai_model_hint_o4_mini', 'contexts' => ['news', 'seo']],
+        'o3-mini' => ['hint' => 'ai_model_hint_o3_mini', 'contexts' => ['news', 'seo']],
+        'grok-3-mini' => ['hint' => 'ai_model_hint_grok_3_mini', 'contexts' => ['product', 'chat', 'seo']],
+        'grok-3-mini-fast' => ['hint' => 'ai_model_hint_grok_3_mini_fast', 'contexts' => ['chat', 'product']],
+        'grok-3' => ['hint' => 'ai_model_hint_grok_3', 'contexts' => ['product', 'news', 'seo']],
+        'grok-3-fast' => ['hint' => 'ai_model_hint_grok_3_fast', 'contexts' => ['chat', 'product']],
+        'grok-2-latest' => ['hint' => 'ai_model_hint_grok_2_latest', 'contexts' => ['chat', 'product']],
+        'grok-2-1212' => ['hint' => 'ai_model_hint_grok_2_1212', 'contexts' => ['news', 'seo']],
+    ];
+}
+
+/** @return list<string> */
+function sh_ai_contexts(): array
+{
+    return ['default', 'product', 'chat', 'news', 'seo'];
+}
+
+/** @return array<string, string> */
+function sh_ai_context_advice_keys(): array
+{
+    return [
+        'default' => 'ai_context_advice_default',
+        'product' => 'ai_context_advice_product',
+        'chat'    => 'ai_context_advice_chat',
+        'news'    => 'ai_context_advice_news',
+        'seo'     => 'ai_context_advice_seo',
+    ];
+}
+
+/**
+ * @param array<string, string> $ta
+ * @return array<string, string>
+ */
+function sh_ai_context_advice_labels(array $ta): array
+{
+    $out = [];
+    foreach (sh_ai_context_advice_keys() as $ctx => $key) {
+        $label = sh_settings_admin_label($key, $ta);
+        $out[$ctx] = $label !== $key ? $label : '';
+    }
+    return $out;
+}
+
+/**
+ * @param array<string, string> $ta
+ * @return array<string, array{hint:string,recommended:list<string>}>
+ */
+function sh_ai_model_meta_for_admin(array $ta): array
+{
+    $out = [];
+    foreach (sh_ai_model_catalog() as $model => $meta) {
+        $hintKey = $meta['hint'] ?? '';
+        $hint = $hintKey !== '' ? sh_settings_admin_label($hintKey, $ta) : '';
+        if ($hint === $hintKey) {
+            $hint = '';
+        }
+        $out[$model] = [
+            'hint'        => $hint,
+            'recommended' => $meta['contexts'] ?? [],
+        ];
+    }
+    return $out;
+}
+
 /** @return array<string, array{label:string,api_base:string,models:list<string>}> */
 function sh_ai_providers(): array
 {
+    $openai = ['gpt-4o-mini', 'gpt-4.1-mini', 'gpt-4.1-nano', 'gpt-4o', 'gpt-4.1', 'o4-mini', 'o3-mini'];
+    $grok = ['grok-3-mini', 'grok-3-mini-fast', 'grok-3', 'grok-3-fast', 'grok-2-latest', 'grok-2-1212'];
+    $catalog = sh_ai_model_catalog();
+
     return [
         'openai' => [
             'label'    => 'OpenAI',
             'api_base' => 'https://api.openai.com/v1',
-            'models'   => ['gpt-4o-mini', 'gpt-4o', 'gpt-4.1-mini'],
+            'models'   => array_values(array_filter($openai, static fn(string $m): bool => isset($catalog[$m]))),
         ],
         'grok' => [
             'label'    => 'xAI Grok',
             'api_base' => 'https://api.x.ai/v1',
-            'models'   => ['grok-3-mini', 'grok-3', 'grok-2-latest'],
+            'models'   => array_values(array_filter($grok, static fn(string $m): bool => isset($catalog[$m]))),
         ],
     ];
 }

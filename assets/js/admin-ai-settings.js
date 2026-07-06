@@ -1,6 +1,7 @@
 (function () {
     var providers = window.SH_AI_PROVIDERS || {};
     var labels = window.SH_AI_LABELS || {};
+    var modelMeta = window.SH_AI_MODEL_META || {};
     var providerEl = document.getElementById('sh-ai-provider');
     var apiBase = document.getElementById('sh-ai-api-base');
     var CUSTOM = '__custom__';
@@ -14,8 +15,43 @@
         return labels.custom_option || 'Custom model…';
     }
 
+    function recommendedLabel() {
+        return labels.recommended_for || 'Recommended';
+    }
+
     function getPreset(key) {
         return providers[key] || { models: [], api_base: '' };
+    }
+
+    function modelOptionLabel(modelId, context) {
+        var meta = modelMeta[modelId];
+        if (!meta || !meta.hint) {
+            return modelId;
+        }
+        var suffix = meta.hint;
+        if (context && context !== 'default' && meta.recommended && meta.recommended.indexOf(context) !== -1) {
+            suffix = '★ ' + suffix;
+        }
+        return modelId + ' — ' + suffix;
+    }
+
+    function syncModelHint(wrap, modelId) {
+        if (!wrap) return;
+        var hintEl = wrap.querySelector('.sh-ai-model-hint');
+        if (!hintEl) return;
+        var meta = modelMeta[modelId];
+        if (!meta || !meta.hint) {
+            hintEl.textContent = '';
+            hintEl.hidden = true;
+            return;
+        }
+        var ctx = wrap.getAttribute('data-context') || 'default';
+        var text = meta.hint;
+        if (ctx !== 'default' && meta.recommended && meta.recommended.indexOf(ctx) !== -1) {
+            text = recommendedLabel() + ': ' + text;
+        }
+        hintEl.textContent = text;
+        hintEl.hidden = false;
     }
 
     function syncModelField(wrap, preset) {
@@ -40,7 +76,7 @@
         (preset.models || []).forEach(function (m) {
             var opt = document.createElement('option');
             opt.value = m;
-            opt.textContent = m;
+            opt.textContent = modelOptionLabel(m, ctx);
             select.appendChild(opt);
         });
 
@@ -57,6 +93,7 @@
                 custom.hidden = true;
                 custom.value = '';
             }
+            syncModelHint(wrap, '');
         } else if (current && (preset.models || []).indexOf(current) !== -1) {
             select.value = current;
             matched = true;
@@ -64,6 +101,7 @@
                 custom.hidden = true;
                 custom.value = current;
             }
+            syncModelHint(wrap, current);
         } else if (current) {
             select.value = CUSTOM;
             matched = true;
@@ -71,6 +109,7 @@
                 custom.hidden = false;
                 custom.value = current;
             }
+            syncModelHint(wrap, current);
         } else if (isDefault && (preset.models || []).length) {
             select.value = preset.models[0];
             valueInput.value = preset.models[0];
@@ -79,6 +118,7 @@
                 custom.hidden = true;
                 custom.value = preset.models[0];
             }
+            syncModelHint(wrap, preset.models[0]);
         }
 
         if (!matched && select.options.length) {
@@ -103,6 +143,7 @@
                 valueInput.value = custom.value.trim();
                 custom.focus();
             }
+            syncModelHint(wrap, valueInput.value.trim());
             return;
         }
 
@@ -113,6 +154,7 @@
             }
         }
         valueInput.value = val;
+        syncModelHint(wrap, val);
     }
 
     function syncAllModels() {
@@ -148,6 +190,7 @@
                 var valueInput = wrap.querySelector('.sh-ai-model-value');
                 if (valueInput && select && select.value === CUSTOM) {
                     valueInput.value = custom.value.trim();
+                    syncModelHint(wrap, valueInput.value.trim());
                 }
             });
         }
