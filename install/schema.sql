@@ -23,6 +23,12 @@ CREATE TABLE IF NOT EXISTS `{prefix}leads` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `{prefix}orders` (
+  `id` VARCHAR(64) NOT NULL,
+  `data` JSON NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `{prefix}subscribers` (
   `id` VARCHAR(64) NOT NULL,
   `data` JSON NOT NULL,

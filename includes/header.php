@@ -22,6 +22,9 @@ $sh_menu_cfg  = sh_menu_settings(sh_site_settings());
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php sh_render_public_stylesheets(); ?>
+    <?php foreach (($extra_css ?? []) as $cssHref): ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssHref) ?>">
+    <?php endforeach; ?>
     <?php
     require_once __DIR__ . '/store-settings.php';
     sh_render_shop_theme_styles(sh_site_settings());

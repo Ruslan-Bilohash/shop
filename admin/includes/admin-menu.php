@@ -26,6 +26,7 @@ function sh_admin_sidebar_menu(): array
         ['label_key' => 'products_io', 'icon' => 'file-import', 'url' => 'products-io.php', 'page' => 'products-io'],
         ['label_key' => 'categories', 'icon' => 'layer-group', 'url' => 'categories.php', 'page' => 'categories'],
         ['label_key' => 'quick_leads', 'icon' => 'bolt', 'url' => 'quick-leads.php', 'page' => 'quick-leads', 'badge' => 'leads'],
+        ['label_key' => 'orders', 'icon' => 'receipt', 'url' => 'orders.php', 'page' => 'orders', 'badge' => 'orders'],
         ['label_key' => 'subscribers', 'icon' => 'paper-plane', 'url' => 'subscribers.php', 'page' => 'subscribers'],
     ];
 
@@ -175,6 +176,22 @@ function sh_admin_menu_leads_badge(): int
     return $count;
 }
 
+function sh_admin_menu_orders_badge(): int
+{
+    static $count = null;
+    if ($count !== null) {
+        return $count;
+    }
+    $path = dirname(__DIR__, 2) . '/includes/orders-storage.php';
+    if (!is_file($path)) {
+        $count = 0;
+        return 0;
+    }
+    require_once $path;
+    $count = function_exists('sh_orders_count_by_status') ? sh_orders_count_by_status('pending') : 0;
+    return $count;
+}
+
 function sh_render_admin_sidebar_nav(array $ta, string $adminPage, ?string $settingsTab = null): void
 {
     foreach (sh_admin_sidebar_menu() as $entry) {
@@ -216,6 +233,9 @@ function sh_render_admin_sidebar_nav(array $ta, string $adminPage, ?string $sett
                     $badge = 0;
                     if (($item['badge'] ?? '') === 'leads') {
                         $badge = sh_admin_menu_leads_badge();
+                    }
+                    if (($item['badge'] ?? '') === 'orders') {
+                        $badge = sh_admin_menu_orders_badge();
                     }
                     ?>
                 <a href="<?= htmlspecialchars($href) ?>"

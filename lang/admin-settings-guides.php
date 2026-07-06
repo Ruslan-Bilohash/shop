@@ -54,6 +54,30 @@ $en = [
             'newsletter_notify_email' => 'You receive an email when someone clicks Subscribe in the footer.',
         ],
     ],
+    'invoice' => [
+        'intro' => 'Company block, 12 invoice designs, A4/A5/Letter/Legal print sizes and email delivery.',
+        'guide' => [
+            'title' => 'Invoice setup guide',
+            'intro' => 'Fill company details, pick a print design and configure SMTP for sending invoices.',
+            'steps' => [
+                'Enter legal name, address, org/VAT number and bank details (IBAN).',
+                'Choose one of 12 print designs and paper size (A4 recommended for PDF).',
+                'Set invoice prefix and next number — incremented on each demo order.',
+                'Enable auto-send and configure SMTP under Integrations → SMTP.',
+            ],
+            'links' => [],
+            'note' => 'PDF export uses browser Print → Save as PDF. No server-side PDF library required.',
+        ],
+        'sections' => [
+            'invoice-enable' => 'Invoices',
+            'invoice-company' => 'Company',
+            'invoice-numbering' => 'Numbering',
+            'invoice-print' => 'Print layout',
+        ],
+        'hints' => [
+            'invoice_auto_send' => 'Requires valid customer email at checkout and working SMTP settings.',
+        ],
+    ],
     'taxes' => [
         'intro' => 'VAT and sales tax for Norway, Lithuania, Ukraine, Sweden, Poland and UK.',
         'guide' => [

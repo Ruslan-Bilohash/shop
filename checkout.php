@@ -15,11 +15,42 @@ if (empty($lines)) {
 $flash = '';
 $flash_type = '';
 
+$placed_order = null;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $method = trim($_POST['payment_method'] ?? '');
     $valid = ['stripe', 'paypal', 'vipps', 'cod'];
     if (in_array($method, $valid, true) && !empty($settings[$method]['enabled'])) {
-        $flash = $t['checkout']['demo_success'] ?? 'Demo order placed — no payment processed.';
+        require_once __DIR__ . '/includes/orders-storage.php';
+        require_once __DIR__ . '/includes/invoice-mail.php';
+        require_once __DIR__ . '/includes/invoice-settings.php';
+
+        $customer = [
+            'name'    => trim($_POST['customer_name'] ?? ''),
+            'email'   => trim($_POST['customer_email'] ?? ''),
+            'phone'   => trim($_POST['customer_phone'] ?? ''),
+            'address' => trim($_POST['customer_address'] ?? ''),
+            'city'    => trim($_POST['customer_city'] ?? ''),
+            'postal'  => trim($_POST['customer_postal'] ?? ''),
+            'country' => trim($_POST['customer_country'] ?? ''),
+        ];
+
+        $invSettings = sh_invoice_merge_settings($settings);
+        if (!empty($invSettings['invoice_enabled'])) {
+            $placed_order = sh_order_create($lines, $customer, $method, $settings, $lang);
+            if ($placed_order && !empty($invSettings['invoice_auto_send']) && filter_var($customer['email'], FILTER_VALIDATE_EMAIL)) {
+                sh_send_order_invoice($placed_order['id'], $customer['email'], $settings);
+            }
+        }
+
+        if ($placed_order) {
+            $flash = sprintf(
+                $t['checkout']['order_success'] ?? 'Order placed. Invoice %s created.',
+                $placed_order['invoice_no'] ?? ''
+            );
+        } else {
+            $flash = $t['checkout']['demo_success'] ?? 'Demo order placed — no payment processed.';
+        }
         $flash_type = 'success';
         sh_cart_clear();
     } else {
@@ -63,7 +94,14 @@ require __DIR__ . '/includes/header.php';
     <?php if ($flash): ?>
     <div class="sh-alert sh-alert-<?= htmlspecialchars($flash_type) ?>"><i class="fas fa-<?= $flash_type === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i> <?= htmlspecialchars($flash) ?></div>
     <?php if ($flash_type === 'success'): ?>
-    <p><a href="<?= sh_url('search.php') ?>" class="sh-btn-primary"><?= htmlspecialchars($t['cart']['continue']) ?></a></p>
+    <p>
+        <?php if ($placed_order): ?>
+        <a href="<?= htmlspecialchars(sh_invoice_public_url($placed_order)) ?>" class="sh-btn-primary" target="_blank" rel="noopener">
+            <i class="fas fa-file-invoice"></i> <?= htmlspecialchars($t['checkout']['view_invoice'] ?? 'View invoice') ?>
+        </a>
+        <?php endif; ?>
+        <a href="<?= sh_url('search.php') ?>" class="sh-btn-outline"><?= htmlspecialchars($t['cart']['continue']) ?></a>
+    </p>
     <?php endif; ?>
     <?php else: ?>
 
@@ -74,6 +112,38 @@ require __DIR__ . '/includes/header.php';
             <p class="sh-checkout-note"><?= htmlspecialchars($t['checkout']['no_methods'] ?? 'No payment methods enabled. Configure them in admin.') ?></p>
             <?php else: ?>
             <form method="post" class="sh-checkout-form">
+                <h3><?= htmlspecialchars($t['checkout']['customer_title'] ?? 'Customer details') ?></h3>
+                <div class="sh-form-grid sh-checkout-customer">
+                    <label class="sh-field sh-field--wide">
+                        <span><?= htmlspecialchars($t['checkout']['customer_name'] ?? 'Name') ?></span>
+                        <input type="text" name="customer_name" autocomplete="name">
+                    </label>
+                    <label class="sh-field">
+                        <span><?= htmlspecialchars($t['checkout']['customer_email'] ?? 'Email') ?></span>
+                        <input type="email" name="customer_email" autocomplete="email">
+                    </label>
+                    <label class="sh-field">
+                        <span><?= htmlspecialchars($t['checkout']['customer_phone'] ?? 'Phone') ?></span>
+                        <input type="tel" name="customer_phone" autocomplete="tel">
+                    </label>
+                    <label class="sh-field sh-field--wide">
+                        <span><?= htmlspecialchars($t['checkout']['customer_address'] ?? 'Address') ?></span>
+                        <input type="text" name="customer_address" autocomplete="street-address">
+                    </label>
+                    <label class="sh-field">
+                        <span><?= htmlspecialchars($t['checkout']['customer_city'] ?? 'City') ?></span>
+                        <input type="text" name="customer_city" autocomplete="address-level2">
+                    </label>
+                    <label class="sh-field">
+                        <span><?= htmlspecialchars($t['checkout']['customer_postal'] ?? 'Postal code') ?></span>
+                        <input type="text" name="customer_postal" autocomplete="postal-code">
+                    </label>
+                    <label class="sh-field">
+                        <span><?= htmlspecialchars($t['checkout']['customer_country'] ?? 'Country') ?></span>
+                        <input type="text" name="customer_country" autocomplete="country-name">
+                    </label>
+                </div>
+                <h3><?= htmlspecialchars($t['checkout']['payment_title'] ?? 'Payment method') ?></h3>
                 <div class="sh-payment-methods">
                     <?php foreach ($methods as $i => $m): ?>
                     <label class="sh-payment-method">

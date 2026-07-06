@@ -57,6 +57,7 @@ function sh_merge_site_settings(array $settings): array
     require_once __DIR__ . '/menu-settings.php';
     require_once __DIR__ . '/tax-settings.php';
     require_once __DIR__ . '/smtp-settings.php';
+    require_once __DIR__ . '/invoice-settings.php';
     $merged = array_merge(
         sh_default_payment_settings(),
         bh_cms_site_settings_defaults(bh_cms_product_accent('shop')),
@@ -66,6 +67,7 @@ function sh_merge_site_settings(array $settings): array
         sh_store_settings_defaults(),
         sh_tax_settings_defaults(),
         sh_smtp_settings_defaults(),
+        sh_invoice_settings_defaults(),
         sh_menu_settings_defaults(),
         $settings
     );
@@ -193,6 +195,11 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings = sh_tax_settings_apply_post($post, $settings);
     }
 
+    if ($section === 'invoice') {
+        require_once __DIR__ . '/invoice-settings.php';
+        $settings = sh_invoice_settings_apply_post($post, $settings);
+    }
+
     if ($section === 'smtp') {
         require_once __DIR__ . '/smtp-settings.php';
         $settings = sh_smtp_settings_apply_post($post, $settings);
@@ -267,6 +274,7 @@ function sh_settings_tabs(): array
     return [
         'store'      => ['file' => 'settings-store.php',      'icon' => 'store', 'group' => 'shop'],
         'taxes'      => ['file' => 'settings-taxes.php',      'icon' => 'percent', 'group' => 'shop'],
+        'invoice'    => ['file' => 'settings-invoice.php',    'icon' => 'file-invoice', 'group' => 'shop'],
         'languages'  => ['file' => 'settings-languages.php',  'icon' => 'language', 'group' => 'advanced'],
         'payments'   => ['file' => 'payments.php',            'icon' => 'credit-card', 'group' => 'integrations'],
         'homepage'      => ['file' => 'settings-homepage.php',      'icon' => 'house', 'group' => 'content'],
@@ -296,7 +304,7 @@ function sh_settings_tab_groups(): array
         'shop' => [
             'label_key' => 'settings_group_shop',
             'icon'      => 'store',
-            'tabs'      => ['store', 'taxes'],
+            'tabs'      => ['store', 'taxes', 'invoice'],
         ],
         'content' => [
             'label_key' => 'settings_group_content',
