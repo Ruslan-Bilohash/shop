@@ -141,8 +141,21 @@ foreach (sh_langs() as $code => $info) {
     $checklistLangs[] = ['code' => $code, 'name' => $info['name'] ?? $code];
 }
 
+$aiSeoTips = $tp['ai_seo_tips'] ?? [];
+if ($aiSeoTips === [] && !empty($tp['seo_checklist'])) {
+    $sc = $tp['seo_checklist'];
+    $aiSeoTips = array_values(array_filter([
+        $sc['meta_title_hint'] ?? '',
+        $sc['meta_desc_hint'] ?? '',
+        $sc['meta_keywords_hint'] ?? '',
+        $sc['og_image_hint'] ?? '',
+        $sc['brand_hint'] ?? '',
+        $sc['schema_hint'] ?? '',
+    ]));
+}
+
 $admin_extra_js = [
-    sh_asset('js/admin-product.js') . '?v=5',
+    sh_asset('js/admin-product.js') . '?v=6',
     sh_asset('js/admin-product-images.js') . '?v=2',
     sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];
@@ -252,19 +265,8 @@ require __DIR__ . '/includes/layout.php';
 
     <section class="adm-edit-section" id="product-section-names" data-panel="names">
         <div class="adm-card">
-            <div class="adm-card-head adm-card-head--stack">
+            <div class="adm-card-head">
                 <h2><?= htmlspecialchars($tp['names_title'] ?? 'Names & descriptions') ?></h2>
-                <div class="adm-ai-toolbar">
-                    <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="shAiGenerateBtn"
-                            data-generating="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating…') ?>"
-                            data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Generated and translated for all languages.') ?>"
-                            data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied — add API key in Settings → AI.') ?>"
-                            data-failed="<?= htmlspecialchars($tp['ai_failed'] ?? 'AI generation failed.') ?>"
-                            data-need-name="<?= htmlspecialchars($tp['ai_need_name'] ?? 'Enter a product name first (source language).') ?>">
-                        <i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars($tp['ai_generate'] ?? 'Generate with AI') ?>
-                    </button>
-                    <span id="shAiStatus" class="adm-ai-status" hidden></span>
-                </div>
             </div>
             <div class="adm-card-body padded">
                 <div class="adm-ai-source-box adm-ai-source-box--product">
@@ -283,6 +285,32 @@ require __DIR__ . '/includes/layout.php';
                         </div>
                     </div>
                 </div>
+
+                <div class="adm-ai-generate-panel">
+                    <div class="adm-ai-generate-actions">
+                        <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate" id="shAiGenerateBtn"
+                                data-generating="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating…') ?>"
+                                data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Generated and translated for all languages.') ?>"
+                                data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied — add API key in Settings → AI.') ?>"
+                                data-failed="<?= htmlspecialchars($tp['ai_failed'] ?? 'AI generation failed.') ?>"
+                                data-need-name="<?= htmlspecialchars($tp['ai_need_name'] ?? 'Enter a product name first (source language).') ?>">
+                            <i class="fas fa-wand-magic-sparkles adm-ai-btn-icon" aria-hidden="true"></i>
+                            <span class="adm-ai-btn-label"><?= htmlspecialchars($tp['ai_generate'] ?? 'Generate all with AI') ?></span>
+                        </button>
+                        <p id="shAiStatus" class="adm-ai-status adm-ai-status--block" hidden></p>
+                    </div>
+                    <?php if ($aiSeoTips !== []): ?>
+                    <aside class="adm-seo-tips-box">
+                        <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> <?= htmlspecialchars($tp['ai_seo_tips_title'] ?? 'SEO tips') ?></h3>
+                        <ul>
+                            <?php foreach ($aiSeoTips as $tip): ?>
+                            <li><?= htmlspecialchars($tip) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </aside>
+                    <?php endif; ?>
+                </div>
+
                 <p class="adm-help"><?= htmlspecialchars($tp['ai_names_help'] ?? 'Edit per-language texts below after generation.') ?></p>
                 <?php foreach (sh_langs() as $code => $info): ?>
                 <details class="adm-spoiler adm-spoiler-nested" <?= $code === $aiSourceLang ? 'open' : '' ?>>
@@ -308,19 +336,8 @@ require __DIR__ . '/includes/layout.php';
 
     <section class="adm-edit-section" id="product-section-seo" data-panel="seo">
         <div class="adm-card">
-            <div class="adm-card-head adm-card-head--stack">
+            <div class="adm-card-head">
                 <h2><?= htmlspecialchars($seo_tp['spoiler_title'] ?? 'SEO & Schema.org') ?></h2>
-                <div class="adm-ai-toolbar">
-                    <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="shAiSeoGenerateBtn"
-                            data-generating="<?= htmlspecialchars($seo_tp['ai_generating'] ?? $tp['ai_generating'] ?? 'Generating…') ?>"
-                            data-ok="<?= htmlspecialchars($seo_tp['ai_ok'] ?? 'SEO generated for all languages.') ?>"
-                            data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied.') ?>"
-                            data-failed="<?= htmlspecialchars($tp['ai_failed'] ?? 'AI generation failed.') ?>"
-                            data-need-name="<?= htmlspecialchars($seo_tp['ai_need_name'] ?? $tp['ai_need_name'] ?? 'Enter product name first.') ?>">
-                        <i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars($seo_tp['ai_generate'] ?? 'Generate SEO with AI') ?>
-                    </button>
-                    <span id="shAiSeoStatus" class="adm-ai-status" hidden></span>
-                </div>
             </div>
             <?php $seo_panel_mode = true; require __DIR__ . '/includes/seo-spoiler.php'; ?>
         </div>

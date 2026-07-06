@@ -9,6 +9,10 @@
     var sourceNameField = form.querySelector('[name="name_' + sourceLang + '"]');
     var sourceDescField = form.querySelector('[name="desc_' + sourceLang + '"]');
 
+    var META_DESC_MIN = 120;
+    var META_DESC_MAX = 160;
+    var META_DESC_PAD = [' Free delivery available.', ' Order securely online today.', ' Quality guaranteed.'];
+
     function field(name) {
         return form.querySelector('[name="' + name + '"]');
     }
@@ -16,8 +20,26 @@
     function setStatus(el, msg, type) {
         if (!el) return;
         el.textContent = msg;
-        el.className = 'adm-ai-status' + (type ? ' adm-ai-status--' + type : '');
+        el.className = 'adm-ai-status adm-ai-status--block' + (type ? ' adm-ai-status--' + type : '');
         el.hidden = !msg;
+    }
+
+    function setLoading(btn, loading) {
+        if (!btn) return;
+        btn.classList.toggle('is-loading', loading);
+        btn.disabled = loading;
+        var icon = btn.querySelector('.adm-ai-btn-icon');
+        var label = btn.querySelector('.adm-ai-btn-label');
+        if (icon) {
+            icon.className = loading
+                ? 'fas fa-spinner adm-ai-btn-icon'
+                : 'fas fa-wand-magic-sparkles adm-ai-btn-icon';
+        }
+        if (label && loading) {
+            label.textContent = btn.getAttribute('data-generating') || 'Generating…';
+        } else if (label) {
+            label.textContent = btn.getAttribute('data-label-default') || label.textContent;
+        }
     }
 
     function setFieldValue(el, value) {
@@ -27,6 +49,30 @@
         el.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
+    function fitMetaDescription(text) {
+        text = String(text || '').replace(/\s+/g, ' ').trim();
+        if (!text) return '';
+        if (text.length > META_DESC_MAX) {
+            text = text.slice(0, META_DESC_MAX);
+            var cut = text.lastIndexOf(' ');
+            if (cut > META_DESC_MAX - 40) {
+                text = text.slice(0, cut);
+            }
+            text = text.replace(/[.,;:!?—-–]+$/, '');
+        }
+        var i = 0;
+        while (text.length < META_DESC_MIN && i < META_DESC_PAD.length) {
+            if (text.length + META_DESC_PAD[i].length <= META_DESC_MAX) {
+                text += META_DESC_PAD[i];
+            }
+            i++;
+        }
+        if (text.length > META_DESC_MAX) {
+            text = text.slice(0, META_DESC_MAX).replace(/[.,;:!?—-–]+$/, '');
+        }
+        return text;
+    }
+
     function fillLangFields(prefix, data) {
         if (!data || typeof data !== 'object') return;
         Object.keys(data).forEach(function (code) {
@@ -34,6 +80,16 @@
             if (el && data[code] != null && String(data[code]).trim() !== '') {
                 setFieldValue(el, data[code]);
             }
+        });
+    }
+
+    function fillMetaDescriptions(data) {
+        if (!data || typeof data !== 'object') return;
+        Object.keys(data).forEach(function (code) {
+            var el = field('seo_meta_description_' + code);
+            if (!el || data[code] == null) return;
+            var fitted = fitMetaDescription(data[code]);
+            if (fitted) setFieldValue(el, fitted);
         });
     }
 
@@ -93,7 +149,7 @@
         if (data.desc) fillLangFields('desc_', data.desc);
         if (data.seo) {
             fillLangFields('seo_meta_title_', data.seo.meta_title);
-            fillLangFields('seo_meta_description_', data.seo.meta_description);
+            fillMetaDescriptions(data.seo.meta_description);
             fillLangFields('seo_meta_keywords_', data.seo.meta_keywords);
         }
         var brand = data.brand || (data.seo && data.seo.brand) || '';
@@ -134,13 +190,12 @@
         });
     }
 
-    function requestAi(productName, category, brief, seoOnly) {
+    function requestAi(productName, category, brief) {
         var payload = {
             product_name: productName,
             category: category,
             source_lang: sourceLang,
-            brief_description: brief,
-            seo_only: seoOnly ? 1 : 0
+            brief_description: brief
         };
         return fetch(apiUrl, {
             method: 'POST',
@@ -166,7 +221,7 @@
             });
     }
 
-    function runAi(btn, statusEl, seoOnly) {
+    function runAi(btn, statusEl) {
         var productName = getProductName();
         var categoryEl = field('category');
         var category = categoryEl ? categoryEl.value : '';
@@ -180,50 +235,30 @@
 
         syncAiNameToSource();
         syncAiBriefToSource();
-        btn.disabled = true;
+        setLoading(btn, true);
         setStatus(statusEl, btn.getAttribute('data-generating') || 'Generating…', 'loading');
 
-        requestAi(productName, category, brief, seoOnly)
+        requestAi(productName, category, brief)
             .then(function (res) {
-                if (seoOnly && res.ok && res.data) {
-                    if (res.data.seo) {
-                        fillLangFields('seo_meta_title_', res.data.seo.meta_title);
-                        fillLangFields('seo_meta_description_', res.data.seo.meta_description);
-                        fillLangFields('seo_meta_keywords_', res.data.seo.meta_keywords);
-                    }
-                    var brand = res.data.brand || (res.data.seo && res.data.seo.brand);
-                    if (field('seo_brand') && brand) setFieldValue(field('seo_brand'), brand);
-                    openLangSpoilers();
-                    form.dispatchEvent(new CustomEvent('shProductAiFilled', { bubbles: true }));
-                    var msg = res.demo
-                        ? (btn.getAttribute('data-demo-ok') || 'Demo templates.')
-                        : (btn.getAttribute('data-ok') || 'SEO generated.');
-                    setStatus(statusEl, msg, res.demo ? 'info' : 'success');
-                } else {
-                    applyAiData(res, statusEl, btn);
-                }
+                applyAiData(res, statusEl, btn);
             })
             .catch(function (err) {
                 setStatus(statusEl, err.message || (btn.getAttribute('data-failed') || 'Failed'), 'error');
             })
             .finally(function () {
-                btn.disabled = false;
+                setLoading(btn, false);
             });
     }
 
-    var btnNames = document.getElementById('shAiGenerateBtn');
-    var statusNames = document.getElementById('shAiStatus');
-    if (btnNames) {
-        btnNames.addEventListener('click', function () {
-            runAi(btnNames, statusNames, false);
-        });
-    }
-
-    var btnSeo = document.getElementById('shAiSeoGenerateBtn');
-    var statusSeo = document.getElementById('shAiSeoStatus');
-    if (btnSeo) {
-        btnSeo.addEventListener('click', function () {
-            runAi(btnSeo, statusSeo, true);
+    var btnGenerate = document.getElementById('shAiGenerateBtn');
+    var statusEl = document.getElementById('shAiStatus');
+    if (btnGenerate) {
+        var defaultLabel = btnGenerate.querySelector('.adm-ai-btn-label');
+        if (defaultLabel) {
+            btnGenerate.setAttribute('data-label-default', defaultLabel.textContent);
+        }
+        btnGenerate.addEventListener('click', function () {
+            runAi(btnGenerate, statusEl);
         });
     }
 

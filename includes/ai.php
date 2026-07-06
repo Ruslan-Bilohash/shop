@@ -25,7 +25,7 @@ function sh_ai_defaults(): array
         'ai_api_key'              => '',
         'ai_api_base'             => '',
         'ai_model'                => 'grok-3-mini',
-        'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars, meta description 120-160 chars. Professional, SEO-friendly, demo-safe tone.',
+        'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars. meta_description MUST be 120-160 characters (inclusive) in EVERY language — compelling Google snippet with keyword, benefit and call-to-action. Count characters carefully. Professional, SEO-friendly, demo-safe tone.',
         'ai_source_lang'          => 'en',
     ];
 }
@@ -299,6 +299,49 @@ function sh_ai_call_chat(array $ai, string $prompt, int $maxTokens = 1200): arra
     return ['ok' => true, 'text' => $text, 'error' => ''];
 }
 
+/** @return list<string> */
+function sh_ai_meta_desc_padding(string $lang): array
+{
+    $map = [
+        'en' => [' Free delivery available.', ' Order securely online today.', ' Trusted quality — buy now.'],
+        'no' => [' Gratis frakt tilgjengelig.', ' Bestill trygt på nett i dag.', ' Kvalitet du kan stole på.'],
+        'uk' => [' Безкоштовна доставка.', ' Замовляйте онлайн сьогодні.', ' Якість та надійність.'],
+        'ru' => [' Бесплатная доставка.', ' Закажите онлайн сегодня.', ' Качество и надёжность.'],
+        'sv' => [' Fri frakt tillgänglig.', ' Beställ säkert online idag.', ' Kvalitet du kan lita på.'],
+        'lt' => [' Nemokamas pristatymas.', ' Užsisakykite internetu šiandien.', ' Patikima kokybė.'],
+    ];
+    return $map[$lang] ?? $map['en'];
+}
+
+function sh_ai_fit_meta_description(string $text, string $lang = 'en', int $min = 120, int $max = 160): string
+{
+    $text = trim(preg_replace('/\s+/u', ' ', $text));
+    if ($text === '') {
+        return '';
+    }
+    if (mb_strlen($text) > $max) {
+        $text = mb_substr($text, 0, $max);
+        $lastSpace = mb_strrpos($text, ' ');
+        if ($lastSpace !== false && $lastSpace > (int) ($max * 0.65)) {
+            $text = mb_substr($text, 0, $lastSpace);
+        }
+        $text = rtrim($text, ".,;:!?—-–");
+    }
+    foreach (sh_ai_meta_desc_padding($lang) as $pad) {
+        if (mb_strlen($text) >= $min) {
+            break;
+        }
+        if (mb_strlen($text . $pad) <= $max) {
+            $text .= $pad;
+        }
+    }
+    if (mb_strlen($text) > $max) {
+        $text = mb_substr($text, 0, $max);
+        $text = rtrim($text, ".,;:!?—-–");
+    }
+    return $text;
+}
+
 /** @return ?array */
 function sh_ai_parse_product_json(string $raw): ?array
 {
@@ -319,7 +362,8 @@ function sh_ai_parse_product_json(string $raw): ?array
         $out['desc'][$code] = trim((string) ($data['desc'][$code] ?? ''));
         $seo = is_array($data['seo'] ?? null) ? $data['seo'] : [];
         $out['seo']['meta_title'][$code] = trim((string) ($seo['meta_title'][$code] ?? ''));
-        $out['seo']['meta_description'][$code] = trim((string) ($seo['meta_description'][$code] ?? ''));
+        $rawDesc = trim((string) ($seo['meta_description'][$code] ?? ''));
+        $out['seo']['meta_description'][$code] = $rawDesc !== '' ? sh_ai_fit_meta_description($rawDesc, $code) : '';
         $out['seo']['meta_keywords'][$code] = trim((string) ($seo['meta_keywords'][$code] ?? ''));
     }
 
@@ -348,27 +392,27 @@ function sh_ai_product_fallback(string $productName, string $category, string $s
     $templates = [
         'en' => [
             'desc' => '{name} — quality product for everyday use.{brief} Category: {category}. Fast delivery across Norway & EU.',
-            'meta_desc' => 'Buy {name} online.{brief} {category} — Shop CMS demo with multilingual SEO and Schema.org.',
+            'meta_desc' => 'Buy {name} online — premium {category} with fast delivery across Norway & EU.{brief} Secure checkout, Schema.org SEO, multilingual storefront. Order today.',
         ],
         'no' => [
             'desc' => '{name} — kvalitetsprodukt for daglig bruk.{brief} Kategori: {category}. Rask levering i Norge og EU.',
-            'meta_desc' => 'Kjøp {name} på nett.{brief} {category} — Shop CMS-demo med flerspråklig SEO.',
+            'meta_desc' => 'Kjøp {name} på nett — {category} med rask levering i Norge og EU.{brief} Trygg kasse, Schema.org SEO og flerspråklig butikk. Bestill i dag.',
         ],
         'uk' => [
             'desc' => '{name} — якісний товар для щоденного використання.{brief} Категорія: {category}. Швидка доставка по Норвегії та ЄС.',
-            'meta_desc' => 'Купити {name} онлайн.{brief} {category} — демо Shop CMS з багатомовним SEO та Schema.org.',
+            'meta_desc' => 'Купити {name} онлайн — {category} з швидкою доставкою по Норвегії та ЄС.{brief} Безпечне оформлення, Schema.org SEO, багатомовна вітрина. Замовте сьогодні.',
         ],
         'ru' => [
             'desc' => '{name} — качественный товар для повседневного использования.{brief} Категория: {category}. Быстрая доставка по Норвегии и ЕС.',
-            'meta_desc' => 'Купить {name} онлайн.{brief} {category} — демо Shop CMS с многоязычным SEO.',
+            'meta_desc' => 'Купить {name} онлайн — {category} с быстрой доставкой по Норвегии и ЕС.{brief} Безопасный checkout, Schema.org SEO, мультиязычная витрина. Закажите сегодня.',
         ],
         'sv' => [
             'desc' => '{name} — kvalitetsprodukt för vardagsbruk.{brief} Kategori: {category}. Snabb leverans i Norge och EU.',
-            'meta_desc' => 'Köp {name} online.{brief} {category} — Shop CMS-demo med flerspråkig SEO.',
+            'meta_desc' => 'Köp {name} online — {category} med snabb leverans i Norge och EU.{brief} Säker kassa, Schema.org SEO och flerspråkig butik. Beställ idag.',
         ],
         'lt' => [
             'desc' => '{name} — kokybiškas produktas kasdieniam naudojimui.{brief} Kategorija: {category}. Greitas pristatymas Norvegijoje ir ES.',
-            'meta_desc' => 'Pirkite {name} internetu.{brief} {category} — Shop CMS demo su daugiakalbiu SEO.',
+            'meta_desc' => 'Pirkite {name} internetu — {category} su greitu pristatymu Norvegijoje ir ES.{brief} Saugus atsiskaitymas, Schema.org SEO. Užsisakykite šiandien.',
         ],
     ];
 
@@ -382,7 +426,7 @@ function sh_ai_product_fallback(string $productName, string $category, string $s
             $desc[$code] .= ' ' . $briefDescription;
         }
         $metaTitle[$code] = mb_substr($productName . ' | ' . ($category ?: 'Shop'), 0, 60);
-        $metaDesc[$code] = mb_substr(strtr($tpl['meta_desc'], $repl), 0, 160);
+        $metaDesc[$code] = sh_ai_fit_meta_description(strtr($tpl['meta_desc'], $repl), $code);
         $metaKw[$code] = strtolower(str_replace(' ', ', ', $productName)) . ', ' . strtolower($category ?: 'ecommerce');
     }
 
