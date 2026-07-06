@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/json-store.php';
+
 function sh_categories_file(): string
 {
     return sh_data_path('categories.json');
@@ -80,7 +82,10 @@ function sh_category_migrate_legacy_data(): void
     if (!is_readable($jsonFile)) {
         return;
     }
-    $existing = json_decode(file_get_contents($jsonFile) ?: '[]', true);
+    $existing = sh_json_store_decode($jsonFile, true);
+    if (!is_array($existing)) {
+        $existing = [];
+    }
     if (!is_array($existing) || $existing === []) {
         return;
     }
@@ -126,7 +131,7 @@ function sh_ensure_categories_json(): void
         sh_category_migrate_legacy_data();
         return;
     }
-    $existing = json_decode(file_get_contents($json) ?: '[]', true);
+    $existing = sh_json_store_decode($json, true);
     if (!is_array($existing) || $existing === []) {
         sh_save_categories($defaults);
     }
@@ -137,11 +142,9 @@ function sh_load_categories_raw(): array
 {
     sh_ensure_categories_json();
     $file = sh_categories_file();
-    if (is_readable($file)) {
-        $data = json_decode(file_get_contents($file) ?: '[]', true);
-        if (is_array($data) && $data !== []) {
-            return $data;
-        }
+    $data = sh_json_store_decode($file, true);
+    if (is_array($data) && $data !== []) {
+        return $data;
     }
 
     $seed = sh_default_categories_from_seed();
@@ -152,7 +155,7 @@ function sh_save_categories(array $list): bool
 {
     usort($list, fn($a, $b) => ($a['sort'] ?? 99) <=> ($b['sort'] ?? 99));
     $json = json_encode(array_values($list), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    return file_put_contents(sh_categories_file(), $json, LOCK_EX) !== false;
+    return sh_json_store_write(sh_categories_file(), $json);
 }
 
 function sh_category_records(bool $active_only = false): array

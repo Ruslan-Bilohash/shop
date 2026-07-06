@@ -208,6 +208,8 @@ body.sh-nav-open { overflow: hidden; }
     border: 1px solid var(--sh-border);
 }
 .sh-search-field { flex: 1 1 140px; text-align: left; }
+.sh-search-field--keyword { flex: 2 1 240px; }
+.sh-search-btn-wrap { display: flex; align-items: flex-end; flex: 0 0 auto; }
 .sh-search-field label { display: block; font-size: 11px; font-weight: 600; color: var(--sh-text-muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
 .sh-search-field input, .sh-search-field select {
     width: 100%; padding: 10px 12px; border: 1px solid var(--sh-border);
@@ -1090,9 +1092,11 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
     .sh-container { padding: 24px max(16px, env(safe-area-inset-right)) 32px max(16px, env(safe-area-inset-left)); }
     .sh-hero { padding: 32px max(16px, env(safe-area-inset-right)) 40px max(16px, env(safe-area-inset-left)); }
     .sh-header-inner { padding: 0 max(12px, env(safe-area-inset-left)) 0 max(12px, env(safe-area-inset-right)); }
-    .sh-search { flex-direction: column; align-items: stretch; }
-    .sh-search-field { flex: 1 1 auto; }
-    .sh-search-btn { width: 100%; min-height: 44px; justify-content: center; }
+    .sh-search { flex-direction: column; align-items: stretch; gap: 8px; padding: 12px; }
+    .sh-search-field,
+    .sh-search-field--keyword { flex: 1 1 auto; min-width: 0; }
+    .sh-search-btn-wrap { align-items: stretch; width: 100%; margin: 0; }
+    .sh-search-btn { width: 100%; min-height: 44px; justify-content: center; margin: 0; }
     .sh-section-head { flex-direction: column; align-items: flex-start; }
     .sh-filters { position: sticky; top: 56px; z-index: 5; }
     .sh-product-excerpt { -webkit-line-clamp: 1; }

@@ -48,11 +48,12 @@ function sh_read_store_settings_light(): array
     }
     $file = dirname(__DIR__) . '/data/settings.json';
     $data = [];
-    if (is_readable($file)) {
-        $decoded = json_decode(file_get_contents($file) ?: '{}', true);
-        if (is_array($decoded)) {
-            $data = $decoded;
-        }
+    if (!function_exists('sh_json_store_decode')) {
+        require_once __DIR__ . '/json-store.php';
+    }
+    $decoded = sh_json_store_decode($file, true);
+    if (is_array($decoded)) {
+        $data = $decoded;
     }
     $cache = $data;
     return $cache;

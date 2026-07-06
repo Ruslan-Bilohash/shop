@@ -53,9 +53,14 @@ function sh_detect_lang(): string
 
 $lang      = sh_detect_lang();
 $lang_meta = $SH_LANGS[$lang] ?? $SH_LANGS['no'];
+$en_file = __DIR__ . '/../lang/en.php';
+$en_t = is_file($en_file) ? require $en_file : [];
 $lang_file = __DIR__ . '/../lang/' . $lang . '.php';
-if (!is_file($lang_file)) $lang_file = __DIR__ . '/../lang/en.php';
-$t = require $lang_file;
+if (!is_file($lang_file)) {
+    $lang_file = $en_file;
+}
+$t_local = require $lang_file;
+$t = ($lang === 'en' || !is_array($en_t)) ? $t_local : array_replace_recursive($en_t, $t_local);
 
 require_once dirname(__DIR__, 2) . '/includes/ecosystem-i18n.php';
 $t = bh_apply_ecosystem_translations($t, $lang, 'shop');

@@ -3,7 +3,7 @@
  * Shop CMS — single source of truth for script version.
  * Used on /shop/site/ and /shop/admin/ (must always match).
  */
-define('SH_VERSION', '1.4.0');
+define('SH_VERSION', '1.4.1');
 define('SH_VERSION_DATE', '2026-07-06');
 
 function sh_version(): string
@@ -22,12 +22,13 @@ function sh_version_date(): string
 }
 
 /** Production cap — do not publish changelog entries above this version. */
-define('SH_VERSION_PUBLIC_CAP', '1.4.0');
+define('SH_VERSION_PUBLIC_CAP', '1.4.1');
 
 /** @return list<array{version:string,date:string}> */
 function sh_version_releases(): array
 {
     return [
+        ['version' => '1.4.1', 'date' => '2026-07-06'],
         ['version' => '1.4.0', 'date' => '2026-07-06'],
         ['version' => '1.3.9', 'date' => '2026-07-06'],
         ['version' => '1.3.8', 'date' => '2026-07-06'],
@@ -56,7 +57,7 @@ function sh_version_releases_public(): array
 
 function sh_public_style_version(): string
 {
-    return '25';
+    return '26';
 }
 
 function sh_public_script_version(): string

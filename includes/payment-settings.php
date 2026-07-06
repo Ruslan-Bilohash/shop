@@ -3,6 +3,7 @@
 if (!function_exists('sh_data_path')) {
     require_once __DIR__ . '/storage.php';
 }
+require_once __DIR__ . '/json-store.php';
 
 function sh_settings_file(): string
 {
@@ -60,11 +61,7 @@ function sh_load_settings(): array
     require_once __DIR__ . '/site-settings.php';
     $file = sh_settings_file();
 
-    if (!is_readable($file)) {
-        return sh_merge_site_settings([]);
-    }
-
-    $data = json_decode(file_get_contents($file) ?: '{}', true);
+    $data = sh_json_store_decode($file, true);
     if (!is_array($data)) {
         return sh_merge_site_settings([]);
     }
@@ -90,11 +87,9 @@ function sh_save_settings(array $settings): bool
 
     $existingRaw = [];
     $file = sh_settings_file();
-    if (is_readable($file)) {
-        $decoded = json_decode(file_get_contents($file) ?: '{}', true);
-        if (is_array($decoded)) {
-            $existingRaw = $decoded;
-        }
+    $decoded = sh_json_store_decode($file, true);
+    if (is_array($decoded)) {
+        $existingRaw = $decoded;
     }
     foreach (sh_settings_secret_keys() as $secretKey) {
         $incoming = trim((string) ($merged[$secretKey] ?? ''));
@@ -171,7 +166,7 @@ function sh_save_settings(array $settings): bool
     if ($json === false) {
         return false;
     }
-    return file_put_contents(sh_settings_file(), $json, LOCK_EX) !== false;
+    return sh_json_store_write(sh_settings_file(), $json);
 }
 
 function sh_payment_tabs(): array

@@ -1,0 +1,11 @@
+<?php
+/**
+ * Copy to db.config.php after MySQL install (or use install/install.php).
+ */
+return [
+    'host'     => 'localhost',
+    'database' => 'shop_cms',
+    'user'     => 'root',
+    'pass'     => '',
+    'prefix'   => 'sh_',
+];

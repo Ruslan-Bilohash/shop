@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/json-store.php';
+
 function sh_data_path(string $file): string
 {
     return __DIR__ . '/../data/' . $file;
@@ -43,7 +45,10 @@ function sh_ensure_products_json(): void
         return;
     }
 
-    $existing = json_decode(file_get_contents($json) ?: '[]', true);
+    $existing = sh_json_store_decode($json, true);
+    if (!is_array($existing)) {
+        $existing = [];
+    }
     if (!is_array($existing)) {
         sh_save_products($defaults);
         return;
@@ -66,25 +71,21 @@ function sh_ensure_products_json(): void
 function sh_save_products(array $list): bool
 {
     $json = json_encode(array_values($list), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    return file_put_contents(sh_products_file(), $json, LOCK_EX) !== false;
+    return sh_json_store_write(sh_products_file(), $json);
 }
 
 function sh_load_products_raw(): array
 {
     $file = sh_products_file();
-    if (is_readable($file)) {
-        $data = json_decode(file_get_contents($file) ?: '[]', true);
-        if (is_array($data) && $data !== []) {
-            return $data;
-        }
+    $data = sh_json_store_decode($file, true);
+    if (is_array($data) && $data !== []) {
+        return $data;
     }
 
     sh_ensure_products_json();
-    if (is_readable($file)) {
-        $data = json_decode(file_get_contents($file) ?: '[]', true);
-        if (is_array($data) && $data !== []) {
-            return $data;
-        }
+    $data = sh_json_store_decode($file, true);
+    if (is_array($data) && $data !== []) {
+        return $data;
     }
 
     $seed = sh_default_products_from_seed();

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/json-store.php';
+
 function sh_news_file(): string
 {
     return sh_data_path('news.json');
@@ -10,17 +12,14 @@ function sh_news_load(): array
 {
     sh_ensure_news_json();
     $file = sh_news_file();
-    if (!is_readable($file)) {
-        return [];
-    }
-    $data = json_decode(file_get_contents($file) ?: '[]', true);
+    $data = sh_json_store_decode($file, true);
     return is_array($data) ? array_values($data) : [];
 }
 
 function sh_news_save(array $list): bool
 {
     $json = json_encode(array_values($list), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    $ok = file_put_contents(sh_news_file(), $json, LOCK_EX) !== false;
+    $ok = sh_json_store_write(sh_news_file(), $json);
     if ($ok) {
         sh_news_touch_sitemap();
     }
@@ -49,7 +48,7 @@ function sh_default_news_from_seed(): ?array
     if (!is_readable($seedFile)) {
         return null;
     }
-    $defaults = json_decode(file_get_contents($seedFile) ?: '[]', true);
+    $defaults = sh_json_store_decode($seedFile, true);
     return is_array($defaults) && $defaults !== [] ? $defaults : null;
 }
 
@@ -59,7 +58,10 @@ function sh_ensure_news_json(): void
     if (!is_file($json)) {
         return;
     }
-    $existing = json_decode(file_get_contents($json) ?: '[]', true);
+    $existing = sh_json_store_decode($json, true);
+    if (!is_array($existing)) {
+        $existing = [];
+    }
     if (!is_array($existing)) {
         sh_news_save([]);
     }

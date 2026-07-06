@@ -1,0 +1,759 @@
+{
+    "paypal": {
+        "enabled": true,
+        "mode": "sandbox",
+        "client_id": "",
+        "client_secret": "",
+        "currency": "NOK"
+    },
+    "stripe": {
+        "enabled": true,
+        "mode": "test",
+        "publishable_key": "123",
+        "secret_key": "123",
+        "webhook_secret": ""
+    },
+    "vipps": {
+        "enabled": true,
+        "environment": "test",
+        "client_id": "",
+        "client_secret": "",
+        "subscription_key": "",
+        "merchant_serial": "",
+        "callback_token": ""
+    },
+    "google_pay": {
+        "enabled": true,
+        "merchant_id": "1231",
+        "gateway": "stripe"
+    },
+    "apple_pay": {
+        "enabled": true,
+        "merchant_id": "",
+        "domain": "",
+        "verify_domain": true
+    },
+    "cod": {
+        "enabled": true,
+        "title": "Cash on delivery",
+        "instructions": "Pay the courier when your order arrives. Demo only — no real shipment.",
+        "fee": 0
+    },
+    "seo_site_name": "SHOP CMS",
+    "seo_default_og_image": "",
+    "seo_org_name": "SHOP CMS",
+    "seo_geo_region": "NO",
+    "seo_geo_placename": "Norway",
+    "seo_twitter_site": "",
+    "seo_default_country_code": "NO",
+    "seo_schema_product": true,
+    "seo_schema_breadcrumbs": true,
+    "seo_schema_itemlist": true,
+    "seo_schema_website": true,
+    "seo_schema_organization": true,
+    "sitemap_enabled": true,
+    "sitemap_include_products": true,
+    "sitemap_include_categories": true,
+    "sitemap_include_verticals": true,
+    "sitemap_include_news": true,
+    "sitemap_priority_home": "1",
+    "sitemap_priority_product": "0.8",
+    "sitemap_priority_category": "0.85",
+    "sitemap_last_generated": "2026-07-06T19:52:23Z",
+    "ai_enabled": false,
+    "ai_provider": "grok",
+    "ai_api_key": "",
+    "ai_api_base": "https:\/\/api.x.ai\/v1",
+    "ai_model": "grok-3-mini",
+    "ai_model_product": "",
+    "ai_model_chat": "",
+    "ai_model_news": "",
+    "ai_model_seo": "",
+    "ai_prompt_product": "You are an e-commerce copywriter for a Norway\/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with keys no, en, uk, ru, sv (short desc 1-2 sentences each). seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. Meta title max 60 chars, meta description max 155 chars. Professional, SEO-friendly, demo-safe tone.",
+    "ai_prompt_news": "You are a technical editor for Shop CMS — a PHP e-commerce demo from Norway. Topic: {topic}. Source language: {source_lang}. Return ONLY valid JSON (no markdown) with keys: name, excerpt, body, seo — each an object with every active language key (no, en, uk, ru, sv, lt). excerpt: 1–2 sentences (max 220 chars). body: HTML with <p>, <h2>, <ul>\/<li>, <strong>, <a> only. seo has meta_title, meta_description, meta_keywords per language. meta_title max 60 chars. meta_description MUST be 120–160 characters in EVERY language. Professional release-note tone.",
+    "ai_prompt_seo": "You are an SEO specialist for Norway\/EU e-commerce. Task: {task_type}. Target name: \"{target_name}\". Slug: {slug}. Country ISO: {country_code}. Source language: {source_lang}. Return ONLY valid JSON (no markdown). For site task use keys: seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, seo_default_country_code (2 letters), seo_twitter_site (optional @handle). For category task use key \"seo\" with meta_title, meta_description, meta_keywords, intro — each an object with every active language key. meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences. Professional, Schema.org-friendly tone.",
+    "ai_source_lang": "uk",
+    "service_pages": {
+        "delivery": {
+            "active": true,
+            "title": {
+                "no": "Levering og frakt",
+                "en": "Delivery & shipping",
+                "uk": "Доставка та відправлення",
+                "ru": "Доставка и отправка",
+                "sv": "Leverans och frakt"
+            },
+            "content": {
+                "no": "Demo Shop CMS — fraktinformasjon.\n\n• Standardlevering 3–5 virkedager i Norge\n• EU-levering 5–10 virkedager (demopriser)\n• Gratis henting i Oslo-området (demo)\n\nDette er en demobutikk — ingen reell forsendelse.",
+                "en": "Demo Shop CMS — shipping information.\n\n• Standard delivery 3–5 business days within Norway\n• EU delivery 5–10 business days (demo rates)\n• Free pickup option in Oslo area (demo)\n• Tracking email sent when order ships (production feature)\n\nThis is a showcase store — no real shipments are processed.",
+                "uk": "Демо Shop CMS — інформація про доставку.\n\n• Стандартна доставка 3–5 робочих днів по Норвегії\n• Доставка по ЄС 5–10 днів (демо)\n\nЦе демо-магазин — реальні відправлення не здійснюються.",
+                "ru": "Демо Shop CMS — информация о доставке.\n\n• Стандартная доставка 3–5 рабочих дней по Норвегии\n• Доставка по ЕС 5–10 дней (демо)\n\nЭто демо-магазин — реальные отправления не выполняются.",
+                "sv": "Demo Shop CMS — leveransinformation.\n\n• Standardleverans 3–5 arbetsdagar i Norge\n• EU-leverans 5–10 dagar (demo)\n\nDetta är en demobutik — inga riktiga leveranser."
+            },
+            "meta_title": {
+                "no": "Levering — Shop CMS",
+                "en": "Delivery — Shop CMS",
+                "uk": "Доставка — Shop CMS",
+                "ru": "Доставка — Shop CMS",
+                "sv": "Leverans — Shop CMS"
+            },
+            "meta_description": {
+                "no": "Fraktsoner, leveringstider og henting for Shop CMS-demobutikken.",
+                "en": "Shipping zones, delivery times and pickup options for the Shop CMS demo store.",
+                "uk": "Зони доставки та терміни для демо-магазину Shop CMS.",
+                "ru": "Зоны доставки и сроки для демо-магазина Shop CMS.",
+                "sv": "Leveranszoner och tider för Shop CMS-demobutiken."
+            }
+        },
+        "payment": {
+            "active": true,
+            "title": {
+                "no": "Betalingsmetoder",
+                "en": "Payment methods",
+                "uk": "Способи оплати",
+                "ru": "Способы оплаты",
+                "sv": "Betalningsmetoder"
+            },
+            "content": {
+                "no": "Betalingsmetoder i produksjon:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, kontant ved levering<br>\r\n<br>\r\nDemokassen simulerer betaling — konfigurer i Admin → Betalinger.",
+                "en": "Accepted payment methods in production builds:<br>\r\n<br>\r\n• Stripe (cards, Apple Pay, Google Pay)<br>\r\n• PayPal<br>\r\n• Vipps (Norway)<br>\r\n• Cash on delivery (optional)<br>\r\n<br>\r\nDemo checkout simulates payment — configure providers in Admin → Payments.",
+                "uk": "Способи оплати у продакшн:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, накладений платіж<br>\r\n<br>\r\nДемо-каса симулює оплату.",
+                "ru": "Способы оплаты в продакшене:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, наложенный платёж<br>\r\n<br>\r\nДемо-касса симулирует оплату.",
+                "sv": "Betalningsmetoder i produktion:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, postförskott<br>\r\n<br>\r\nDemokassan simulerar betalning."
+            },
+            "meta_title": {
+                "no": "Betaling — Shop CMS",
+                "en": "Payment — Shop CMS",
+                "uk": "Оплата — Shop CMS",
+                "ru": "Оплата — Shop CMS",
+                "sv": "Betalning — Shop CMS"
+            },
+            "meta_description": {
+                "no": "Stripe, PayPal, Vipps og COD for Shop CMS.",
+                "en": "Stripe, PayPal, Vipps and COD options for Shop CMS storefronts.",
+                "uk": "Stripe, PayPal, Vipps для Shop CMS.",
+                "ru": "Stripe, PayPal, Vipps для Shop CMS.",
+                "sv": "Stripe, PayPal, Vipps för Shop CMS."
+            }
+        },
+        "privacy": {
+            "active": true,
+            "title": {
+                "no": "Personvern",
+                "en": "Privacy policy",
+                "uk": "Політика конфіденційності",
+                "ru": "Политика конфиденциальности",
+                "sv": "Integritetspolicy"
+            },
+            "content": {
+                "no": "Shop CMS demo — personvern.\n\nKontaktskjema og handlekurv lagres lokalt i demo. Ingen reelle bestillinger.\n\nProduksjonsbutikker bør publisere full GDPR-policy.",
+                "en": "Shop CMS demo — privacy overview.\n\nWe process contact form data and session cart items locally in this demo. No real orders or payment data are stored.\n\nProduction shops should publish a full GDPR-compliant policy with data controller details, legal basis, retention and user rights.",
+                "uk": "Демо Shop CMS — конфіденційність.\n\nДані форми та кошика — лише в демо-сесії. Реальні замовлення не зберігаються.",
+                "ru": "Демо Shop CMS — конфиденциальность.\n\nДанные формы и корзины — только в демо-сессии.",
+                "sv": "Demo Shop CMS — integritet.\n\nKontaktformulär och varukorg lagras lokalt i demon."
+            },
+            "meta_title": {
+                "no": "Personvern — Shop CMS",
+                "en": "Privacy policy — Shop CMS",
+                "uk": "Конфіденційність — Shop CMS",
+                "ru": "Конфиденциальность — Shop CMS",
+                "sv": "Integritet — Shop CMS"
+            },
+            "meta_description": {
+                "no": "Personvern for Shop CMS-demobutikken.",
+                "en": "Privacy and data processing information for the Shop CMS demo storefront.",
+                "uk": "Політика конфіденційності демо-магазину Shop CMS.",
+                "ru": "Политика конфиденциальности демо-магазина Shop CMS.",
+                "sv": "Integritetspolicy för Shop CMS-demobutiken."
+            }
+        },
+        "cookies": {
+            "active": true,
+            "title": {
+                "no": "Informasjonskapsler",
+                "en": "Cookie policy",
+                "uk": "Політика cookies",
+                "ru": "Политика cookies",
+                "sv": "Cookiepolicy"
+            },
+            "content": {
+                "no": "Denne demoen bruker sesjonskapsel for handlekurv, språkvalg og eventuelt reCAPTCHA.",
+                "en": "This demo uses:\n\n• Session cookie (cart)\n• Language preference cookie (sh_lang)\n• Optional reCAPTCHA cookies when contact form is enabled\n\nNo advertising or third-party tracking cookies in the default demo.",
+                "uk": "Демо використовує cookies сесії, мови та reCAPTCHA (за потреби).",
+                "ru": "Демо использует cookies сессии, языка и reCAPTCHA (при необходимости).",
+                "sv": "Denna demo använder sessionscookies för varukorg och språk."
+            },
+            "meta_title": {
+                "no": "Cookies — Shop CMS",
+                "en": "Cookies — Shop CMS",
+                "uk": "Cookies — Shop CMS",
+                "ru": "Cookies — Shop CMS",
+                "sv": "Cookies — Shop CMS"
+            },
+            "meta_description": {
+                "no": "Bruk av informasjonskapsler på Shop CMS-demo.",
+                "en": "Cookie usage on the Shop CMS demo site.",
+                "uk": "Використання cookies на демо Shop CMS.",
+                "ru": "Использование cookies на демо Shop CMS.",
+                "sv": "Cookie-användning på Shop CMS-demo."
+            }
+        }
+    },
+    "footer_links": {
+        "shop": [
+            {
+                "id": "solutions",
+                "url": "solutions.php",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Butikkløsninger",
+                    "en": "Store solutions",
+                    "uk": "Рішення для магазину",
+                    "ru": "Решения для магазина",
+                    "sv": "Butikslösningar"
+                }
+            },
+            {
+                "id": "products",
+                "url": "search.php",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Alle produkter",
+                    "en": "All products",
+                    "uk": "Усі товари",
+                    "ru": "Все товары",
+                    "sv": "Alla produkter"
+                }
+            },
+            {
+                "id": "sale",
+                "url": "search.php?sale=1",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Salg",
+                    "en": "Sale",
+                    "uk": "Розпродаж",
+                    "ru": "Распродажа",
+                    "sv": "Rea"
+                }
+            },
+            {
+                "id": "cart",
+                "url": "cart.php",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Handlekurv",
+                    "en": "Cart",
+                    "uk": "Кошик",
+                    "ru": "Корзина",
+                    "sv": "Varukorg"
+                }
+            },
+            {
+                "id": "contact",
+                "url": "contact.php",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Kontakt",
+                    "en": "Contact",
+                    "uk": "Контакт",
+                    "ru": "Контакты",
+                    "sv": "Kontakt"
+                }
+            }
+        ],
+        "legal": [
+            {
+                "id": "home",
+                "url": "index.php",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Hjem",
+                    "en": "Home",
+                    "uk": "Головна",
+                    "ru": "Главная",
+                    "sv": "Hem"
+                }
+            },
+            {
+                "id": "delivery",
+                "url": "page.php?slug=delivery",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Levering",
+                    "en": "Delivery",
+                    "uk": "Доставка",
+                    "ru": "Доставка",
+                    "sv": "Leverans"
+                }
+            },
+            {
+                "id": "payment",
+                "url": "page.php?slug=payment",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Betaling",
+                    "en": "Payment",
+                    "uk": "Оплата",
+                    "ru": "Оплата",
+                    "sv": "Betalning"
+                }
+            },
+            {
+                "id": "privacy",
+                "url": "page.php?slug=privacy",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Personvern",
+                    "en": "Privacy",
+                    "uk": "Конфіденційність",
+                    "ru": "Конфиденциальность",
+                    "sv": "Integritet"
+                }
+            },
+            {
+                "id": "cookies",
+                "url": "page.php?slug=cookies",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Cookies",
+                    "en": "Cookies",
+                    "uk": "Cookies",
+                    "ru": "Cookies",
+                    "sv": "Cookies"
+                }
+            },
+            {
+                "id": "sitemap",
+                "url": "sitemap.xml",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Sitemap",
+                    "en": "Sitemap",
+                    "uk": "Карта сайту",
+                    "ru": "Карта сайта",
+                    "sv": "Webbplatskarta"
+                }
+            },
+            {
+                "id": "admin",
+                "url": "admin\/login.php",
+                "external": false,
+                "active": true,
+                "label": {
+                    "no": "Admin demo",
+                    "en": "Admin demo",
+                    "uk": "Адмін-демо",
+                    "ru": "Демо админки",
+                    "sv": "Admin demo"
+                }
+            }
+        ]
+    },
+    "site_currency": "NOK",
+    "site_default_lang": "no",
+    "currency_symbol": "kr",
+    "currency_decimals": 0,
+    "currency_thousands_sep": " ",
+    "currency_decimal_sep": ",",
+    "card_show_category": true,
+    "card_show_stock": true,
+    "card_show_excerpt": true,
+    "card_excerpt_len": 85,
+    "card_show_sale_badge": true,
+    "card_show_featured": true,
+    "card_show_add_cart": true,
+    "card_show_view_btn": true,
+    "quick_buy_enabled": true,
+    "quick_buy_show_after_phone": true,
+    "tracking_gtag_id": "",
+    "tracking_meta_pixel": "",
+    "custom_head_html": "",
+    "custom_footer_js": "",
+    "design_text_color": "#1e293b",
+    "design_text_muted": "#3a4350",
+    "design_card_bg": "#ffffff",
+    "design_header_bg": "#ffffff",
+    "design_footer_bg": "#efeff1",
+    "design_border_color": "#e2e8f0",
+    "design_sale_color": "#ea580c",
+    "design_border_radius": 10,
+    "design_font_family": "",
+    "color_btn_search": "",
+    "color_btn_search_hover": "",
+    "color_btn_cart": "",
+    "color_btn_cart_hover": "",
+    "color_btn_outline": "",
+    "color_btn_outline_hover": "",
+    "posten_enabled": true,
+    "posten_api_key": "",
+    "posten_client_id": "123",
+    "posten_demo_mode": true,
+    "nova_poshta_enabled": true,
+    "nova_poshta_track_enabled": true,
+    "nova_poshta_checkout_enabled": false,
+    "nova_poshta_demo_mode": true,
+    "nova_poshta_api_key": "",
+    "nova_poshta_sender_city_ref": "",
+    "nova_poshta_sender_city_name": "",
+    "nova_poshta_sender_warehouse_ref": "",
+    "nova_poshta_sender_warehouse_name": "",
+    "nova_poshta_sender_phone": "+380977001414",
+    "nova_poshta_default_weight_kg": 1,
+    "site_languages": [],
+    "customer_auth_enabled": true,
+    "customer_phone_login": true,
+    "customer_google_login": true,
+    "customer_apple_login": true,
+    "customer_google_client_id": "123йцу",
+    "customer_google_client_secret": "123йцу",
+    "customer_apple_client_id": "123йцу",
+    "customer_apple_team_id": "",
+    "customer_apple_key_id": "",
+    "customer_apple_private_key": "",
+    "customer_email_login": true,
+    "shop_maintenance_enabled": false,
+    "shop_maintenance_allow_admin": true,
+    "shop_dev_errors": true,
+    "cookie_consent_enabled": true,
+    "home_blocks": [
+        {
+            "id": "stats",
+            "type": "stats",
+            "enabled": true,
+            "sort": 1,
+            "limit": 0,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "featured",
+            "type": "featured",
+            "enabled": true,
+            "sort": 2,
+            "limit": 6,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "categories",
+            "type": "categories",
+            "enabled": true,
+            "sort": 3,
+            "limit": 6,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "new",
+            "type": "new",
+            "enabled": true,
+            "sort": 4,
+            "limit": 4,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "about",
+            "type": "about",
+            "enabled": true,
+            "sort": 5,
+            "limit": 0,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "platform",
+            "type": "platform",
+            "enabled": true,
+            "sort": 6,
+            "limit": 0,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "steps",
+            "type": "steps",
+            "enabled": true,
+            "sort": 7,
+            "limit": 0,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "why",
+            "type": "why",
+            "enabled": true,
+            "sort": 8,
+            "limit": 0,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        },
+        {
+            "id": "faq",
+            "type": "faq",
+            "enabled": true,
+            "sort": 9,
+            "limit": 0,
+            "title": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "subtitle": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            },
+            "body": {
+                "no": "",
+                "en": "",
+                "uk": "",
+                "ru": "",
+                "sv": ""
+            }
+        }
+    ],
+    "block_templates": [
+        {
+            "id": "tpl83364405",
+            "name": "Orange newsletter signup with email field rbi…",
+            "prompt": "Orange newsletter signup with email field rbilohash@gmail.com",
+            "enabled": false,
+            "placement": "none",
+            "page_slug": "cookies",
+            "title": {
+                "no": "Bli med i vårt nyhetsbrev",
+                "en": "Join Our Newsletter",
+                "uk": "Приєднуйтесь до нашої розсилки",
+                "ru": "Подпишитесь на нашу рассылку",
+                "sv": "Prenumerera på vårt nyhetsbrev"
+            },
+            "subtitle": {
+                "no": "Få oppdateringer og tilbud",
+                "en": "Get updates and offers",
+                "uk": "Отримуйте оновлення та пропозиції",
+                "ru": "Получайте обновления и предложения",
+                "sv": "Få uppdateringar och erbjudanden"
+            },
+            "body": {
+                "no": "<div style=\"display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px;border-radius:12px;background:#ea580c14;border:1px solid #ea580c44;\"><i class=\"fas fa-paper-plane\" style=\"font-size:1.4rem;color:#ea580c;\"><\/i><input type=\"email\" placeholder=\"your@email.com\" style=\"flex:1;min-width:180px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;\"><button type=\"button\" style=\"padding:10px 18px;border:none;border-radius:8px;background:#ea580c;color:#fff;font-weight:700;cursor:pointer;\">Subscribe<\/button><\/div>",
+                "en": "<div class=\"sh-tpl-card\" style=\"background:#f97316;color:#fff;padding:20px;border-radius:8px;max-width:320px;font-family:sans-serif;\"><div style=\"display:flex;align-items:center;gap:10px;margin-bottom:12px;\"><i class=\"fas fa-envelope\" style=\"font-size:24px;\"><\/i><div><h3 style=\"margin:0;font-size:18px;\">Newsletter<\/h3><p style=\"margin:0;font-size:13px;opacity:0.9;\">Stay in the loop<\/p><\/div><\/div><form style=\"display:flex;gap:8px;\"><input type=\"email\" value=\"rbilohash@gmail.com\" style=\"flex:1;padding:8px;border:none;border-radius:4px;font-size:14px;\" placeholder=\"Your email\"><button type=\"submit\" style=\"background:#ea580c;color:#fff;border:none;padding:8px 16px;border-radius:4px;font-size:14px;cursor:pointer;\"><i class=\"fas fa-paper-plane\"><\/i><\/button><\/form><\/div>",
+                "uk": "<div style=\"display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px;border-radius:12px;background:#ea580c14;border:1px solid #ea580c44;\"><i class=\"fas fa-paper-plane\" style=\"font-size:1.4rem;color:#ea580c;\"><\/i><input type=\"email\" placeholder=\"your@email.com\" style=\"flex:1;min-width:180px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;\"><button type=\"button\" style=\"padding:10px 18px;border:none;border-radius:8px;background:#ea580c;color:#fff;font-weight:700;cursor:pointer;\">Subscribe<\/button><\/div>",
+                "ru": "<div style=\"display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px;border-radius:12px;background:#ea580c14;border:1px solid #ea580c44;\"><i class=\"fas fa-paper-plane\" style=\"font-size:1.4rem;color:#ea580c;\"><\/i><input type=\"email\" placeholder=\"your@email.com\" style=\"flex:1;min-width:180px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;\"><button type=\"button\" style=\"padding:10px 18px;border:none;border-radius:8px;background:#ea580c;color:#fff;font-weight:700;cursor:pointer;\">Subscribe<\/button><\/div>",
+                "sv": "<div style=\"display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px;border-radius:12px;background:#ea580c14;border:1px solid #ea580c44;\"><i class=\"fas fa-paper-plane\" style=\"font-size:1.4rem;color:#ea580c;\"><\/i><input type=\"email\" placeholder=\"your@email.com\" style=\"flex:1;min-width:180px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;\"><button type=\"button\" style=\"padding:10px 18px;border:none;border-radius:8px;background:#ea580c;color:#fff;font-weight:700;cursor:pointer;\">Subscribe<\/button><\/div>"
+            },
+            "updated": "2026-07-06T20:04:12Z"
+        }
+    ],
+    "menu_show_signin": true,
+    "header_nav_links": [
+        {
+            "id": "sale",
+            "url": "search.php?sale=1",
+            "external": false,
+            "active": true,
+            "label": []
+        },
+        {
+            "id": "contact",
+            "url": "contact.php",
+            "external": false,
+            "active": true,
+            "label": []
+        },
+        {
+            "id": "track",
+            "url": "track.php",
+            "external": false,
+            "active": true,
+            "label": []
+        },
+        {
+            "id": "solutions",
+            "url": "solutions.php",
+            "external": false,
+            "active": false,
+            "label": []
+        }
+    ],
+    "chat_enabled": true,
+    "chat_provider": "grok",
+    "chat_api_key": "",
+    "chat_instructions": "уйцуйцу",
+    "recaptcha_enabled": true,
+    "recaptcha_site_key": "",
+    "recaptcha_secret_key": "",
+    "color_primary": "#2563eb",
+    "color_button": "#2bb329",
+    "color_button_hover": "#2563eb",
+    "bg_color": "#f5f5f5",
+    "bg_image": ""
+}

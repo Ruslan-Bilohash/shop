@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/json-store.php';
+
 function sh_leads_file(): string
 {
     return sh_data_path('quick-leads.json');
@@ -9,17 +11,14 @@ function sh_leads_file(): string
 function sh_leads_load(): array
 {
     $file = sh_leads_file();
-    if (!is_readable($file)) {
-        return [];
-    }
-    $data = json_decode(file_get_contents($file) ?: '[]', true);
+    $data = sh_json_store_decode($file, true);
     return is_array($data) ? $data : [];
 }
 
 function sh_leads_save(array $leads): bool
 {
     $json = json_encode(array_values($leads), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    return file_put_contents(sh_leads_file(), $json, LOCK_EX) !== false;
+    return sh_json_store_write(sh_leads_file(), $json);
 }
 
 function sh_lead_add(array $payload): ?array

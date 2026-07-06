@@ -1,5 +1,8 @@
 <?php
 
+require_once __DIR__ . '/storage.php';
+require_once __DIR__ . '/json-store.php';
+
 function sh_customer_profiles_file(): string
 {
     return sh_data_path('customer-profiles.json');
@@ -9,17 +12,14 @@ function sh_customer_profiles_file(): string
 function sh_customer_profiles_load(): array
 {
     $file = sh_customer_profiles_file();
-    if (!is_readable($file)) {
-        return [];
-    }
-    $data = json_decode(file_get_contents($file) ?: '{}', true);
+    $data = sh_json_store_decode($file, true);
     return is_array($data) ? $data : [];
 }
 
 function sh_customer_profiles_save(array $profiles): bool
 {
     $json = json_encode($profiles, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    return file_put_contents(sh_customer_profiles_file(), $json, LOCK_EX) !== false;
+    return sh_json_store_write(sh_customer_profiles_file(), $json);
 }
 
 function sh_customer_profile_id(): ?string

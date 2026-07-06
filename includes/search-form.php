@@ -2,7 +2,7 @@
 $p = $search_params ?? sh_search_params();
 ?>
 <form class="sh-search" action="<?= sh_url('search.php') ?>" method="get" role="search">
-    <div class="sh-search-field" style="flex:2 1 240px">
+    <div class="sh-search-field sh-search-field--keyword">
         <label for="q"><?= htmlspecialchars($t['search']['keyword']) ?></label>
         <input type="search" id="q" name="q" value="<?= htmlspecialchars($p['q']) ?>"
                placeholder="<?= htmlspecialchars($t['search']['placeholder']) ?>" autocomplete="off">

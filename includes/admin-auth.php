@@ -1,11 +1,32 @@
 <?php
 /**
- * Demo admin auth — session based
- * Login: demo / demo2026
+ * Admin auth — session based. Credentials from data/admin.config.php after install,
+ * otherwise demo / demo2026.
  */
-define('SH_ADMIN_USER', 'demo');
-define('SH_ADMIN_PASS', 'demo2026');
 define('SH_ADMIN_SESSION_KEY', 'sh_admin_logged');
+
+/** @return array{user:string,pass_hash:?string,pass_plain:?string} */
+function sh_admin_credentials(): array
+{
+    static $cache = null;
+    if (is_array($cache)) {
+        return $cache;
+    }
+    $file = __DIR__ . '/../data/admin.config.php';
+    if (is_readable($file)) {
+        $cfg = require $file;
+        if (is_array($cfg) && !empty($cfg['user']) && !empty($cfg['pass_hash'])) {
+            $cache = [
+                'user'       => (string) $cfg['user'],
+                'pass_hash'  => (string) $cfg['pass_hash'],
+                'pass_plain' => null,
+            ];
+            return $cache;
+        }
+    }
+    $cache = ['user' => 'demo', 'pass_hash' => null, 'pass_plain' => 'demo2026'];
+    return $cache;
+}
 
 function sh_admin_start(): void
 {
@@ -22,13 +43,20 @@ function sh_admin_logged(): bool
 
 function sh_admin_login(string $user, string $pass): bool
 {
-    if ($user === SH_ADMIN_USER && $pass === SH_ADMIN_PASS) {
-        sh_admin_start();
-        $_SESSION[SH_ADMIN_SESSION_KEY] = true;
-        $_SESSION['sh_admin_user'] = $user;
-        return true;
+    $creds = sh_admin_credentials();
+    if ($user !== $creds['user']) {
+        return false;
     }
-    return false;
+    $ok = $creds['pass_hash'] !== null
+        ? password_verify($pass, $creds['pass_hash'])
+        : ($pass === (string) ($creds['pass_plain'] ?? ''));
+    if (!$ok) {
+        return false;
+    }
+    sh_admin_start();
+    $_SESSION[SH_ADMIN_SESSION_KEY] = true;
+    $_SESSION['sh_admin_user'] = $user;
+    return true;
 }
 
 function sh_admin_logout(): void

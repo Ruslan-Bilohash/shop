@@ -1,0 +1,422 @@
+[
+    {
+        "slug": "laptops-computers",
+        "icon": "laptop",
+        "active": true,
+        "sort": 1,
+        "name": {
+            "no": "Bærbare og datamaskiner",
+            "en": "Laptops & computers",
+            "uk": "Ноутбуки та комп'ютери",
+            "ru": "Ноутбуки и компьютеры",
+            "sv": "Bärbara datorer & datorer"
+        },
+        "seo": {
+            "meta_title": {
+                "no": "Laptop og datamaskiner | Kjøp online",
+                "en": "Laptops & Computers | Shop Online",
+                "uk": "Ноутбуки та комп'ютери | Купити онлайн",
+                "ru": "Ноутбуки и компьютеры | Купить онлайн",
+                "sv": "Laptops och datorer | Köp online"
+            },
+            "meta_description": {
+                "no": "Oppdag vårt utvalg av bærbare datamaskiner og stasjonære PC-er. Kjøp kvalitetslaptop og datamaskiner med rask levering i Norge og EU.",
+                "en": "Explore our range of laptops and desktop computers. Buy quality laptops and PCs with fast shipping across Norway and EU.",
+                "uk": "Ознайомтеся з нашим асортиментом ноутбуків та комп'ютерів. Купуйте якісні ноутбуки та ПК з швидкою доставкою по Норвегії та ЄС.",
+                "ru": "Ознакомьтесь с нашим ассортиментом ноутбуков и компьютеров. Покупайте качественные ноутбуки и ПК с быстрой доставкой по Норвегии и ЕС.",
+                "sv": "Utforska vårt utbud av laptops och stationära datorer. Köp kvalitetslaptops och datorer med snabb leverans i Norge och EU."
+            },
+            "meta_keywords": {
+                "no": "laptop, datamaskin, bærbar pc, stasjonær pc, kjøp laptop",
+                "en": "laptops, computers, buy laptops, desktop pc",
+                "uk": "ноутбуки, комп'ютери, купити ноутбук",
+                "ru": "ноутбуки, компьютеры, купить ноутбук",
+                "sv": "laptops, datorer, köp laptop"
+            },
+            "og_image": "",
+            "canonical_override": "",
+            "schema": {
+                "collection": true,
+                "itemlist": true,
+                "breadcrumb": true
+            },
+            "intro": {
+                "no": "Velkommen til vår kategori for laptop og datamaskiner. Her finner du et bredt utvalg av bærbare og stasjonære modeller for alle behov. Oppdag de beste tilbudene og kjøp online med trygghet.",
+                "en": "Welcome to our laptops and computers category. Browse a wide selection of portable and desktop models suitable for every need. Discover the best deals and shop online with confidence.",
+                "uk": "Ласкаво просимо до категорії ноутбуків та комп'ютерів. Перегляньте широкий вибір портативних та настільних моделей для будь-яких потреб. Відкрийте для себе найкращі пропозиції та купуйте онлайн з упевненістю.",
+                "ru": "Добро пожаловать в категорию ноутбуков и компьютеров. Просмотрите широкий выбор портативных и настольных моделей для любых нужд. Откройте для себя лучшие предложения и покупайте онлайн с уверенностью.",
+                "sv": "Välkommen till vår kategori för laptops och datorer. Bläddra bland ett brett urval av bärbara och stationära modeller för alla behov. Upptäck de bästa erbjudandena och shoppa online med trygghet."
+            }
+        }
+    },
+    {
+        "slug": "smartphones-tv-electronics",
+        "code": "33613361",
+        "icon": "mobile-screen-button",
+        "active": true,
+        "sort": 2,
+        "name": {
+            "uk": "Смартфони, ТВ і електроніка",
+            "no": "Smarttelefoner, TV og elektronikk",
+            "en": "Smartphones, TV & electronics",
+            "ru": "Смартфоны, ТВ и электроника",
+            "sv": "Smartphones, TV och elektronik",
+            "lt": "Išmanieji telefonai, TV ir elektronika"
+        }
+    },
+    {
+        "slug": "gaming",
+        "code": "1842118421",
+        "icon": "gamepad",
+        "active": true,
+        "sort": 3,
+        "name": {
+            "uk": "Товари для геймерів",
+            "no": "Gaming og e-sport",
+            "en": "Gaming gear",
+            "ru": "Товары для геймеров",
+            "sv": "Gaming och e-sport",
+            "lt": "Žaidimų įranga"
+        }
+    },
+    {
+        "slug": "appliances",
+        "code": "43064306",
+        "icon": "blender",
+        "active": true,
+        "sort": 4,
+        "name": {
+            "uk": "Побутова техніка",
+            "no": "Hvitevarer og småelektrisk",
+            "en": "Home appliances",
+            "ru": "Бытовая техника",
+            "sv": "Hushållsapparater",
+            "lt": "Buitinė technika"
+        }
+    },
+    {
+        "slug": "home-goods",
+        "code": "53005300",
+        "icon": "house",
+        "active": true,
+        "sort": 5,
+        "name": {
+            "uk": "Товари для дому",
+            "no": "Hjem og interiør",
+            "en": "Home goods",
+            "ru": "Товары для дома",
+            "sv": "Hem och inredning",
+            "lt": "Namų prekės"
+        }
+    },
+    {
+        "slug": "auto-moto",
+        "code": "67006700",
+        "icon": "car",
+        "active": true,
+        "sort": 6,
+        "name": {
+            "uk": "Авто і мото",
+            "no": "Bil og motorsykkel",
+            "en": "Auto & moto",
+            "ru": "Авто и мото",
+            "sv": "Bil och motorcykel",
+            "lt": "Auto ir moto"
+        }
+    },
+    {
+        "slug": "tools-equipment",
+        "code": "2350523505",
+        "icon": "screwdriver-wrench",
+        "active": true,
+        "sort": 7,
+        "name": {
+            "uk": "Інструменти та обладнання",
+            "no": "Verktøy og utstyr",
+            "en": "Tools & equipment",
+            "ru": "Инструменты и оборудование",
+            "sv": "Verktyg och utrustning",
+            "lt": "Įrankiai ir įranga"
+        }
+    },
+    {
+        "slug": "plumbing-repair",
+        "icon": "faucet",
+        "active": true,
+        "sort": 8,
+        "name": {
+            "no": "Rørlegger og oppussing",
+            "en": "Plumbing & repair",
+            "uk": "Сантехніка та ремонт",
+            "ru": "Сантехника и ремонт",
+            "sv": "VVS och renovering"
+        },
+        "seo": {
+            "meta_title": {
+                "no": "Rørlegger og Reparasjon | Norge",
+                "en": "Plumbing and Repair | Norway",
+                "uk": "Сантехніка та ремонт | Норвегія",
+                "ru": "Сантехника и ремонт | Норвегия",
+                "sv": "VVS och Reparation | Norge"
+            },
+            "meta_description": {
+                "no": "Kjøp rørleggerutstyr og reparasjonsprodukter av høy kvalitet. Rask levering over hele Norge og EU.",
+                "en": "Shop high-quality plumbing tools and repair products. Fast delivery across Norway and the EU.",
+                "uk": "Купуйте якісну сантехніку та товари для ремонту. Швидка доставка по Норвегії та ЄС.",
+                "ru": "Купите качественную сантехнику и товары для ремонта. Быстрая доставка по Норвегии и ЕС.",
+                "sv": "Köp VVS-verktyg och reparationsprodukter av hög kvalitet. Snabb leverans i Norge och EU."
+            },
+            "meta_keywords": {
+                "no": "rørlegger, reparasjon, verktøy, Norge",
+                "en": "plumbing, repair, tools, Norway",
+                "uk": "сантехніка, ремонт, інструменти, Норвегія",
+                "ru": "сантехника, ремонт, инструменты, Норвегия",
+                "sv": "VVS, reparation, verktyg, Norge"
+            },
+            "og_image": "",
+            "canonical_override": "",
+            "schema": {
+                "collection": true,
+                "itemlist": true,
+                "breadcrumb": true
+            },
+            "intro": {
+                "no": "Vi tilbyr et bredt utvalg av rørleggerutstyr for hjemmereparasjoner. Produktene kommer fra pålitelige produsenter. Handle nå for de beste tilbudene i Norge.",
+                "en": "We offer a wide selection of plumbing equipment for home repairs. Our products come from reliable manufacturers. Shop now for the best deals in Norway.",
+                "uk": "Ми пропонуємо широкий вибір сантехнічного обладнання для ремонту вдома. Наші товари від надійних виробників. Купуйте зараз за найкращими цінами в Норвегії.",
+                "ru": "Мы предлагаем широкий выбор сантехнического оборудования для ремонта дома. Наши товары от надежных производителей. Покупайте сейчас по лучшим ценам в Норвегии.",
+                "sv": "Vi erbjuder ett brett urval av VVS-utrustning för hemreparationer. Våra produkter kommer från pålitliga tillverkare. Handla nu för bästa erbjudanden i Norge."
+            }
+        }
+    },
+    {
+        "slug": "garden-dacha",
+        "code": "82618261",
+        "icon": "seedling",
+        "active": true,
+        "sort": 9,
+        "name": {
+            "uk": "Дача, сад і город",
+            "no": "Hage, hytte og dyrking",
+            "en": "Garden & dacha",
+            "ru": "Дача, сад и огород",
+            "sv": "Trädgård och sommarstuga",
+            "lt": "Sodas ir daržas"
+        }
+    },
+    {
+        "slug": "sports-hobbies",
+        "code": "90179017",
+        "icon": "football",
+        "active": true,
+        "sort": 10,
+        "name": {
+            "uk": "Спорт і захоплення",
+            "no": "Sport og hobby",
+            "en": "Sports & hobbies",
+            "ru": "Спорт и увлечения",
+            "sv": "Sport och hobby",
+            "lt": "Sportas ir pomėgiai"
+        }
+    },
+    {
+        "slug": "fashion-shoes-jewelry",
+        "code": "1051510515",
+        "icon": "shirt",
+        "active": true,
+        "sort": 11,
+        "name": {
+            "uk": "Одяг, взуття та прикраси",
+            "no": "Klær, sko og smykker",
+            "en": "Fashion, shoes & jewelry",
+            "ru": "Одежда, обувь и украшения",
+            "sv": "Kläder, skor och smycken",
+            "lt": "Drabužiai, avalynė ir papuošalai"
+        }
+    },
+    {
+        "slug": "beauty-health",
+        "code": "1225812258",
+        "icon": "spa",
+        "active": true,
+        "sort": 12,
+        "name": {
+            "uk": "Краса та здоров'я",
+            "no": "Skjønnhet og helse",
+            "en": "Beauty & health",
+            "ru": "Красота и здоровье",
+            "sv": "Skönhet och hälsa",
+            "lt": "Grožis ir sveikata"
+        }
+    },
+    {
+        "slug": "kids",
+        "code": "1322413224",
+        "icon": "baby",
+        "active": true,
+        "sort": 13,
+        "name": {
+            "uk": "Дитячі товари",
+            "no": "Barneprodukter",
+            "en": "Kids products",
+            "ru": "Детские товары",
+            "sv": "Barnprodukter",
+            "lt": "Vaikiškos prekės"
+        }
+    },
+    {
+        "slug": "pet-supplies",
+        "icon": "paw",
+        "active": true,
+        "sort": 14,
+        "name": {
+            "no": "Kjæledyr",
+            "en": "Pet supplies",
+            "uk": "Зоотовари",
+            "ru": "Зоотовары",
+            "sv": "Djurprodukter"
+        },
+        "seo": {
+            "meta_title": {
+                "no": "Kjæledyrartikler | Kvalitetsprodukter for kjæledyr",
+                "en": "Pet Supplies | Quality Products for Dogs & Cats",
+                "uk": "Зоотовари | Якісні товари для собак і котів",
+                "ru": "Зоотовары | Качественные товары для питомцев",
+                "sv": "Djurtillbehör | Kvalitetsprodukter för husdjur"
+            },
+            "meta_description": {
+                "no": "Oppdag et bredt utvalg av kjæledyrartikler inkludert mat, leker og tilbehør for hunder, katter og andre dyr. Rask levering i Norge og EU.",
+                "en": "Discover a wide range of pet supplies including food, toys and accessories for dogs, cats and other pets. Fast delivery across Norway and EU.",
+                "uk": "Відкрийте широкий асортимент зоотоварів: корм, іграшки та аксесуари для собак, котів та інших тварин. Швидка доставка по Норвегії та ЄС.",
+                "ru": "Откройте широкий ассортимент зоотоваров: корм, игрушки и аксессуары для собак, кошек и других питомцев. Быстрая доставка по Норвегии и ЕС.",
+                "sv": "Upptäck ett brett utbud av djurtillbehör inklusive mat, leksaker och tillbehör för hundar, katter och andra husdjur. Snabb leverans i Norge och EU."
+            },
+            "meta_keywords": {
+                "no": "kjæledyrartikler, hundefôr, katteleker, dyretillbehør, dyrestell",
+                "en": "pet supplies, dog food, cat toys, pet accessories, animal care",
+                "uk": "зоотовари, корм для собак, іграшки для котів, аксесуари для тварин, догляд за тваринами",
+                "ru": "зоотовары, корм для собак, игрушки для кошек, аксессуары для животных, уход за питомцами",
+                "sv": "djurtillbehör, hundmat, kattleksaker, husdjurstillbehör, djurvård"
+            },
+            "og_image": "",
+            "canonical_override": "",
+            "schema": {
+                "collection": true,
+                "itemlist": true,
+                "breadcrumb": true
+            },
+            "intro": {
+                "no": "I kategorien kjæledyrartikler finner du alt du trenger til dine firbente venner. Fra næringsrik mat til morsomme leker og komfortable senger har vi et bredt utvalg. Handle nå og gi kjæledyrene dine det beste.",
+                "en": "In our pet supplies category you will find everything your furry friends need. From premium nutrition to engaging toys and cozy beds we offer a wide selection. Shop now to keep your pets happy and healthy.",
+                "uk": "У категорії зоотоварів ви знайдете все необхідне для ваших улюбленців. Від преміум-корму до цікавих іграшок і затишних лежаків ми пропонуємо широкий вибір. Купуйте зараз, щоб ваші тварини були щасливими та здоровими.",
+                "ru": "В категории зоотоваров вы найдёте всё необходимое для ваших питомцев. От премиум-корма до интересных игрушек и уютных лежанок мы предлагаем широкий выбор. Покупайте сейчас, чтобы ваши животные были счастливы и здоровы.",
+                "sv": "I kategorin djurtillbehör hittar du allt dina pälsvänner behöver. Från premiumfoder till roliga leksaker och mysiga bäddar har vi ett brett sortiment. Handla nu och håll dina husdjur glada och friska."
+            }
+        }
+    },
+    {
+        "slug": "office-school-books",
+        "code": "1412714127",
+        "icon": "book",
+        "active": true,
+        "sort": 15,
+        "name": {
+            "uk": "Офіс, школа, книги",
+            "no": "Kontor, skole og bøker",
+            "en": "Office, school & books",
+            "ru": "Офис, школа, книги",
+            "sv": "Kontor, skola och böcker",
+            "lt": "Biuras, mokykla ir knygos"
+        }
+    },
+    {
+        "slug": "alcohol-food",
+        "code": "1493914939",
+        "icon": "wine-bottle",
+        "active": true,
+        "sort": 16,
+        "name": {
+            "uk": "Алкогольні напої та продукти",
+            "no": "Mat, drikke og gourmet",
+            "en": "Food, drinks & gourmet",
+            "ru": "Алкоголь и продукты",
+            "sv": "Mat, dryck och gourmet",
+            "lt": "Maistas ir gėrimai"
+        }
+    },
+    {
+        "slug": "household-chemicals",
+        "code": "2031020310",
+        "icon": "pump-soap",
+        "active": true,
+        "sort": 17,
+        "name": {
+            "uk": "Побутова хімія",
+            "no": "Husholdningskjemi",
+            "en": "Household chemicals",
+            "ru": "Бытовая химия",
+            "sv": "Hushållskemi",
+            "lt": "Buitinė chemija"
+        }
+    },
+    {
+        "slug": "power-independence",
+        "code": "2306423064",
+        "icon": "solar-panel",
+        "active": true,
+        "sort": 18,
+        "name": {
+            "uk": "Енергонезалежність",
+            "no": "Energi og off-grid",
+            "en": "Power independence",
+            "ru": "Энергонезависимость",
+            "sv": "Energi och off-grid",
+            "lt": "Energetinė nepriklausomybė"
+        }
+    },
+    {
+        "slug": "gifts-souvenirs",
+        "code": "2379923799",
+        "icon": "gift",
+        "active": true,
+        "sort": 19,
+        "name": {
+            "uk": "Подарунки та сувеніри",
+            "no": "Gaver og suvenirer",
+            "en": "Gifts & souvenirs",
+            "ru": "Подарки и сувениры",
+            "sv": "Presenter och souvenirer",
+            "lt": "Dovanos ir suvenyrai"
+        }
+    },
+    {
+        "slug": "bestsellers",
+        "code": "1719117191",
+        "icon": "fire",
+        "active": true,
+        "sort": 20,
+        "name": {
+            "uk": "Топи продажів",
+            "no": "Bestselgere",
+            "en": "Bestsellers",
+            "ru": "Топы продаж",
+            "sv": "Bästsäljare",
+            "lt": "Perkamiausi"
+        }
+    },
+    {
+        "slug": "promotions",
+        "code": "2346923469",
+        "icon": "percent",
+        "active": true,
+        "sort": 21,
+        "name": {
+            "uk": "Всі акції",
+            "no": "Alle tilbud",
+            "en": "All promotions",
+            "ru": "Все акции",
+            "sv": "Alla erbjudanden",
+            "lt": "Visos akcijos"
+        }
+    }
+]
