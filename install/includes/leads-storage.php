@@ -69,6 +69,17 @@ function sh_lead_update_status(string $id, string $status, string $note = ''): b
     return $changed && sh_leads_save($leads);
 }
 
+function sh_leads_count_by_status(string $status = 'new'): int
+{
+    $n = 0;
+    foreach (sh_leads_load() as $lead) {
+        if (($lead['status'] ?? 'new') === $status) {
+            $n++;
+        }
+    }
+    return $n;
+}
+
 function sh_lead_delete(string $id): bool
 {
     $leads = array_values(array_filter(
