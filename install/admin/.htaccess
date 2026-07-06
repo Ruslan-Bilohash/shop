@@ -1,0 +1,5 @@
+# Reduce WAF false positives when saving HTML block templates (Hostinger / LiteSpeed)
+<IfModule mod_security.c>
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+</IfModule>
