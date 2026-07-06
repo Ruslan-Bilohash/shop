@@ -494,6 +494,25 @@ body.shs-lightbox-open { overflow: hidden; }
     margin-top: 4px; font-size: 12px; font-weight: 600; color: #fff; background: var(--shs-primary);
     padding: 8px 12px; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
 }
+.shs-crosslinks-grid {
+    display: grid; gap: 16px; margin-top: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.shs-crosslink-card {
+    display: flex; flex-direction: column; gap: 8px; padding: 22px 20px;
+    border: 1px solid var(--shs-border); border-radius: 14px; background: #fff;
+    text-decoration: none; color: inherit; transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.shs-crosslink-card:hover {
+    border-color: var(--shs-primary); box-shadow: 0 8px 24px rgba(37, 99, 235, .12); transform: translateY(-2px);
+}
+.shs-crosslink-icon {
+    width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    background: #eff6ff; color: var(--shs-primary); font-size: 18px;
+}
+.shs-crosslink-card strong { font-size: 1.05rem; }
+.shs-crosslink-card p { margin: 0; font-size: 14px; color: var(--shs-muted); line-height: 1.5; flex: 1; }
+.shs-crosslink-cta { font-size: 13px; font-weight: 700; color: var(--shs-primary); }
 .shs-text-center { text-align: center; margin-left: auto; margin-right: auto; }
 .shs-subtitle { font-size: 1.1rem; margin: 24px 0 12px; text-align: center; }
 @media (min-width: 768px) {

@@ -261,6 +261,37 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
+<?php if (!empty($t['crosslinks'])): $cl = $t['crosslinks']; ?>
+<section class="shs-section shs-crosslinks" id="explore">
+    <div class="shs-container">
+        <h2 class="shs-section-title"><?= htmlspecialchars($cl['title'] ?? '') ?></h2>
+        <?php if (!empty($cl['subtitle'])): ?>
+        <p class="shs-lead shs-text-center"><?= htmlspecialchars($cl['subtitle']) ?></p>
+        <?php endif; ?>
+        <div class="shs-crosslinks-grid">
+            <a href="<?= shs_demo_url() ?>" class="shs-crosslink-card" rel="related">
+                <span class="shs-crosslink-icon"><i class="fas fa-store" aria-hidden="true"></i></span>
+                <strong><?= htmlspecialchars($cl['demo_title'] ?? '') ?></strong>
+                <p><?= htmlspecialchars($cl['demo_desc'] ?? '') ?></p>
+                <span class="shs-crosslink-cta"><?= htmlspecialchars($cl['demo_btn'] ?? '') ?> →</span>
+            </a>
+            <a href="<?= htmlspecialchars(shs_solutions_url()) ?>" class="shs-crosslink-card" rel="related">
+                <span class="shs-crosslink-icon"><i class="fas fa-th-large" aria-hidden="true"></i></span>
+                <strong><?= htmlspecialchars($cl['solutions_title'] ?? '') ?></strong>
+                <p><?= htmlspecialchars($cl['solutions_desc'] ?? '') ?></p>
+                <span class="shs-crosslink-cta"><?= htmlspecialchars($cl['solutions_btn'] ?? '') ?> →</span>
+            </a>
+            <a href="<?= shs_url('order.php') ?>" class="shs-crosslink-card" rel="related">
+                <span class="shs-crosslink-icon"><i class="fas fa-laptop-code" aria-hidden="true"></i></span>
+                <strong><?= htmlspecialchars($cl['order_title'] ?? '') ?></strong>
+                <p><?= htmlspecialchars($cl['order_desc'] ?? '') ?></p>
+                <span class="shs-crosslink-cta"><?= htmlspecialchars($cl['order_btn'] ?? '') ?> →</span>
+            </a>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
 <section class="shs-section shs-demo-block" id="demo">
     <div class="shs-container">
         <h2 class="shs-section-title"><?= htmlspecialchars($t['demo']['title']) ?></h2>

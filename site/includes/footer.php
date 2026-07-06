@@ -15,8 +15,10 @@ $sh_news_url = bh_cms_news_url('shop') ?? 'https://bilohash.com/news/shop-cms.ht
                 <h4><?= htmlspecialchars($t['footer']['product']) ?></h4>
                 <ul>
                     <li><a href="<?= shs_url('index.php') ?>">Shop CMS</a></li>
+                    <li><a href="<?= shs_demo_url() ?>" rel="related"><?= htmlspecialchars($t['footer']['shop_demo'] ?? $t['footer']['demo_link']) ?></a></li>
+                    <li><a href="<?= shs_solutions_url() ?>" rel="related"><?= htmlspecialchars($t['footer']['solutions'] ?? 'Solutions') ?></a></li>
                     <li><a href="<?= shs_url('order.php') ?>"><?= htmlspecialchars($t['footer']['order_page'] ?? $t['footer']['order']) ?></a></li>
-                    <li><a href="<?= shs_demo_url() ?>"><?= htmlspecialchars($t['footer']['demo_link']) ?></a></li>
+                    <li><a href="<?= shs_demo_url('admin/login.php') ?>"><?= htmlspecialchars($t['footer']['admin_demo'] ?? 'Admin demo') ?></a></li>
                 </ul>
             </div>
             <div>

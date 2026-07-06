@@ -58,4 +58,12 @@ $t = bh_apply_ecosystem_translations($t, $lang, 'shop');
 require_once __DIR__ . '/market.php';
 $t = shs_apply_market_translations($t, $lang);
 
+require_once __DIR__ . '/seo.php';
+if (!empty($t['meta']['description'])) {
+    $t['meta']['description'] = shs_meta_description_fit((string) $t['meta']['description']);
+}
+if (!empty($t['order']['meta_description'])) {
+    $t['order']['meta_description'] = shs_meta_description_fit((string) $t['order']['meta_description']);
+}
+
 require_once __DIR__ . '/helpers.php';
