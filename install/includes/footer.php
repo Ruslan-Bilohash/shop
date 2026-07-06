@@ -3,14 +3,17 @@ if (!function_exists('sh_vertical_hub_label')) {
     require_once __DIR__ . '/vertical-lib.php';
 }
 if (!function_exists('cms_contact_texts')) {
-    $cms_contact_path = dirname(__DIR__, 2) . '/includes/cms-contact.php';
-    if (is_file($cms_contact_path)) {
-        require_once $cms_contact_path;
+    require_once __DIR__ . '/ecosystem-load.php';
+    try {
+        sh_require_ecosystem('cms-contact.php');
+    } catch (Throwable $e) {
+        // optional on storefront
     }
 }
 require_once __DIR__ . '/service-pages.php';
 if (!function_exists('bh_cms_news_url')) {
-    require_once dirname(__DIR__, 2) . '/includes/bh-cms-links.php';
+    require_once __DIR__ . '/ecosystem-load.php';
+    sh_require_ecosystem('bh-cms-links.php');
 }
 
 $ft = $t['footer'] ?? [];

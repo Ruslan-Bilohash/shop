@@ -1,5 +1,6 @@
 <?php
-require_once dirname(__DIR__, 2) . '/includes/cms-contact.php';
+require_once __DIR__ . '/ecosystem-load.php';
+sh_require_ecosystem('cms-contact.php');
 /** @var string $slug @var array $vertical @var array $v @var string $canonical @var array $seo_schemas */
 $current_page = 'vertical';
 $hub_label = sh_vertical_hub_label($lang);

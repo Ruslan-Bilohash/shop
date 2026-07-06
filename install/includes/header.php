@@ -1,5 +1,6 @@
 <?php
-require_once dirname(__DIR__, 2) . '/includes/cms-contact.php';
+require_once __DIR__ . '/ecosystem-load.php';
+sh_require_ecosystem('cms-contact.php');
 require_once __DIR__ . '/category-storage.php';
 require_once __DIR__ . '/site-integrations.php';
 sh_boot_public_integrations();

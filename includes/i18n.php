@@ -62,7 +62,8 @@ if (!is_file($lang_file)) {
 $t_local = require $lang_file;
 $t = ($lang === 'en' || !is_array($en_t)) ? $t_local : array_replace_recursive($en_t, $t_local);
 
-require_once dirname(__DIR__, 2) . '/includes/ecosystem-i18n.php';
+require_once __DIR__ . '/ecosystem-load.php';
+sh_require_ecosystem('ecosystem-i18n.php');
 $t = bh_apply_ecosystem_translations($t, $lang, 'shop');
 
 require_once __DIR__ . '/helpers.php';

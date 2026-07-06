@@ -47,7 +47,8 @@ function sh_merge_site_settings(array $settings): array
         }
     }
 
-    require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
+    require_once __DIR__ . '/ecosystem-load.php';
+    sh_require_ecosystem('bh-cms-site-settings.php');
     require_once __DIR__ . '/payment-settings.php';
 
     require_once __DIR__ . '/ai.php';
@@ -87,7 +88,8 @@ function sh_merge_site_settings(array $settings): array
 
 function sh_settings_apply_post(string $section, array $post, array $settings): array
 {
-    require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
+    require_once __DIR__ . '/ecosystem-load.php';
+    sh_require_ecosystem('bh-cms-site-settings.php');
 
     if ($section === 'appearance') {
         require_once __DIR__ . '/store-settings.php';

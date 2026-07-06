@@ -219,7 +219,8 @@ function sh_advanced_settings_apply_post(array $post, array $settings): array
 
 function sh_appearance_settings_apply_post(array $post, array $settings): array
 {
-    require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
+    require_once __DIR__ . '/ecosystem-load.php';
+    sh_require_ecosystem('bh-cms-site-settings.php');
     $settings = bh_cms_settings_apply_post('appearance', $post, $settings);
     $settings = sh_merge_store_settings($settings);
 
@@ -419,7 +420,8 @@ function sh_render_shop_theme_styles(?array $settings = null): void
     if ($settings === null && function_exists('sh_site_settings')) {
         $settings = sh_site_settings();
     }
-    require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
+    require_once __DIR__ . '/ecosystem-load.php';
+    sh_require_ecosystem('bh-cms-site-settings.php');
     $s = sh_merge_store_settings(is_array($settings) ? $settings : []);
     bh_cms_render_theme_styles('shop', $s);
 

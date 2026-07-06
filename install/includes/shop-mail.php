@@ -27,8 +27,13 @@ function sh_mail_load_phpmailer(): bool
         $loaded = true;
         return true;
     }
-    if (is_file(dirname(__DIR__, 2) . '/includes/bh-mail.php')) {
-        require_once dirname(__DIR__, 2) . '/includes/bh-mail.php';
+    require_once __DIR__ . '/ecosystem-load.php';
+    $bhMail = __DIR__ . '/bh-mail.php';
+    if (!is_file($bhMail)) {
+        $bhMail = dirname(__DIR__, 2) . '/includes/bh-mail.php';
+    }
+    if (is_file($bhMail)) {
+        require_once $bhMail;
         return function_exists('bh_mail_load_phpmailer') && bh_mail_load_phpmailer();
     }
     return false;

@@ -1,6 +1,7 @@
 <?php
 
-require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
+require_once __DIR__ . '/ecosystem-load.php';
+sh_require_ecosystem('bh-cms-site-settings.php');
 require_once __DIR__ . '/payment-settings.php';
 
 function sh_site_settings(): array

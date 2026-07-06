@@ -1,7 +1,13 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once dirname(__DIR__) . '/includes/vertical-lib.php';
-require_once dirname(__DIR__, 2) . '/includes/cms-contact.php';
+$shs_cms_contact = dirname(__DIR__) . '/includes/cms-contact.php';
+if (!is_file($shs_cms_contact)) {
+    $shs_cms_contact = dirname(__DIR__, 2) . '/includes/cms-contact.php';
+}
+if (is_file($shs_cms_contact)) {
+    require_once $shs_cms_contact;
+}
 $canonical = $site_url . '/';
 $page_title = $t['meta']['title'];
 $page_desc  = $t['meta']['description'];
