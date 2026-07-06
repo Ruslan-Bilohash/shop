@@ -33,9 +33,9 @@
 <?php if (($settings_tab ?? '') === 'chat'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-chat-settings.js')) ?>?v=2" defer></script>
 <?php endif; ?>
-<?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($admin_page ?? '') === 'code-editor'): ?>
+<?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($settings_tab ?? '') === 'advanced' || ($admin_page ?? '') === 'code-editor'): ?>
 <?php require __DIR__ . '/code-editor-scripts.php'; ?>
-<script src="<?= htmlspecialchars(sh_asset('js/admin-code-editor.js')) ?>?v=5"></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-code-editor.js')) ?>?v=6"></script>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'homepage'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-homepage.js')) ?>?v=4"></script>

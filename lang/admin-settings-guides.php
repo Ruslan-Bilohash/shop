@@ -111,13 +111,15 @@ $en = [
             'steps' => [
                 'Keep cookie consent enabled for EU/Norway GDPR compliance.',
                 'Use Developer → Show PHP errors only during development.',
-                'Custom HTML/JS editing is available in the Code editor menu item.',
+                'Edit custom <head> HTML and footer JS in the section below (syntax highlighting).',
+                'Edit llms.txt, robots.txt and data/custom.php in Admin → Code editor.',
             ],
             'links' => [],
             'note' => 'Maintenance mode shows a “under development” page — admin stays available when allowed.',
         ],
         'sections' => [
             'advanced-maintenance' => 'Development & GDPR',
+            'advanced-custom-code' => 'Custom HTML & JavaScript',
         ],
         'hints' => [],
     ],
@@ -599,20 +601,22 @@ $uk = [
         ],
     ],
     'advanced' => [
-        'intro' => 'Режим розробки та GDPR cookies для вітрини.',
+        'intro' => 'Режим розробки, GDPR cookies та власний HTML/JS для вітрини.',
         'guide' => [
-            'title' => 'Розширені налаштування',
-            'intro' => 'Тонке налаштування доступності магазину.',
+            'title' => 'Загальні налаштування',
+            'intro' => 'Тонке налаштування доступності магазину та вставки коду.',
             'steps' => [
                 'Залиште банер cookies увімкненим для GDPR.',
                 'Увімкніть показ PHP-помилок лише під час розробки.',
-                'Редагування HTML/JS — у пункті меню «Редактор коду».',
+                'HTML у <head> та JS у футері — у секції нижче з підсвіткою синтаксису.',
+                'llms.txt, robots.txt та data/custom.php — у меню «Редактор коду».',
             ],
             'links' => [],
             'note' => 'Режим «на розробці» показує заглушку — адмінка доступна за потреби.',
         ],
         'sections' => [
             'advanced-maintenance' => 'Розробка та GDPR',
+            'advanced-custom-code' => 'Власний HTML та JavaScript',
         ],
         'hints' => [],
     ],

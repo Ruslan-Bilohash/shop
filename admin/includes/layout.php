@@ -11,13 +11,13 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($layout_title) ?> — <?= htmlspecialchars($ta['title_suffix'] ?? 'Shop CMS Admin') ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=30">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=31">
     <link rel="stylesheet" href="<?= htmlspecialchars(bh_cms_admin_settings_css_href()) ?>">
-    <?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($admin_page ?? '') === 'code-editor'): ?>
+    <?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($settings_tab ?? '') === 'advanced' || ($admin_page ?? '') === 'code-editor'): ?>
     <?php require __DIR__ . '/code-editor-assets.php'; ?>
     <?php endif; ?>
 </head>
-<body class="adm-body">
+<body class="adm-body<?= ($admin_page ?? '') === 'code-editor' ? ' adm-body--code-editor' : '' ?>">
 <div class="adm-sidebar-overlay" id="admOverlay" hidden></div>
 <div class="adm-layout">
     <aside class="adm-sidebar" id="admSidebar">
