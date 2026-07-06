@@ -1,6 +1,9 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/includes/changelog.php';
 require_once dirname(__DIR__) . '/includes/vertical-lib.php';
+$shs_changelog_split = shs_changelog_split_releases();
+$shs_older_count = count($shs_changelog_split['older']);
 $shs_cms_contact = dirname(__DIR__) . '/includes/cms-contact.php';
 if (!is_file($shs_cms_contact)) {
     $shs_cms_contact = dirname(__DIR__, 2) . '/includes/cms-contact.php';
@@ -139,6 +142,14 @@ require __DIR__ . '/includes/header.php';
             </article>
             <?php endforeach; ?>
         </div>
+        <?php if ($shs_older_count > 0): ?>
+        <p class="shs-features-versions">
+            <a href="<?= shs_url('versions.php') ?>" class="shs-versions-link">
+                <i class="fas fa-history" aria-hidden="true"></i>
+                <?= htmlspecialchars(sprintf($t['version']['older_versions_link'] ?? $t['version']['older_versions'] ?? 'Older versions (%d)', $shs_older_count)) ?>
+            </a>
+        </p>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -212,55 +223,18 @@ require __DIR__ . '/includes/header.php';
             </div>
             <div class="shs-version-changelog">
                 <h3><?= htmlspecialchars($t['version']['changelog_title']) ?></h3>
-                <?php
-                $shs_releases = sh_version_releases_public();
-                $shs_current_rel = null;
-                $shs_older_rels = [];
-                foreach ($shs_releases as $shs_rel) {
-                    if ($shs_rel['version'] === sh_version()) {
-                        $shs_current_rel = $shs_rel;
-                    } else {
-                        $shs_older_rels[] = $shs_rel;
-                    }
-                }
-                if ($shs_current_rel === null && $shs_releases !== []) {
-                    $shs_current_rel = $shs_releases[0];
-                    $shs_older_rels = array_slice($shs_releases, 1);
-                }
-                $shs_changelog_render = static function (array $rel, array $t, bool $is_current) {
-                    $items = $t['changelog_items'][$rel['version']] ?? [];
-                    if ($items === [] && !empty($t['changelog_notes'][$rel['version']])) {
-                        $items = [$t['changelog_notes'][$rel['version']]];
-                    }
-                    ?>
-                    <li class="<?= $is_current ? 'is-current' : '' ?>">
-                        <div class="shs-changelog-head">
-                            <strong>v<?= htmlspecialchars($rel['version']) ?></strong>
-                            <time datetime="<?= htmlspecialchars($rel['date']) ?>"><?= htmlspecialchars($rel['date']) ?></time>
-                        </div>
-                        <?php if ($items !== []): ?>
-                        <ul class="shs-changelog-items">
-                            <?php foreach ($items as $item): ?>
-                            <li><?= htmlspecialchars($item) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <?php endif; ?>
-                    </li>
-                    <?php
-                };
-                ?>
-                <?php if ($shs_current_rel !== null): ?>
+                <?php if ($shs_changelog_split['current'] !== null): ?>
                 <ol class="shs-changelog-list shs-changelog-list--current">
-                    <?php $shs_changelog_render($shs_current_rel, $t, true); ?>
+                    <?php shs_changelog_render_release($shs_changelog_split['current'], $t, true); ?>
                 </ol>
                 <?php endif; ?>
-                <?php if ($shs_older_rels !== []): ?>
-                <details class="shs-changelog-spoiler">
-                    <summary><?= htmlspecialchars(sprintf($t['version']['older_versions'] ?? 'Older versions (%d)', count($shs_older_rels))) ?></summary>
-                    <ol class="shs-changelog-list shs-changelog-list--older">
-                        <?php foreach ($shs_older_rels as $rel) { $shs_changelog_render($rel, $t, false); } ?>
-                    </ol>
-                </details>
+                <?php if ($shs_older_count > 0): ?>
+                <p class="shs-version-older-link">
+                    <a href="<?= shs_url('versions.php') ?>" class="shs-versions-link">
+                        <i class="fas fa-history" aria-hidden="true"></i>
+                        <?= htmlspecialchars(sprintf($t['version']['older_versions_link'] ?? $t['version']['older_versions'] ?? 'Older versions (%d)', $shs_older_count)) ?>
+                    </a>
+                </p>
                 <?php endif; ?>
             </div>
         </div>

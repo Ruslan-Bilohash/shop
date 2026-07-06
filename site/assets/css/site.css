@@ -444,6 +444,24 @@ body.shs-lightbox-open { overflow: hidden; }
 }
 .shs-changelog-items li { margin-bottom: 4px; }
 .shs-changelog-items li:last-child { margin-bottom: 0; }
+.shs-version-older-link { margin-top: 14px; }
+.shs-features-versions { margin-top: 28px; text-align: center; }
+.shs-versions-link {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 15px; color: var(--shs-primary);
+    text-decoration: none; padding: 10px 18px;
+    border: 1px solid rgba(37, 99, 235, .25); border-radius: 999px;
+    background: var(--shs-primary-light);
+    transition: background .15s, border-color .15s;
+}
+.shs-versions-link:hover { background: #dbeafe; border-color: rgba(37, 99, 235, .45); }
+.shs-versions-page { padding-top: 32px; }
+.shs-versions-back { margin: 0 0 20px; font-size: 14px; }
+.shs-versions-back a { font-weight: 600; color: var(--shs-primary); text-decoration: none; }
+.shs-versions-back a:hover { text-decoration: underline; }
+.shs-changelog-list--page { max-width: 720px; margin: 0 auto; }
+.shs-versions-current { margin-top: 28px; text-align: center; font-size: 14px; color: var(--shs-muted); }
+.shs-versions-current a { color: var(--shs-primary); text-decoration: none; font-weight: 600; }
 .shs-changelog-spoiler { margin-top: 12px; }
 .shs-changelog-spoiler > summary {
     cursor: pointer; font-size: 14px; font-weight: 600; color: var(--shs-primary);

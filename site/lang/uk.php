@@ -197,6 +197,13 @@ return array_replace_recursive($en, [
         'script_note' => 'Та сама версія в адмінці та на продуктовому сайті. Живе демо: JSON (not_mysql) або MySQL після install.php. Проєкти клієнтів — на MySQL.',
         'changelog_title' => 'Журнал змін',
         'older_versions' => 'Попередні версії (%d)',
+        'older_versions_link' => 'Попередні версії (%d)',
+        'older_page_title' => 'Попередні версії (%d) — Shop CMS',
+        'older_page_meta' => 'Журнал змін для %d попередніх релізів Shop CMS до %s.',
+        'older_page_h1' => 'Попередні версії (%d)',
+        'older_page_intro' => 'Нотатки до релізів для всіх версій до %s.',
+        'older_page_empty' => 'Попередніх релізів ще немає.',
+        'back_to_product' => 'Назад до продуктової сторінки',
     ],
     'changelog_items' => [
         '1.5.0' => [

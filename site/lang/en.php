@@ -300,6 +300,13 @@ return [
         'script_note' => 'Same version in admin and product site. Live demo: JSON edition (not_mysql) or MySQL after install.php. Client stores deploy on MySQL.',
         'changelog_title' => 'Changelog',
         'older_versions' => 'Older versions (%d)',
+        'older_versions_link' => 'Older versions (%d)',
+        'older_page_title' => 'Older versions (%d) — Shop CMS',
+        'older_page_meta' => 'Changelog for %d older Shop CMS releases before %s.',
+        'older_page_h1' => 'Older versions (%d)',
+        'older_page_intro' => 'Release notes for all versions before %s.',
+        'older_page_empty' => 'No older releases published yet.',
+        'back_to_product' => 'Back to product page',
     ],
     'changelog_items' => [
         '1.5.0' => [
