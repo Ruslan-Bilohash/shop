@@ -246,6 +246,26 @@ function sh_render_public_stylesheets(): void
     <?php
 }
 
+function sh_render_product_3d_assets(): void
+{
+    if (empty($GLOBALS['sh_product_3d_enabled'])) {
+        return;
+    }
+    $v = sh_public_script_version();
+    ?>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module" src="<?= htmlspecialchars(sh_asset('js/product-3d.js')) ?>?v=<?= htmlspecialchars($v) ?>"></script>
+    <?php
+}
+
 function sh_seo_website(string $canonical): array
 {
     global $site_url;

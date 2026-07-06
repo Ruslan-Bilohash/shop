@@ -125,6 +125,7 @@ sh_render_tracking_snippets(sh_site_settings());
 sh_render_custom_footer_js(sh_site_settings());
 bh_cms_render_chat_widget('Shop CMS', sh_site_settings(), $lang ?? 'no');
 require __DIR__ . '/cookie-consent.php';
+sh_render_product_3d_assets();
 ?>
 </body>
 </html>

@@ -100,6 +100,7 @@ return [
     'home' => [
         'featured'       => 'Featured products',
         'featured_sub'   => 'Hand-picked items from the demo catalog',
+        'featured_3d'    => '3D featured products',
         'categories'     => 'Browse by category',
         'categories_show_more' => 'Show more (%d)',
         'categories_show_less' => 'Show less',
@@ -227,6 +228,7 @@ return [
         'in_stock'     => 'In stock',
         'out_stock'    => 'Out of stock',
         'featured'     => 'Featured',
+        'view_3d_hint' => 'Drag to rotate · Scroll to zoom',
     ],
     'news_page' => [
         'title'            => 'News — Shop CMS releases & updates',

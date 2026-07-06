@@ -59,10 +59,10 @@ function sh_version_releases_public(): array
 
 function sh_public_style_version(): string
 {
-    return '27';
+    return '28';
 }
 
 function sh_public_script_version(): string
 {
-    return '11';
+    return '12';
 }

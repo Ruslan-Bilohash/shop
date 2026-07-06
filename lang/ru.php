@@ -65,6 +65,7 @@ return array_replace_recursive($en, [
     'home' => [
         'featured'       => 'Рекомендуемые товары',
         'featured_sub'   => 'Отобранные вручную позиции из демо-каталога',
+        'featured_3d'    => '3D рекомендуемые товары',
         'categories'     => 'Просмотр по категориям',
         'new'            => 'Новинки',
         'new_sub'        => 'Последние добавления в демо-магазин',
@@ -133,6 +134,7 @@ return array_replace_recursive($en, [
         'in_stock'     => 'В наличии',
         'out_stock'    => 'Нет в наличии',
         'featured'     => 'Рекомендуемый',
+        'view_3d_hint' => 'Тяните мышью · колёсико для масштаба',
     ],
     'search_page' => [
         'title'        => 'Результаты поиска',

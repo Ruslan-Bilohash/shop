@@ -66,6 +66,8 @@ function sh_render_homepage_block(array $block): void
 
         case 'featured':
             $featured = sh_featured_products($limit);
+            $featured_3d = array_slice($featured, 0, 3);
+            $featured_rest = array_slice($featured, 3);
             ?>
 <div class="sh-container">
     <div class="sh-section-head">
@@ -75,9 +77,16 @@ function sh_render_homepage_block(array $block): void
         </div>
         <a href="<?= sh_url('search.php') ?>" class="sh-link-more"><?= htmlspecialchars($t['home']['view_all']) ?> →</a>
     </div>
-    <div class="sh-product-grid">
-        <?php foreach ($featured as $product): require __DIR__ . '/product-card.php'; endforeach; ?>
+    <?php if ($featured_3d !== []): ?>
+    <div class="sh-product-3d-grid" aria-label="<?= htmlspecialchars($t['home']['featured_3d'] ?? '3D featured products') ?>">
+        <?php foreach ($featured_3d as $product): require __DIR__ . '/product-3d-card.php'; endforeach; ?>
     </div>
+    <?php endif; ?>
+    <?php if ($featured_rest !== []): ?>
+    <div class="sh-product-grid sh-product-grid--after-3d">
+        <?php foreach ($featured_rest as $product): require __DIR__ . '/product-card.php'; endforeach; ?>
+    </div>
+    <?php endif; ?>
 </div>
             <?php
             break;

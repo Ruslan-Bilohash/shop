@@ -50,6 +50,7 @@ return array_replace_recursive($en, [
     ],
     'home' => [
         'featured' => 'Utvalgte produkter', 'featured_sub' => 'Håndplukkede varer fra demokatalogen',
+        'featured_3d' => '3D utvalgte produkter',
         'categories' => 'Bla etter kategori',
         'categories_show_more' => 'Vis flere (%d)',
         'categories_show_less' => 'Vis færre',
@@ -89,6 +90,7 @@ return array_replace_recursive($en, [
     'card' => [
         'price' => 'Pris', 'sale' => 'Tilbud', 'add_cart' => 'Legg i kurv', 'view_product' => 'Se produkt',
         'in_stock' => 'På lager', 'out_stock' => 'Utsolgt', 'featured' => 'Utvalgt',
+        'view_3d_hint' => 'Dra for å rotere · rull for zoom',
     ],
     'search_page' => [
         'title' => 'Søkeresultater', 'found' => '%d produkter funnet',
