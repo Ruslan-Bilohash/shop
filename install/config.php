@@ -15,9 +15,25 @@ if (SH_DEMO_MODE) {
     ini_set('display_startup_errors', '1');
 }
 
-$detected = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '')), '/');
+function sh_resolve_base_path(): string
+{
+    $host = (string) ($_SERVER['HTTP_HOST'] ?? '');
+    if ($host !== '' && str_contains($host, SH_DOMAIN)) {
+        return SH_BASE_PATH;
+    }
+    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
+    $dir = rtrim(dirname($script), '/');
+    foreach (['/admin/api', '/admin', '/site', '/api'] as $suffix) {
+        if ($suffix !== '' && str_ends_with($dir, $suffix)) {
+            $dir = substr($dir, 0, -strlen($suffix));
+            break;
+        }
+    }
+    return ($dir === '' || $dir === '.') ? '' : $dir;
+}
+
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$base_path = (strpos($host, SH_DOMAIN) !== false) ? SH_BASE_PATH : ($detected ?: SH_BASE_PATH);
+$base_path = sh_resolve_base_path();
 
 $protocol = (
     (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')

@@ -1,0 +1,8 @@
+:root{--sh-primary:#2563eb;--sh-bg:#faf9f7;--sh-bg-card:#fff;--sh-border:#e2e8f0;--sh-text:#1e293b;--sh-demo-strip-h:36px;--sh-header-bar-h:56px}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;color:var(--sh-text);background:var(--sh-bg)}
+.sh-demo-strip{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:12px;background:#eff6ff;border-bottom:1px solid var(--sh-border)}
+.sh-header{background:var(--sh-bg-card);border-bottom:1px solid var(--sh-border);position:sticky;top:0;z-index:100}
+.sh-header-inner{display:flex;align-items:center;gap:12px;padding:10px 16px;max-width:1200px;margin:0 auto}
+.sh-logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--sh-text);text-decoration:none}
+.sh-header-mobile-tools{margin-left:auto;display:flex;align-items:center;gap:8px}

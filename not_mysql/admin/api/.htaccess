@@ -1,0 +1,8 @@
+# Allow admin JSON API (block builder AI, uploads) — Hostinger/LiteSpeed WAF
+<IfModule mod_security.c>
+    SecFilterEngine Off
+    SecFilterScanPOST Off
+</IfModule>
+<IfModule LiteSpeed>
+    CacheDisable public /
+</IfModule>

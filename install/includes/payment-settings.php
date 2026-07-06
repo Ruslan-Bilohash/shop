@@ -146,7 +146,7 @@ function sh_save_settings(array $settings): bool
         $out['header_nav_links'] = $merged['header_nav_links'];
     }
 
-    require_once dirname(__DIR__) . '/includes/bh-cms-site-settings.php';
+    require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
     foreach (bh_cms_site_settings_defaults(bh_cms_product_accent('shop')) as $key => $val) {
         if (array_key_exists($key, $merged)) {
             $out[$key] = $merged[$key];

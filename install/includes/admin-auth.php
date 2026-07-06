@@ -67,10 +67,18 @@ function sh_admin_logout(): void
 
 function sh_admin_require(): void
 {
-    if (!sh_admin_logged()) {
-        header('Location: ' . sh_admin_url('login.php'), true, 302);
+    if (sh_admin_logged()) {
+        return;
+    }
+    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    if (str_contains($script, '/admin/api/')) {
+        header('Content-Type: application/json; charset=utf-8');
+        http_response_code(401);
+        echo json_encode(['ok' => false, 'error' => 'Unauthorized'], JSON_UNESCAPED_UNICODE);
         exit;
     }
+    header('Location: ' . sh_admin_url('login.php'), true, 302);
+    exit;
 }
 
 function sh_admin_url(string $path = ''): string
