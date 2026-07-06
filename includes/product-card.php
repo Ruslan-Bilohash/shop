@@ -55,6 +55,14 @@ $excerptLen = (int) ($card['excerpt_len'] ?? 85);
                 <?php if ($on_sale): ?>
                 <span class="sh-price-old"><?= sh_price($original) ?></span>
                 <?php endif; ?>
+                <?php
+                if (!function_exists('sh_tax_price_suffix')) {
+                    require_once __DIR__ . '/tax-settings.php';
+                }
+                $taxNote = sh_tax_price_suffix(null, $lang ?? null);
+                if ($taxNote !== ''): ?>
+                <span class="sh-tax-price-note"><?= htmlspecialchars($taxNote) ?></span>
+                <?php endif; ?>
             </div>
             <div class="sh-product-actions">
                 <?php if ($card['show_add_cart'] && $in_stock): ?>

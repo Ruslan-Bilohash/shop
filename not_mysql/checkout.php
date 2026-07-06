@@ -2,9 +2,10 @@
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/includes/payment-settings.php';
 
+require_once __DIR__ . '/includes/tax-settings.php';
 $lines = sh_cart_lines($lang);
-$total = sh_cart_total();
 $settings = sh_load_settings();
+$total = sh_cart_total_gross($settings);
 
 if (empty($lines)) {
     header('Location: ' . sh_url('cart.php') . ($lang !== 'no' ? '?lang=' . urlencode($lang) : ''), true, 302);
@@ -105,10 +106,7 @@ require __DIR__ . '/includes/header.php';
                 </li>
                 <?php endforeach; ?>
             </ul>
-            <div class="sh-cart-total-row">
-                <span><?= htmlspecialchars($t['cart']['total']) ?></span>
-                <strong><?= sh_price($total) ?></strong>
-            </div>
+            <?php require __DIR__ . '/includes/cart-order-totals.php'; ?>
         </aside>
     </div>
     <?php endif; ?>

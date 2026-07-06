@@ -54,6 +54,7 @@ function sh_merge_site_settings(array $settings): array
     require_once __DIR__ . '/service-pages.php';
     require_once __DIR__ . '/store-settings.php';
     require_once __DIR__ . '/menu-settings.php';
+    require_once __DIR__ . '/tax-settings.php';
     $merged = array_merge(
         sh_default_payment_settings(),
         bh_cms_site_settings_defaults(bh_cms_product_accent('shop')),
@@ -61,10 +62,12 @@ function sh_merge_site_settings(array $settings): array
         sh_ai_defaults(),
         sh_service_pages_defaults(),
         sh_store_settings_defaults(),
+        sh_tax_settings_defaults(),
         sh_menu_settings_defaults(),
         $settings
     );
     $merged = sh_merge_store_settings($merged);
+    $merged = sh_tax_merge_settings($merged);
     $merged = sh_merge_service_settings($merged);
 
     foreach (sh_default_payment_settings() as $provider => $fields) {
@@ -181,6 +184,11 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings = sh_store_settings_apply_post($post, $settings);
     }
 
+    if ($section === 'taxes') {
+        require_once __DIR__ . '/tax-settings.php';
+        $settings = sh_tax_settings_apply_post($post, $settings);
+    }
+
     if ($section === 'analytics') {
         require_once __DIR__ . '/store-settings.php';
         $settings = sh_analytics_settings_apply_post($post, $settings);
@@ -249,6 +257,7 @@ function sh_settings_tabs(): array
 {
     return [
         'store'      => ['file' => 'settings-store.php',      'icon' => 'store', 'group' => 'shop'],
+        'taxes'      => ['file' => 'settings-taxes.php',      'icon' => 'percent', 'group' => 'shop'],
         'languages'  => ['file' => 'settings-languages.php',  'icon' => 'language', 'group' => 'advanced'],
         'payments'   => ['file' => 'payments.php',            'icon' => 'credit-card', 'group' => 'integrations'],
         'homepage'      => ['file' => 'settings-homepage.php',      'icon' => 'house', 'group' => 'content'],
@@ -277,7 +286,7 @@ function sh_settings_tab_groups(): array
         'shop' => [
             'label_key' => 'settings_group_shop',
             'icon'      => 'store',
-            'tabs'      => ['store'],
+            'tabs'      => ['store', 'taxes'],
         ],
         'content' => [
             'label_key' => 'settings_group_content',

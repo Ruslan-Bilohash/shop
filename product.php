@@ -106,6 +106,12 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
             <div class="sh-product-price-row">
                 <strong class="sh-price-lg"><?= sh_price($price) ?></strong>
                 <?php if ($on_sale): ?><span class="sh-price-was-lg"><?= sh_price($original) ?></span><?php endif; ?>
+                <?php
+                require_once __DIR__ . '/includes/tax-settings.php';
+                $taxNote = sh_tax_price_suffix(null, $lang);
+                if ($taxNote !== ''): ?>
+                <span class="sh-tax-price-note"><?= htmlspecialchars($taxNote) ?></span>
+                <?php endif; ?>
             </div>
             <p class="sh-product-stock <?= $in_stock ? 'in' : 'out' ?>">
                 <i class="fas fa-<?= $in_stock ? 'check' : 'times' ?>-circle"></i>

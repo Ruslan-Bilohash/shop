@@ -844,6 +844,14 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
     padding: 20px; box-shadow: var(--sh-shadow);
 }
 .sh-cart-total-row { display: flex; justify-content: space-between; font-size: 1.25rem; margin-bottom: 16px; }
+.sh-order-totals { margin-bottom: 16px; }
+.sh-cart-total-row--sub,
+.sh-cart-total-row--tax { font-size: 0.95rem; color: var(--sh-text-muted); margin-bottom: 8px; }
+.sh-cart-total-row--grand { font-size: 1.25rem; font-weight: 700; margin-bottom: 0; padding-top: 8px; border-top: 1px solid var(--sh-border); }
+.sh-tax-price-note { display: block; font-size: 12px; font-weight: 500; color: var(--sh-text-muted); margin-top: 4px; }
+.sh-tax-business-id { font-size: 12px; color: var(--sh-text-muted); margin: 8px 0 0; }
+.adm-tax-preview { margin-top: 16px; padding: 14px 16px; border-radius: 10px; background: var(--adm-bg-soft, #f8fafc); border: 1px solid var(--adm-border, #e2e8f0); }
+.adm-tax-preview-lines { margin: 6px 0 0; }
 .sh-checkout-note { font-size: 12px; color: var(--sh-text-muted); margin-top: 10px; }
 .sh-cart-remove-form { margin: 0; }
 .sh-cart-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }

@@ -51,8 +51,16 @@
         else setNavOpen(true);
     }
 
+    var menuClose = document.getElementById('shsMenuClose');
+
     if (menuBtn && header) {
         menuBtn.addEventListener('click', onMenuToggle);
+    }
+    if (menuClose) {
+        menuClose.addEventListener('click', function (e) {
+            e.preventDefault();
+            closeNav();
+        });
     }
 
     if (overlay) overlay.addEventListener('click', closeNav);
@@ -66,8 +74,10 @@
         });
     }
 
-    window.addEventListener('resize', function () {
-        if (window.innerWidth >= 1200) closeNav();
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && header && header.classList.contains('nav-open')) {
+            closeNav();
+        }
     });
 
     if (langDetails) {

@@ -21,6 +21,9 @@
 <?php if (($settings_tab ?? '') === 'store'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-store.js')) ?>?v=1" defer></script>
 <?php endif; ?>
+<?php if (($settings_tab ?? '') === 'taxes'): ?>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-taxes.js')) ?>?v=1" defer></script>
+<?php endif; ?>
 <?php if (($settings_tab ?? '') === 'pages'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-service-pages.js')) ?>?v=1" defer></script>
 <?php endif; ?>

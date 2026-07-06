@@ -29,6 +29,32 @@ $en = [
             'card_excerpt_len' => 'Short description length on category and search pages.',
         ],
     ],
+    'taxes' => [
+        'intro' => 'VAT and sales tax for Norway, Lithuania, Ukraine, Sweden, Poland and UK.',
+        'guide' => [
+            'title' => 'Tax setup guide',
+            'intro' => 'Pick your country preset, set the standard rate and whether catalog prices include tax.',
+            'steps' => [
+                'Enable tax and choose country (NO, LT, UA, SE, PL, GB).',
+                'Set inclusive prices if your product prices already contain VAT (typical B2C).',
+                'Use exclusive if prices are net — tax is added in cart and checkout.',
+                'Optional: enter VAT/org number shown on checkout summary.',
+            ],
+            'links' => [],
+            'note' => 'Standard rate only — reduced rates per product category can be added in a future version.',
+        ],
+        'sections' => [
+            'taxes-enable' => 'Tax display',
+            'taxes-country' => 'Country & rate',
+        ],
+        'hints' => [
+            'tax_country' => 'Preset with default standard VAT rate for the selected country.',
+            'tax_rate' => 'Override the preset if you use a reduced rate or local exception.',
+            'tax_mode' => 'Inclusive = prices in admin already include tax. Exclusive = tax added at checkout.',
+            'tax_custom_label' => 'Leave empty to use MVA / VAT / ПДВ / Moms automatically.',
+            'tax_business_id' => 'Shown on checkout for invoices (org.nr, NIP, VAT number, etc.).',
+        ],
+    ],
     'analytics' => [
         'intro' => 'Google Analytics 4 and Meta Pixel for marketing attribution on the public storefront.',
         'guide' => [
@@ -471,6 +497,32 @@ $uk = [
             'site_currency' => 'Код ISO 4217 для Schema.org та checkout (NOK, UAH, EUR).',
             'currency_symbol' => 'Символ після суми: kr, ₴, €.',
             'card_excerpt_len' => 'Довжина короткого опису в каталозі.',
+        ],
+    ],
+    'taxes' => [
+        'intro' => 'ПДВ та податки для Норвегії, Литви, України, Швеції, Польщі та Великобританії.',
+        'guide' => [
+            'title' => 'Налаштування податків',
+            'intro' => 'Оберіть країну, стандартну ставку та чи ціни в каталозі вже включають податок.',
+            'steps' => [
+                'Увімкніть податок і оберіть країну (NO, LT, UA, SE, PL, GB).',
+                'Inclusive — ціни в адмінці вже з ПДВ (типово B2C).',
+                'Exclusive — ціни без податку, ПДВ додається в кошику.',
+                'За бажанням: ЄДРПОУ / VAT / org.nr для підсумку замовлення.',
+            ],
+            'links' => [],
+            'note' => 'Поки лише стандартна ставка — знижені ставки по категоріях можна додати пізніше.',
+        ],
+        'sections' => [
+            'taxes-enable' => 'Відображення податку',
+            'taxes-country' => 'Країна та ставка',
+        ],
+        'hints' => [
+            'tax_country' => 'Пресет зі стандартною ставкою ПДВ для обраної країни.',
+            'tax_rate' => 'Змініть пресет, якщо потрібна інша ставка.',
+            'tax_mode' => 'Inclusive = ціни з податком. Exclusive = податок додається при оформленні.',
+            'tax_custom_label' => 'Порожньо — автоматично MVA / VAT / ПДВ / Moms.',
+            'tax_business_id' => 'Показується при checkout (org.nr, NIP, VAT тощо).',
         ],
     ],
     'analytics' => [

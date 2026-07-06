@@ -128,6 +128,13 @@ function sh_save_settings(array $settings): bool
         }
     }
 
+    require_once __DIR__ . '/tax-settings.php';
+    foreach (sh_tax_settings_keys() as $key) {
+        if (array_key_exists($key, $merged)) {
+            $out[$key] = $merged[$key];
+        }
+    }
+
     if (array_key_exists('home_blocks', $merged) && is_array($merged['home_blocks'])) {
         $out['home_blocks'] = $merged['home_blocks'];
     }

@@ -35,8 +35,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $current_page = 'cart';
+require_once __DIR__ . '/includes/tax-settings.php';
 $lines = sh_cart_lines($lang);
-$total = sh_cart_total();
+$settings = sh_load_settings();
+$total = sh_cart_total_gross($settings);
 $page_title = $t['cart']['title'] . ' — ' . ($t['meta']['site_name'] ?? 'Shop CMS');
 $page_desc  = $t['meta']['description'];
 $canonical  = $site_url . '/cart.php' . ($lang !== 'no' ? '?lang=' . $lang : '');
@@ -117,10 +119,7 @@ require __DIR__ . '/includes/header.php';
             </form>
         </div>
         <div class="sh-cart-summary">
-            <div class="sh-cart-total-row">
-                <span><?= htmlspecialchars($t['cart']['total']) ?></span>
-                <strong><?= sh_price($total) ?></strong>
-            </div>
+            <?php require __DIR__ . '/includes/cart-order-totals.php'; ?>
             <a href="<?= sh_url('checkout.php') ?>" class="sh-btn-primary sh-btn-lg sh-btn-block">
                 <i class="fas fa-credit-card"></i> <?= htmlspecialchars($t['cart']['checkout']) ?>
             </a>

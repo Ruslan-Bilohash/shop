@@ -1,8 +1,8 @@
 :root{--shs-primary:#2563eb;--shs-bg:#faf9f7;--shs-card:#fff;--shs-border:#e2e8f0;--shs-text:#1e293b}
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;color:var(--shs-text);background:var(--shs-bg);line-height:1.6}
-.shs-header{background:var(--shs-card);border-bottom:1px solid var(--shs-border);position:sticky;top:0;z-index:100}
-.shs-header-inner{max-width:1100px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px}
-.shs-header-tools{margin-left:auto;display:flex;align-items:center;gap:8px}
+.shs-header{background:rgba(255,255,255,.92);border-bottom:1px solid var(--shs-border);position:sticky;top:0;z-index:100}
+.shs-header-inner{max-width:1100px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.shs-header-end{margin-left:auto;display:flex;align-items:center;gap:8px}
 .shs-logo{display:flex;align-items:center;gap:10px;font-weight:800;color:var(--shs-text);text-decoration:none}
-.shs-menu-toggle{border:1px solid var(--shs-border);background:#fff;width:44px;height:44px;border-radius:8px;cursor:pointer}
+.shs-menu-toggle{border:1px solid var(--shs-border);background:#fff;width:40px;height:40px;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
