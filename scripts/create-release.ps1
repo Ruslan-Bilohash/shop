@@ -57,14 +57,15 @@ foreach ($asset in $assets) {
     Compress-Archive -Path (Join-Path $src '*') -DestinationPath $zip -Force
     Write-Host "Packed: $($asset.Zip)"
 
-    $upload = ($release.upload_url -replace '\{\?name,label\}', '') + "?name=$($asset.Zip)"
+    $uploadBase = ($release.upload_url -replace '\{\?name,label\}', '')
+    $uploadUrl = "${uploadBase}?name=$($asset.Zip)"
     $assetPath = Join-Path $root "_asset_$($asset.Folder).json"
     $acode = & curl.exe --max-time 180 -sS -X POST `
         -H "Authorization: Bearer $token" `
         -H "Accept: application/vnd.github+json" `
         -H "Content-Type: application/zip" `
         --data-binary "@$zip" `
-        "$upload?name=$($asset.Zip)" `
+        $uploadUrl `
         -o $assetPath -w "%{http_code}"
     Write-Host "Asset $($asset.Zip) HTTP: $acode"
     $uploaded = Get-Content $assetPath -Raw | ConvertFrom-Json
