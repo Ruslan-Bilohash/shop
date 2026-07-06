@@ -76,13 +76,13 @@ $preview = sh_tax_breakdown(10000, $settings, $lang ?? 'en');
                 <p class="adm-help adm-tax-preview-lines">
                     <?= htmlspecialchars(sh_settings_admin_label('tax_preview_example', $ta)) ?>:
                     <span id="shTaxPreviewText">
-                        <?= htmlspecialchars(sprintf('%s %s + %s %s = %s %s',
-                            sh_format_price($preview['net'], $settings),
-                            $preview['label'],
-                            sh_format_price($preview['tax'], $settings),
-                            $preview['label'],
-                            sh_format_price($preview['total'], $settings)
-                        )) ?>
+                        <?= htmlspecialchars(
+                            sh_format_price($preview['net'], $settings)
+                            . ' + '
+                            . sh_format_price($preview['tax'], $settings)
+                            . ' = '
+                            . sh_format_price($preview['total'], $settings)
+                        ) ?>
                     </span>
                 </p>
             </div>
