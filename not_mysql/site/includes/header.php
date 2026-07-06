@@ -6,6 +6,8 @@ $page_title = $page_title ?? $t['meta']['title'];
 $page_desc  = $page_desc ?? $t['meta']['description'];
 $canonical  = $canonical ?? $site_url . '/';
 $seo_schemas = $seo_schemas ?? shs_seo_schemas(shs_absolute_url($canonical), $page_title, $page_desc);
+$shs_on_home = basename(str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? 'index.php'))) === 'index.php';
+$shs_section_prefix = $shs_on_home ? '' : shs_url('index.php');
 ?>
 <!DOCTYPE html>
 <html lang="<?= htmlspecialchars($lang_meta['html']) ?>">
@@ -24,31 +26,36 @@ $seo_schemas = $seo_schemas ?? shs_seo_schemas(shs_absolute_url($canonical), $pa
             <span class="shs-logo-icon">S</span>
             <span class="shs-logo-text">Shop <em>CMS</em></span>
         </a>
-        <div class="shs-header-tools">
+        <div class="shs-header-end">
+            <a href="<?= shs_url('order.php') ?>" class="shs-btn-primary shs-header-cta">
+                <i class="fas fa-laptop-code" aria-hidden="true"></i>
+                <span><?= htmlspecialchars($t['nav']['order'] ?? '') ?></span>
+            </a>
             <?php require __DIR__ . '/lang-dropdown.php'; ?>
             <button class="shs-menu-toggle" id="shsMenuBtn" aria-label="<?= htmlspecialchars($t['a11y']['menu'] ?? 'Menu') ?>" type="button" aria-expanded="false" aria-controls="shsMobilePanel">
                 <i class="fas fa-bars shs-menu-icon-open" aria-hidden="true"></i>
                 <i class="fas fa-times shs-menu-icon-close" aria-hidden="true"></i>
             </button>
         </div>
-        <nav class="shs-nav-desktop" aria-label="<?= htmlspecialchars($t['nav']['main_nav'] ?? 'Main') ?>">
-            <a href="<?= shs_url('index.php#features') ?>"><?= htmlspecialchars($t['nav']['features']) ?></a>
-            <a href="<?= shs_url('index.php#screenshots') ?>"><?= htmlspecialchars($t['nav']['screenshots'] ?? 'Screenshots') ?></a>
-            <a href="<?= shs_url('index.php#seo') ?>"><?= htmlspecialchars($t['nav']['seo'] ?? 'SEO') ?></a>
-            <a href="<?= shs_url('index.php#demo') ?>"><?= htmlspecialchars($t['nav']['demo']) ?></a>
-        </nav>
-        <div class="shs-header-actions">
-            <a href="<?= shs_demo_url() ?>" class="shs-btn-ghost"><i class="fas fa-store"></i> <?= htmlspecialchars($t['demo']['frontend']) ?></a>
-            <a href="<?= shs_demo_url('admin/login.php') ?>" class="shs-btn-ghost"><i class="fas fa-lock"></i> <?= htmlspecialchars($t['nav']['admin']) ?></a>
-            <a href="<?= shs_url('order.php') ?>" class="shs-btn-ghost"><i class="fas fa-laptop-code"></i> <?= htmlspecialchars($t['nav']['order'] ?? '') ?></a>
-            <a href="<?= shs_demo_url('contact.php') ?>" class="shs-btn-primary"><i class="fas fa-comments"></i> <?= htmlspecialchars($cms_nav_discuss) ?></a>
-        </div>
     </div>
     <div class="shs-mobile-panel" id="shsMobilePanel" hidden>
-        <nav class="shs-nav-mobile" aria-label="<?= htmlspecialchars($t['a11y']['menu'] ?? 'Menu') ?>">
+        <div class="shs-mobile-panel-head">
+            <span class="shs-mobile-panel-title"><?= htmlspecialchars($t['nav']['menu'] ?? 'Menu') ?></span>
+            <button type="button" class="shs-mobile-panel-close" id="shsMenuClose" aria-label="<?= htmlspecialchars($t['a11y']['close'] ?? 'Close') ?>">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <nav class="shs-nav-mobile" aria-label="<?= htmlspecialchars($t['nav']['main_nav'] ?? 'Main') ?>">
+            <p class="shs-nav-group-label"><?= htmlspecialchars($t['nav']['page_sections'] ?? 'On this page') ?></p>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#features') ?>"><?= htmlspecialchars($t['nav']['features']) ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#screenshots') ?>"><?= htmlspecialchars($t['nav']['screenshots'] ?? 'Screenshots') ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#seo') ?>"><?= htmlspecialchars($t['nav']['seo'] ?? 'SEO') ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#demo') ?>"><?= htmlspecialchars($t['nav']['demo']) ?></a>
+
+            <p class="shs-nav-group-label"><?= htmlspecialchars($t['nav']['try_demo'] ?? 'Try demo') ?></p>
             <a href="<?= shs_demo_url() ?>"><i class="fas fa-store" aria-hidden="true"></i> <?= htmlspecialchars($t['demo']['frontend']) ?></a>
             <a href="<?= shs_demo_url('admin/login.php') ?>"><i class="fas fa-lock" aria-hidden="true"></i> <?= htmlspecialchars($t['nav']['admin']) ?></a>
-            <a href="<?= shs_url('order.php') ?>"><i class="fas fa-laptop-code" aria-hidden="true"></i> <?= htmlspecialchars($t['nav']['order'] ?? '') ?></a>
+            <a href="<?= shs_demo_url('contact.php') ?>" class="shs-nav-mobile-accent"><i class="fas fa-comments" aria-hidden="true"></i> <?= htmlspecialchars($cms_nav_discuss) ?></a>
         </nav>
         <?php require __DIR__ . '/ecosystem-mobile-block.php'; ?>
     </div>

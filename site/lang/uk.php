@@ -19,10 +19,15 @@ return array_replace_recursive($en, [
         'contact'     => 'Контакт',
         'order'       => 'Замовити розробку',
         'menu'        => 'Меню',
-        'lang_menu'   => 'Мова',
-        'main_nav'    => 'Головна навігація',
+        'lang_menu'     => 'Мова',
+        'main_nav'      => 'Головна навігація',
+        'page_sections' => 'На сторінці',
+        'try_demo'      => 'Спробувати демо',
     ],
-    'a11y' => ['menu' => 'Меню'],
+    'a11y' => [
+        'menu'  => 'Меню',
+        'close' => 'Закрити',
+    ],
     'mockup' => [
         'title' => 'Рекомендовані товари',
         'items' => [
