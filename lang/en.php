@@ -544,8 +544,6 @@ return [
         'store_tracking_section' => 'Analytics tracking',
         'tracking_gtag_id' => 'Google Analytics / gtag ID',
         'tracking_meta_pixel' => 'Meta Pixel ID',
-        'advanced_custom_code_section' => 'Custom code & JS',
-        'advanced_custom_code_help' => 'Add HTML to <head> or JavaScript to the storefront footer. Code runs on all shop pages.',
         'custom_head_html' => 'HTML in <head>',
         'custom_head_html_hint' => 'Raw HTML inserted before </head> — site verification, preconnect, etc.',
         'custom_footer_js' => 'JavaScript in footer',

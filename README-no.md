@@ -67,7 +67,8 @@ Demomodus fungerer **uten API-nøkkel** — lokale maler brukes slik at du kan t
 - Flerspråklig UI: **norsk** (standard), **engelsk**, **ukrainsk**, **russisk**, **svensk**, **litauisk** (`?lang=` + informasjonskapsel)
 - Demo kundeinnlogging: telefon, Google og Apple OAuth
 - Sporingside for pakker (Bring / Posten demo)
-- Kontaktskjema, tjenestesider, SEO-vertikalsider
+- Kontaktskjema, tjenestesider (levering, personvern, informasjonskapsler, egendefinerte sider)
+- SEO-vertikalsider (mote, elektronikk, B2B osv.)
 - Responsivt lyst tema, mobil burgermeny
 - GDPR informasjonskapsel-banner
 
@@ -83,24 +84,26 @@ Demomodus fungerer **uten API-nøkkel** — lokale maler brukes slik at du kan t
 - Flerspråklig admin
 
 ### Produktside (`/site/`)
-- Landingsside for Shop CMS med skjermbilder og bestillingsskjema
+- Landingsside for Shop CMS
+- Skjermbilder, versjonsinfo, teknisk stack, bestillingsskjema
 
 ---
 
 ## Teknisk stack
 
 - PHP 8+ (uten rammeverk)
-- JSON-lagring — MySQL/PostgreSQL på forespørsel for produksjon
+- JSON-lagring (`data/*.json`, `data/products.php` seed) — MySQL/PostgreSQL på forespørsel for produksjon
 - Modulær i18n (`lang/*.php`)
-- Apache `.htaccess`, canonical, hreflang, Schema.org, sitemap
+- Apache `.htaccess`, kanoniske URL-er, hreflang, Schema.org, sitemap-indeks
 - Font Awesome 6, vanlig CSS og JS
+- CodeMirror i admin for HTML/JS-redigering
 
 ---
 
 ## Krav
 
 - PHP 8.0 eller nyere
-- Apache med `mod_rewrite`
+- Apache med `mod_rewrite` (eller nginx-tilsvarende)
 - Skrivbar `data/`-mappe
 
 ---
@@ -109,22 +112,80 @@ Demomodus fungerer **uten API-nøkkel** — lokale maler brukes slik at du kan t
 
 ```bash
 git clone https://github.com/Ruslan-Bilohash/shop.git shop
-chmod 755 data
 ```
 
-Åpne `https://ditt-domene.no/shop/` — demoprodukter lastes automatisk.
+1. Kopier `shop/`-mappen til webroten (f.eks. `/shop/`).
+2. Sett skriverettigheter på `data/`:
+   ```bash
+   chmod 755 data
+   ```
+3. Åpne `https://ditt-domene.no/shop/` — demoprodukter lastes fra seed-data.
+4. Admin: `https://ditt-domene.no/shop/admin/` — endre påloggingsdata før produksjon.
 
-### Lokal server
+### Lokal PHP-server
 
 ```bash
-cd shop && php -S localhost:8080
+cd shop
+php -S localhost:8080
+```
+
+Åpne http://localhost:8080/
+
+### Konfigurasjon (`config.php`)
+
+```php
+define('SH_BASE_PATH', '/shop');
+define('SH_SITE_NAME', 'Shop CMS');
+define('SH_CURRENCY', 'NOK');
+define('SH_DEMO_MODE', true);
+```
+
+---
+
+## Prosjektstruktur
+
+```
+shop/
+├── index.php              # Forside
+├── search.php             # Katalogsøk
+├── product.php            # Produktdetalj
+├── cart.php / checkout.php
+├── login.php              # Demo kundeinnlogging
+├── contact.php / page.php
+├── config.php / init.php
+├── lang/                  # NO, EN, UA, RU, SV butikkfront-UI
+├── includes/              # Header, SEO, kurv, AI, betalinger, blokker
+├── assets/css|js/
+├── data/                  # produkter, kategorier, innstillinger (JSON)
+├── admin/                 # Fullt adminpanel
+├── site/                  # Markedsføringslanding (NO, EN, UA, RU, SV, LT)
+├── screenshot/            # Skjermbilder av admin og butikkfront
+├── sitemap*.php
+└── LICENSE
 ```
 
 ---
 
 ## Skjermbilder
 
-Se `screenshot/`-mappen — dashboard, katalog, AI-integrasjoner, betalinger, SEO og mer. Full liste i [README.md](README.md#screenshots).
+| Skjerm | Fil |
+|--------|-----|
+| Admin dashboard | `screenshot/dashboard.jpg` |
+| Produktkatalog | `screenshot/catalog_product.jpg` |
+| Kategorier | `screenshot/catalog_categories.jpg` |
+| Butikkinnstillinger | `screenshot/store_setting.jpg` |
+| Forsideblokker | `screenshot/main_block.jpg` |
+| Tjenesteside-redigerer | `screenshot/servise_page_editor.jpg` |
+| Bunntekst-lenker | `screenshot/footer_link_editor.jpg` |
+| Header-innstillinger | `screenshot/header_setting.jpg` |
+| Utseende / farger | `screenshot/seting_color.jpg` |
+| SEO og Schema | `screenshot/seo_schema.jpg` |
+| Sitemap-generator | `screenshot/generate_schema_sitemap.jpg` |
+| AI-chat-widget | `screenshot/integrations_chat.jpg` |
+| AI-assistent | `screenshot/integrations_ai_assistant.jpg` |
+| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
+| Bring-sporing | `screenshot/integrations_bring_posten_api.jpg` |
+| Avanserte innstillinger | `screenshot/advanced_settings.jpg` |
 
 ---
 
@@ -133,12 +194,15 @@ Se `screenshot/`-mappen — dashboard, katalog, AI-integrasjoner, betalinger, SE
 - Gult demo-banner på alle sider
 - Ingen ekte betalinger — kurv kun på sesjon
 - Demoprodukter med Unsplash-bilder
-- AI bruker lokale maler uten API-nøkkel
+- AI bruker lokale maler når ingen API-nøkkel er satt
 
 ---
 
-## Forfatter og lisens
+## Forfatter og kommersiell lisens
 
-**Ruslan Bilohash** — https://bilohash.com/ · rbilohash@gmail.com
+**Ruslan Bilohash**
+- Nettsted: https://bilohash.com/
+- GitHub: https://github.com/Ruslan-Bilohash/
+- E-post: rbilohash@gmail.com
 
-For **kommersiell lisens**, full kildekode eller **nyeste produksjonsversjon**, kontakt forfatteren. Se [LICENSE](LICENSE).
+For **kommersiell lisens**, full kildekode, tilpasset utvikling eller **nyeste produksjonsversjon**, kontakt forfatteren direkte. Se [LICENSE](LICENSE).

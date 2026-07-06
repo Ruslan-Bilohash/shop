@@ -67,7 +67,8 @@ Demoläge fungerar **utan API-nyckel** — lokala mallar används så att du kan
 - Flerspråkigt UI: **norska** (standard), **engelska**, **ukrainska**, **ryska**, **svenska**, **litauiska** (`?lang=` + cookie)
 - Demo kundinloggning: telefon, Google och Apple OAuth
 - Spårningssida för paket (Bring / Posten demo)
-- Kontaktformulär, servicesidor, SEO-vertikalsidor
+- Kontaktformulär, servicesidor (leverans, integritet, cookies, anpassade sidor)
+- SEO-vertikalsidor (mode, elektronik, B2B m.m.)
 - Responsivt ljust tema, mobil burgermeny
 - GDPR cookie-banner
 
@@ -83,24 +84,26 @@ Demoläge fungerar **utan API-nyckel** — lokala mallar används så att du kan
 - Flerspråkig admin
 
 ### Produktsida (`/site/`)
-- Landningssida för Shop CMS med skärmdumpar och beställningsformulär
+- Landningssida för Shop CMS
+- Skärmdumpar, versionsinfo, teknisk stack, beställningsformulär
 
 ---
 
 ## Teknisk stack
 
 - PHP 8+ (utan ramverk)
-- JSON-lagring — MySQL/PostgreSQL på begäran för produktion
+- JSON-lagring (`data/*.json`, `data/products.php` seed) — MySQL/PostgreSQL på begäran för produktion
 - Modulär i18n (`lang/*.php`)
-- Apache `.htaccess`, canonical, hreflang, Schema.org, sitemap
+- Apache `.htaccess`, kanoniska URL:er, hreflang, Schema.org, sitemap-index
 - Font Awesome 6, vanlig CSS och JS
+- CodeMirror i admin för HTML/JS-redigering
 
 ---
 
 ## Krav
 
 - PHP 8.0 eller nyare
-- Apache med `mod_rewrite`
+- Apache med `mod_rewrite` (eller nginx-motsvarighet)
 - Skrivbar `data/`-katalog
 
 ---
@@ -109,22 +112,80 @@ Demoläge fungerar **utan API-nyckel** — lokala mallar används så att du kan
 
 ```bash
 git clone https://github.com/Ruslan-Bilohash/shop.git shop
-chmod 755 data
 ```
 
-Öppna `https://din-domän.se/shop/` — demoprodukter laddas automatiskt.
+1. Kopiera `shop/`-mappen till webbrot (t.ex. `/shop/`).
+2. Sätt skrivrättigheter på `data/`:
+   ```bash
+   chmod 755 data
+   ```
+3. Öppna `https://din-domän.se/shop/` — demoprodukter laddas från seed-data.
+4. Admin: `https://din-domän.se/shop/admin/` — ändra inloggningsuppgifter före produktion.
 
-### Lokal server
+### Lokal PHP-server
 
 ```bash
-cd shop && php -S localhost:8080
+cd shop
+php -S localhost:8080
+```
+
+Öppna http://localhost:8080/
+
+### Konfiguration (`config.php`)
+
+```php
+define('SH_BASE_PATH', '/shop');
+define('SH_SITE_NAME', 'Shop CMS');
+define('SH_CURRENCY', 'NOK');
+define('SH_DEMO_MODE', true);
+```
+
+---
+
+## Projektstruktur
+
+```
+shop/
+├── index.php              # Startsida
+├── search.php             # Katalogsökning
+├── product.php            # Produktdetalj
+├── cart.php / checkout.php
+├── login.php              # Demo kundinloggning
+├── contact.php / page.php
+├── config.php / init.php
+├── lang/                  # NO, EN, UA, RU, SV butiks-UI
+├── includes/              # Header, SEO, kundvagn, AI, betalningar, block
+├── assets/css|js/
+├── data/                  # produkter, kategorier, inställningar (JSON)
+├── admin/                 # Fullt adminpanel
+├── site/                  # Marknadsföringslanding (NO, EN, UA, RU, SV, LT)
+├── screenshot/            # Skärmdumpar av admin och butik
+├── sitemap*.php
+└── LICENSE
 ```
 
 ---
 
 ## Skärmdumpar
 
-Se mappen `screenshot/` — dashboard, katalog, AI-integrationer, betalningar, SEO med mera. Full lista i [README.md](README.md#screenshots).
+| Skärm | Fil |
+|-------|-----|
+| Admin dashboard | `screenshot/dashboard.jpg` |
+| Produktkatalog | `screenshot/catalog_product.jpg` |
+| Kategorier | `screenshot/catalog_categories.jpg` |
+| Butiksinställningar | `screenshot/store_setting.jpg` |
+| Startsidesblock | `screenshot/main_block.jpg` |
+| Serviceside-redigerare | `screenshot/servise_page_editor.jpg` |
+| Sidfotslänkar | `screenshot/footer_link_editor.jpg` |
+| Header-inställningar | `screenshot/header_setting.jpg` |
+| Utseende / färger | `screenshot/seting_color.jpg` |
+| SEO och Schema | `screenshot/seo_schema.jpg` |
+| Sitemap-generator | `screenshot/generate_schema_sitemap.jpg` |
+| AI-chat-widget | `screenshot/integrations_chat.jpg` |
+| AI-assistent | `screenshot/integrations_ai_assistant.jpg` |
+| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
+| Bring-spårning | `screenshot/integrations_bring_posten_api.jpg` |
+| Avancerade inställningar | `screenshot/advanced_settings.jpg` |
 
 ---
 
@@ -133,12 +194,15 @@ Se mappen `screenshot/` — dashboard, katalog, AI-integrationer, betalningar, S
 - Gult demo-band på alla sidor
 - Inga riktiga betalningar — kundvagn endast i session
 - Demoprodukter med Unsplash-bilder
-- AI använder lokala mallar utan API-nyckel
+- AI använder lokala mallar när ingen API-nyckel är angiven
 
 ---
 
-## Författare och licens
+## Författare och kommersiell licens
 
-**Ruslan Bilohash** — https://bilohash.com/ · rbilohash@gmail.com
+**Ruslan Bilohash**
+- Webbplats: https://bilohash.com/
+- GitHub: https://github.com/Ruslan-Bilohash/
+- E-post: rbilohash@gmail.com
 
-För **kommersiell licens**, full källkod eller **senaste produktionsversionen**, kontakta författaren. Se [LICENSE](LICENSE).
+För **kommersiell licens**, full källkod, anpassad utveckling eller **senaste produktionsversionen**, kontakta författaren direkt. Se [LICENSE](LICENSE).

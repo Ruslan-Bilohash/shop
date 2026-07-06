@@ -63,11 +63,12 @@ Shop CMS має **вбудовану AI-автоматизацію** (Grok / Ope
 ### Публічна вітрина
 - Каталог з пошуком, фільтрами, категоріями та сортуванням
 - Картки товарів, Schema.org Product, знижки, супутні товари
-- Кошик на PHP-сесії
+- Кошик на PHP-сесії (додати, змінити кількість, видалити)
 - Мови: **норвезька** (за замовч.), **англійська**, **українська**, **російська**, **шведська**, **литовська** (`?lang=` + cookie)
 - Вхід покупця (демо): телефон, Google і Apple OAuth
 - Відстеження посилок (Bring / Posten)
-- Контакт, сервісні сторінки, SEO-вертикалі
+- Контакт, сервісні сторінки (доставка, конфіденційність, cookies, власні сторінки)
+- SEO-вертикалі (мода, електроніка, B2B тощо)
 - Адаптивний світлий дизайн, мобільне меню
 - GDPR банер cookies
 
@@ -78,30 +79,32 @@ Shop CMS має **вбудовану AI-автоматизацію** (Grok / Ope
 - **Дизайн** — кольори, картка товару, швидка покупка
 - **Маркетинг** — SEO, Schema.org, sitemap, аналітика
 - **Інтеграції** — AI, чат, reCAPTCHA, вхід покупця, платежі (PayPal, Stripe, Vipps, COD, Google/Apple Pay), Bring
-- **Розширені** — режим розробки, GDPR, головна мова, помилки PHP
+- **Розширені** — режим обслуговування, GDPR, головна мова, помилки PHP
 - **Редактор коду** — HTML/JS з підсвіткою синтаксису
 - Багатомовна адмінка
 
 ### Маркетинговий сайт (`/site/`)
-- Лендінг Shop CMS зі скріншотами та формою замовлення
+- Лендінг Shop CMS
+- Скріншоти, інформація про версію, технічний стек, форма замовлення
 
 ---
 
 ## Стек
 
 - PHP 8+ (без фреймворків)
-- JSON — MySQL/PostgreSQL за запитом для продакшену
+- JSON (`data/*.json`, `data/products.php` seed) — MySQL/PostgreSQL за запитом для продакшену
 - i18n (`lang/*.php`)
-- Apache, canonical, hreflang, Schema.org, sitemap
+- Apache `.htaccess`, canonical URL, hreflang, Schema.org, sitemap index
 - Font Awesome 6, vanilla CSS/JS
+- CodeMirror в адмінці для редагування HTML/JS
 
 ---
 
 ## Вимоги
 
 - PHP 8.0+
-- Apache з `mod_rewrite`
-- Запис у `data/`
+- Apache з `mod_rewrite` (або nginx-аналог)
+- Запис у каталог `data/`
 
 ---
 
@@ -109,47 +112,97 @@ Shop CMS має **вбудовану AI-автоматизацію** (Grok / Ope
 
 ```bash
 git clone https://github.com/Ruslan-Bilohash/shop.git shop
-chmod 755 data
 ```
 
-Відкрийте `https://ваш-домен/shop/` — демо-товари завантажаться автоматично.
+1. Скопіюйте папку `shop/` у web root (наприклад `/shop/`).
+2. Надайте права на запис для `data/`:
+   ```bash
+   chmod 755 data
+   ```
+3. Відкрийте `https://ваш-домен/shop/` — демо-товари завантажаться з seed-даних.
+4. Адмінка: `https://ваш-домен/shop/admin/` — змініть логін перед продакшеном.
 
 ### Локальний сервер
 
 ```bash
-cd shop && php -S localhost:8080
+cd shop
+php -S localhost:8080
+```
+
+Відкрийте http://localhost:8080/
+
+### Конфігурація (`config.php`)
+
+```php
+define('SH_BASE_PATH', '/shop');
+define('SH_SITE_NAME', 'Shop CMS');
+define('SH_CURRENCY', 'NOK');
+define('SH_DEMO_MODE', true);
+```
+
+---
+
+## Структура проєкту
+
+```
+shop/
+├── index.php              # Головна
+├── search.php             # Пошук у каталозі
+├── product.php            # Картка товару
+├── cart.php / checkout.php
+├── login.php              # Демо-вхід покупця
+├── contact.php / page.php
+├── config.php / init.php
+├── lang/                  # NO, EN, UA, RU, SV — UI вітрини
+├── includes/              # Header, SEO, кошик, AI, платежі, блоки
+├── assets/css|js/
+├── data/                  # товари, категорії, налаштування (JSON)
+├── admin/                 # Повна адмін-панель
+├── site/                  # Маркетинговий лендінг (NO, EN, UA, RU, SV, LT)
+├── screenshot/            # Скріншоти адмінки та вітрини
+├── sitemap*.php
+└── LICENSE
 ```
 
 ---
 
 ## Скріншоти
 
-Папка `screenshot/` — dashboard, каталог, AI, платежі, SEO та інше. Повний список у [README.md](README.md#screenshots).
-
 | Екран | Файл |
 |-------|------|
 | Адмін dashboard | `screenshot/dashboard.jpg` |
-| Товари | `screenshot/catalog_product.jpg` |
+| Каталог товарів | `screenshot/catalog_product.jpg` |
 | Категорії | `screenshot/catalog_categories.jpg` |
+| Налаштування магазину | `screenshot/store_setting.jpg` |
+| Блоки головної | `screenshot/main_block.jpg` |
+| Редактор сервісних сторінок | `screenshot/servise_page_editor.jpg` |
+| Посилання у футері | `screenshot/footer_link_editor.jpg` |
+| Налаштування шапки | `screenshot/header_setting.jpg` |
+| Зовнішній вигляд / кольори | `screenshot/seting_color.jpg` |
+| SEO та Schema | `screenshot/seo_schema.jpg` |
+| Генератор sitemap | `screenshot/generate_schema_sitemap.jpg` |
+| AI-чат віджет | `screenshot/integrations_chat.jpg` |
 | AI-асистент | `screenshot/integrations_ai_assistant.jpg` |
-| Конструктор блоків | `screenshot/main_block.jpg` |
+| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
+| Bring відстеження | `screenshot/integrations_bring_posten_api.jpg` |
+| Розширені налаштування | `screenshot/advanced_settings.jpg` |
 
 ---
 
 ## Демо-режим
 
 - Жовта смуга «демо» на всіх сторінках
-- Без реальних платежів
+- Без реальних платежів — кошик лише в сесії
 - Демо-товари з Unsplash
-- AI працює з локальними шаблонами без ключа
+- AI працює з локальними шаблонами без API-ключа
 
 ---
 
-## Автор і ліцензія
+## Автор і комерційна ліцензія
 
 **Ruslan Bilohash**
 - Сайт: https://bilohash.com/
 - GitHub: https://github.com/Ruslan-Bilohash/
 - Email: rbilohash@gmail.com
 
-Для **комерційної ліцензії**, повного коду або **останньої версії** — звертайтесь до автора. [LICENSE](LICENSE).
+Для **комерційної ліцензії**, повного коду, індивідуальної розробки або **останньої версії** — звертайтесь до автора. [LICENSE](LICENSE).

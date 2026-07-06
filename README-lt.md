@@ -50,11 +50,11 @@ Shop CMS turi **įmontuotą AI automatizaciją** (Grok / OpenAI — API raktas a
 | **Kategorijos** | Siūlo pavadinimus, slug ir SEO tekstą |
 | **Kalbos** | Verčia visus UI kalbų failus iš anglų |
 | **SEO** | Generuoja meta pavadinimus, aprašymus ir raktažodžius |
-| **Pagrindinis puslapis** | AI blokų konstruktorius — kontaktų formos, CTA, ikonų tinkleliai |
+| **Pagrindinis puslapis** | AI blokų konstruktorius — kontaktų formos, CTA, ikonų tinkleliai iš natūralios kalbos |
 | **Viešas pokalbis** | Plaukiojantis AI pardavimų asistentas vitrinoje |
 | **Naujienos ir turinys** | Paslaugų puslapiai ir HTML blokai su AI redagavimu |
 
-Demo režimas veikia **be API rakto** — naudojami vietiniai šablonai.
+Demo režimas veikia **be API rakto** — naudojami vietiniai šablonai, kad galėtumėte iš karto išbandyti darbo eigą.
 
 ---
 
@@ -62,19 +62,20 @@ Demo režimas veikia **be API rakto** — naudojami vietiniai šablonai.
 
 ### Vieša vitrina
 - Produktų katalogas su paieška, filtrais, kategorijomis ir rūšiavimu
-- Produktų puslapiai su Schema.org Product, išpardavimo ženklais
+- Produktų puslapiai su Schema.org Product, išpardavimo ženklais, susijusiais produktais
 - Sesijos krepšelis (pridėti, keisti kiekį, pašalinti)
 - Daugiakalbis UI: **norvegų** (numatyta), **anglų**, **ukrainiečių**, **rusų**, **švedų**, **lietuvių** (`?lang=` + slapukas)
 - Demo kliento prisijungimas: telefonas, Google ir Apple OAuth
 - Siuntos sekimas (Bring / Posten demo)
-- Kontaktų forma, paslaugų puslapiai, SEO vertikalės
+- Kontaktų forma, paslaugų puslapiai (pristatymas, privatumas, slapukai, pasirinktiniai puslapiai)
+- SEO vertikalės (mada, elektronika, B2B ir kt.)
 - Adaptyvus šviesus dizainas, mobilus meniu
 - GDPR slapukų banneris
 
 ### Administravimo panelė
-- **Dashboard** — produktai, kategorijos, krepšelio statistika
+- **Dashboard** — produktai, kategorijos, krepšelio statistika, diagramos
 - **Katalogas** — produktai, kategorijų rikiavimas, greitos užklausos
-- **Turinys** — pagrindinio puslapio blokai, AI konstruktorius, paslaugų puslapiai
+- **Turinys** — pagrindinio puslapio blokai, AI konstruktorius, paslaugų puslapiai, poraštė ir antraštė
 - **Dizainas** — spalvos, produktų kortelės, greitas pirkimas
 - **Rinkodara** — globalus SEO, Schema.org, XML sitemap, analitika
 - **Integracijos** — AI asistentas, viešas chat, reCAPTCHA, klientų prisijungimas, mokėjimai (PayPal, Stripe, Vipps, COD, Google/Apple Pay), Bring sekimas
@@ -83,24 +84,26 @@ Demo režimas veikia **be API rakto** — naudojami vietiniai šablonai.
 - Daugiakalbis admin
 
 ### Produkto svetainė (`/site/`)
-- Shop CMS pristatymo puslapis su ekrano nuotraukomis
+- Shop CMS pristatymo puslapis
+- Ekrano nuotraukos, versijos informacija, technologijų stack, užsakymo forma
 
 ---
 
 ## Technologijos
 
 - PHP 8+ (be framework)
-- JSON saugykla — MySQL/PostgreSQL pagal užklausą
+- JSON saugykla (`data/*.json`, `data/products.php` seed) — MySQL/PostgreSQL pagal užklausą produkcijai
 - Modulinis i18n (`lang/*.php`)
-- Apache `.htaccess`, canonical, hreflang, Schema.org, sitemap
+- Apache `.htaccess`, kanoniniai URL, hreflang, Schema.org, sitemap indeksas
 - Font Awesome 6, paprastas CSS ir JS
+- CodeMirror admin panelėje HTML/JS redagavimui
 
 ---
 
 ## Reikalavimai
 
 - PHP 8.0 ar naujesnė
-- Apache su `mod_rewrite`
+- Apache su `mod_rewrite` (arba nginx atitikmuo)
 - Rašomas `data/` katalogas
 
 ---
@@ -109,22 +112,80 @@ Demo režimas veikia **be API rakto** — naudojami vietiniai šablonai.
 
 ```bash
 git clone https://github.com/Ruslan-Bilohash/shop.git shop
-chmod 755 data
 ```
 
-Atidarykite `https://jusu-domenas.lt/shop/` — demo produktai įkeliami automatiškai.
+1. Nukopijuokite `shop/` aplanką į web root (pvz. `/shop/`).
+2. Nustatykite rašymo teises `data/`:
+   ```bash
+   chmod 755 data
+   ```
+3. Atidarykite `https://jusu-domenas.lt/shop/` — demo produktai įkeliami iš seed duomenų.
+4. Admin: `https://jusu-domenas.lt/shop/admin/` — pakeiskite prisijungimo duomenis prieš produkciją.
 
-### Vietinis serveris
+### Vietinis PHP serveris
 
 ```bash
-cd shop && php -S localhost:8080
+cd shop
+php -S localhost:8080
+```
+
+Atidarykite http://localhost:8080/
+
+### Konfigūracija (`config.php`)
+
+```php
+define('SH_BASE_PATH', '/shop');
+define('SH_SITE_NAME', 'Shop CMS');
+define('SH_CURRENCY', 'NOK');
+define('SH_DEMO_MODE', true);
+```
+
+---
+
+## Projekto struktūra
+
+```
+shop/
+├── index.php              # Pagrindinis puslapis
+├── search.php             # Katalogo paieška
+├── product.php            # Produkto detalė
+├── cart.php / checkout.php
+├── login.php              # Demo kliento prisijungimas
+├── contact.php / page.php
+├── config.php / init.php
+├── lang/                  # NO, EN, UA, RU, SV vitrinos UI
+├── includes/              # Header, SEO, krepšelis, AI, mokėjimai, blokai
+├── assets/css|js/
+├── data/                  # produktai, kategorijos, nustatymai (JSON)
+├── admin/                 # Pilna admin panelė
+├── site/                  # Rinkodaros landing (NO, EN, UA, RU, SV, LT)
+├── screenshot/            # Admin ir vitrinos ekrano nuotraukos
+├── sitemap*.php
+└── LICENSE
 ```
 
 ---
 
 ## Ekrano nuotraukos
 
-Žr. aplanką `screenshot/` — dashboard, katalogas, AI integracijos, mokėjimai, SEO ir kt. Pilnas sąrašas [README.md](README.md#screenshots).
+| Ekranas | Failas |
+|---------|--------|
+| Admin dashboard | `screenshot/dashboard.jpg` |
+| Produktų katalogas | `screenshot/catalog_product.jpg` |
+| Kategorijos | `screenshot/catalog_categories.jpg` |
+| Parduotuvės nustatymai | `screenshot/store_setting.jpg` |
+| Pagrindinio puslapio blokai | `screenshot/main_block.jpg` |
+| Paslaugų puslapio redaktorius | `screenshot/servise_page_editor.jpg` |
+| Poraštės nuorodos | `screenshot/footer_link_editor.jpg` |
+| Antraštės nustatymai | `screenshot/header_setting.jpg` |
+| Išvaizda / spalvos | `screenshot/seting_color.jpg` |
+| SEO ir Schema | `screenshot/seo_schema.jpg` |
+| Sitemap generatorius | `screenshot/generate_schema_sitemap.jpg` |
+| AI chat valdiklis | `screenshot/integrations_chat.jpg` |
+| AI asistentas | `screenshot/integrations_ai_assistant.jpg` |
+| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
+| Bring sekimas | `screenshot/integrations_bring_posten_api.jpg` |
+| Išplėstiniai nustatymai | `screenshot/advanced_settings.jpg` |
 
 ---
 
@@ -133,12 +194,15 @@ cd shop && php -S localhost:8080
 - Geltona demo juosta visuose puslapiuose
 - Jokių tikrų mokėjimų — krepšelis tik sesijoje
 - Demo produktai su Unsplash vaizdais
-- AI naudoja vietinius šablonus be API rakto
+- AI naudoja vietinius šablonus, kai API raktas nenustatytas
 
 ---
 
-## Autorius ir licencija
+## Autorius ir komercinė licencija
 
-**Ruslan Bilohash** — https://bilohash.com/ · rbilohash@gmail.com
+**Ruslan Bilohash**
+- Svetainė: https://bilohash.com/
+- GitHub: https://github.com/Ruslan-Bilohash/
+- El. paštas: rbilohash@gmail.com
 
-**Komercinei licencijai**, pilnam kodui ar **naujausiai produkcinei versijai** kreipkitės į autorių. Žr. [LICENSE](LICENSE).
+**Komercinei licencijai**, pilnam kodui, individualiai plėtrai ar **naujausiai produkcinei versijai** kreipkitės tiesiogiai į autorių. Žr. [LICENSE](LICENSE).

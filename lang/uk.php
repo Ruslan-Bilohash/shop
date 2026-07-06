@@ -532,8 +532,6 @@ return [
         'store_tracking_section' => 'Відстеження (аналітика)',
         'tracking_gtag_id' => 'Google Analytics ID',
         'tracking_meta_pixel' => 'Meta Pixel ID',
-        'advanced_custom_code_section' => 'Власний код та JS',
-        'advanced_custom_code_help' => 'Додайте HTML у <head> або JavaScript у футер публічної вітрини. Код виконується на всіх сторінках магазину.',
         'custom_head_html' => 'HTML у <head>',
         'custom_head_html_hint' => 'Без обгортки — вставляється перед </head>. Для верифікації сайту, preconnect тощо.',
         'custom_footer_js' => 'JavaScript у футері',
