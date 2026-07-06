@@ -24,10 +24,21 @@ function sh_ai_model_catalog(): array
     ];
 }
 
+/** Image generation models (separate API — /images/generations). */
+function sh_ai_image_model_catalog(): array
+{
+    return [
+        'grok-2-image-1212' => ['hint' => 'ai_model_hint_grok_2_image', 'provider' => 'grok'],
+        'grok-2-image'      => ['hint' => 'ai_model_hint_grok_2_image_latest', 'provider' => 'grok'],
+        'dall-e-3'          => ['hint' => 'ai_model_hint_dall_e_3', 'provider' => 'openai'],
+        'gpt-image-1'       => ['hint' => 'ai_model_hint_gpt_image_1', 'provider' => 'openai'],
+    ];
+}
+
 /** @return list<string> */
 function sh_ai_contexts(): array
 {
-    return ['default', 'product', 'chat', 'news', 'seo'];
+    return ['default', 'product', 'chat', 'news', 'seo', 'image'];
 }
 
 /** @return array<string, string> */
@@ -39,6 +50,7 @@ function sh_ai_context_advice_keys(): array
         'chat'    => 'ai_context_advice_chat',
         'news'    => 'ai_context_advice_news',
         'seo'     => 'ai_context_advice_seo',
+        'image'   => 'ai_context_advice_image',
     ];
 }
 
@@ -110,6 +122,7 @@ function sh_ai_defaults(): array
         'ai_model_chat'           => '',
         'ai_model_news'           => '',
         'ai_model_seo'            => '',
+        'ai_model_image'          => 'grok-2-image-1212',
         'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars. meta_description MUST be 120-160 characters (inclusive) in EVERY language — compelling Google snippet with keyword, benefit and call-to-action. Count characters carefully. Professional, SEO-friendly, demo-safe tone.',
         'ai_prompt_news'          => 'You are a senior technical editor for Shop CMS — a PHP e-commerce demo from Norway. Topic: {topic}. Source language: {source_lang}. Return ONLY valid JSON (no markdown) with keys: name, excerpt, body, seo — each an object with every active language key (no, en, uk, ru, sv, lt). excerpt: 2–3 sentences (max 280 chars). body: rich HTML with <p>, <h2>, <h3>, <ul>/<li>, <strong>, <a> only — MINIMUM 5 paragraphs and 3 section headings per language; write a full release article (not a short note), ~500–900 words equivalent with concrete features, admin paths and storefront impact. seo has meta_title, meta_description, meta_keywords per language. meta_title max 60 chars. meta_description MUST be 120–160 characters in EVERY language. Professional release-note tone.',
         'ai_prompt_seo'           => 'You are an SEO specialist for Norway/EU e-commerce. Task: {task_type}. Target name: "{target_name}". Slug: {slug}. Country ISO: {country_code}. Source language: {source_lang}. Return ONLY valid JSON (no markdown). For site task use keys: seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, seo_default_country_code (2 letters), seo_twitter_site (optional @handle). For category task use key "seo" with meta_title, meta_description, meta_keywords, intro — each an object with every active language key. meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences. Professional, Schema.org-friendly tone.',
@@ -132,7 +145,7 @@ function sh_ai_resolve_config(array $ai, string $context = 'default'): array
     }
 
     $context = strtolower(trim($context));
-    $contextKey = in_array($context, ['product', 'chat', 'news', 'seo'], true) ? 'ai_model_' . $context : '';
+    $contextKey = in_array($context, ['product', 'chat', 'news', 'seo', 'image'], true) ? 'ai_model_' . $context : '';
     $model = '';
     if ($contextKey !== '') {
         $model = trim((string) ($ai[$contextKey] ?? ''));
@@ -182,6 +195,42 @@ function sh_ai_enabled(?array $settings = null): bool
 {
     $ai = sh_ai_settings($settings);
     return !empty($ai['ai_enabled']) && trim((string) ($ai['ai_api_key'] ?? '')) !== '';
+}
+
+/** @return array{provider:string,api_base:string,model:string} */
+function sh_ai_resolve_image_config(?array $settings = null): array
+{
+    $ai = sh_ai_settings($settings);
+    $catalog = sh_ai_image_model_catalog();
+    $model = trim((string) ($ai['ai_model_image'] ?? ''));
+    if ($model === '' || !isset($catalog[$model])) {
+        $model = 'grok-2-image-1212';
+    }
+    $provider = $catalog[$model]['provider'] ?? 'grok';
+    $textCfg = sh_ai_resolve_config($ai, 'default');
+    $apiBase = $textCfg['api_base'];
+    if ($provider === 'openai' && str_contains($apiBase, 'api.x.ai')) {
+        $apiBase = 'https://api.openai.com/v1';
+    }
+    return ['provider' => $provider, 'api_base' => $apiBase, 'model' => $model];
+}
+
+/**
+ * @param array<string, string> $ta
+ * @return array<string, string>
+ */
+function sh_ai_image_model_options_for_admin(array $ta): array
+{
+    $out = [];
+    foreach (sh_ai_image_model_catalog() as $model => $meta) {
+        $hintKey = $meta['hint'] ?? '';
+        $hint = $hintKey !== '' ? sh_settings_admin_label($hintKey, $ta) : '';
+        if ($hint === $hintKey) {
+            $hint = '';
+        }
+        $out[$model] = $hint !== '' ? $model . ' — ' . $hint : $model;
+    }
+    return $out;
 }
 
 /**

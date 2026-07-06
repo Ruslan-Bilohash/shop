@@ -16,6 +16,8 @@ $contextModels = [
     'news'    => ['key' => 'ai_model_news', 'label' => sh_settings_admin_label('ai_model_news', $ta)],
     'seo'     => ['key' => 'ai_model_seo', 'label' => sh_settings_admin_label('ai_model_seo', $ta)],
 ];
+$imageModelOptions = sh_ai_image_model_options_for_admin($ta);
+$storedImageModel = trim((string) ($ai['ai_model_image'] ?? 'grok-2-image-1212'));
 $aiModelUseDefault = sh_settings_admin_label('ai_model_use_default', $ta);
 $aiModelCustomOption = sh_settings_admin_label('ai_model_custom_option', $ta);
 $aiContextAdvice = sh_ai_context_advice_labels($ta);
@@ -112,6 +114,20 @@ $aiRecommendedLabel = sh_settings_admin_label('ai_model_recommended_for', $ta);
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
+            </div>
+            <div class="adm-field adm-field--wide adm-ai-image-model-row">
+                <label><?= htmlspecialchars(sh_settings_admin_label('ai_model_image', $ta)) ?></label>
+                <?php if (!empty($aiContextAdvice['image'])): ?>
+                <p class="adm-ai-context-advice"><?= htmlspecialchars($aiContextAdvice['image']) ?></p>
+                <?php endif; ?>
+                <select name="ai_model_image" class="adm-select">
+                    <?php foreach ($imageModelOptions as $modelId => $label): ?>
+                    <option value="<?= htmlspecialchars($modelId) ?>" <?= $storedImageModel === $modelId ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($label) ?>
+                    </option>
+                    <?php endforeach; ?>
+                </select>
+                <small class="adm-field-hint"><?= htmlspecialchars(sh_settings_admin_label('ai_model_image_hint', $ta)) ?></small>
             </div>
     <?php sh_admin_section_close(); ?>
 

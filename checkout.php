@@ -41,6 +41,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($placed_order && !empty($invSettings['invoice_auto_send']) && filter_var($customer['email'], FILTER_VALIDATE_EMAIL)) {
                 sh_send_order_invoice($placed_order['id'], $customer['email'], $settings);
             }
+            if ($placed_order) {
+                require_once __DIR__ . '/includes/telegram-notify.php';
+                sh_telegram_notify_order($placed_order, $settings);
+            }
         }
 
         if ($placed_order) {
