@@ -1,7 +1,8 @@
 <?php
 require_once dirname(__DIR__) . '/init.php';
 require_once dirname(__DIR__) . '/includes/admin-auth.php';
-require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
+require_once dirname(__DIR__) . '/includes/ecosystem-load.php';
+sh_require_ecosystem('bh-cms-site-settings.php');
 
 $ta = $t['admin'] ?? [];
 $admin_page = $admin_page ?? 'dashboard';
