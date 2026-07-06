@@ -287,6 +287,8 @@ return array_replace_recursive($en, [
     'screenshots' => [
         'title' => 'Skjermbilder og admin-omvisning',
         'intro' => 'Ekte skjermbilder fra live demo — komprimert WebP for rask lasting. Logg inn med demo / demo2026.',
+        'loading' => 'Laster galleri…',
+        'load_error' => 'Kunne ikke laste skjermbildegalleriet.',
         'lightbox_prev' => 'Forrige skjermbilde',
         'lightbox_next' => 'Neste skjermbilde',
         'lightbox_close' => 'Lukk galleri',

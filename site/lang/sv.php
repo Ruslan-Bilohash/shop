@@ -281,6 +281,8 @@ return array_replace_recursive($en, [
     'screenshots' => [
         'title' => 'Skärmdumpar och admin-genomgång',
         'intro' => 'Riktiga skärmdumpar från live demo — komprimerade WebP för snabb laddning. Logga in med demo / demo2026.',
+        'loading' => 'Laddar galleri…',
+        'load_error' => 'Kunde inte ladda skärmdumpsgalleriet.',
         'lightbox_prev' => 'Föregående skärmdump',
         'lightbox_next' => 'Nästa skärmdump',
         'lightbox_close' => 'Stäng galleri',

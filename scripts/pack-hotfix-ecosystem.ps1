@@ -11,8 +11,9 @@ New-Item -ItemType Directory -Path (Join-Path $staging 'includes') -Force | Out-
 New-Item -ItemType Directory -Path (Join-Path $staging 'admin') -Force | Out-Null
 
 Copy-Item (Join-Path $install 'includes\*') (Join-Path $staging 'includes') -Recurse -Force
-foreach ($f in @('init.php', 'settings-recaptcha.php', 'settings-appearance.php', 'settings-chat.php')) {
-    Copy-Item (Join-Path $install "admin\$f") (Join-Path $staging "admin\$f") -Force
+New-Item -ItemType Directory -Path (Join-Path $staging 'admin') -Force | Out-Null
+Get-ChildItem (Join-Path $install 'admin') -Filter '*.php' -File | ForEach-Object {
+    Copy-Item $_.FullName (Join-Path $staging "admin\$($_.Name)") -Force
 }
 
 if (Test-Path $out) { Remove-Item $out -Force }

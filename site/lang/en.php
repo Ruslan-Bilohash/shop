@@ -155,6 +155,8 @@ return [
     'screenshots' => [
         'title' => 'Screenshots & admin walkthrough',
         'intro' => 'Real admin panel captures from the live demo — compressed WebP for fast loading. Log in with demo / demo2026 and explore the same UI.',
+        'loading' => 'Loading gallery…',
+        'load_error' => 'Could not load screenshot gallery.',
         'lightbox_prev' => 'Previous screenshot',
         'lightbox_next' => 'Next screenshot',
         'lightbox_close' => 'Close gallery',

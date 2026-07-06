@@ -200,6 +200,17 @@ a:hover { color: var(--shs-primary-hover); }
 /* Screenshots gallery */
 .shs-screenshots { background: var(--shs-cream); border-top: 1px solid var(--shs-border); }
 .shs-screenshots-intro { margin: 0 auto 32px; text-align: center; }
+.shs-screenshots-host { min-height: 120px; }
+.shs-screenshots-loading {
+    margin: 0; padding: 28px 16px; text-align: center; color: var(--shs-muted); font-size: 14px;
+}
+.shs-screenshots-loading::before {
+    content: ''; display: block; width: 36px; height: 36px; margin: 0 auto 12px;
+    border: 3px solid rgba(37, 99, 235, .2); border-top-color: var(--shs-primary);
+    border-radius: 50%; animation: shs-spin .8s linear infinite;
+}
+@keyframes shs-spin { to { transform: rotate(360deg); } }
+.shs-screenshots-error { margin: 0; padding: 20px; text-align: center; color: #b45309; font-size: 14px; }
 .shs-text-center { text-align: center; margin-left: auto; margin-right: auto; }
 .shs-subtitle { font-size: 1.25rem; margin: 0 0 16px; text-align: center; }
 .shs-muted-block { color: var(--shs-muted); font-size: 14px; text-align: center; max-width: 720px; margin: 0 auto 24px; line-height: 1.55; }

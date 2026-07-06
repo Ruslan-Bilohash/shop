@@ -282,6 +282,8 @@ return array_replace_recursive($en, [
     'screenshots' => [
         'title' => 'Ekrano nuotraukos ir admin apžvalga',
         'intro' => 'Tikros nuotraukos iš live demo — suspaustos WebP greitam įkėlimui. Prisijunkite demo / demo2026.',
+        'loading' => 'Įkeliama galerija…',
+        'load_error' => 'Nepavyko įkelti ekrano nuotraukų galerijos.',
         'lightbox_prev' => 'Ankstesnė nuotrauka',
         'lightbox_next' => 'Kita nuotrauka',
         'lightbox_close' => 'Uždaryti galeriją',

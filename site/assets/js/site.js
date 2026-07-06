@@ -97,18 +97,31 @@
         if (e.key === 'Escape') closeNav();
     });
 
-    (function initScreenshotLightbox() {
-        var root = document.getElementById('shsLightbox');
-        var dataEl = document.getElementById('shsLightboxData');
-        if (!root || !dataEl) return;
+    var lightboxState = null;
 
-        var items;
+    function shsReadLightboxItems() {
+        var dataEl = document.getElementById('shsLightboxData');
+        if (!dataEl) return [];
         try {
-            items = JSON.parse(dataEl.textContent || '[]');
-        } catch (e) {
+            var items = JSON.parse(dataEl.textContent || '[]');
+            return Array.isArray(items) ? items : [];
+        } catch (err) {
+            return [];
+        }
+    }
+
+    function shsBindScreenshotLightbox() {
+        var root = document.getElementById('shsLightbox');
+        if (!root) {
+            lightboxState = null;
             return;
         }
-        if (!items.length) return;
+
+        var items = shsReadLightboxItems();
+        if (!items.length) {
+            lightboxState = null;
+            return;
+        }
 
         var img = document.getElementById('shsLightboxImg');
         var caption = document.getElementById('shsLightboxCaption');
@@ -160,19 +173,18 @@
             render();
         }
 
-        document.querySelectorAll('[data-shs-lightbox]').forEach(function (btn) {
-            btn.addEventListener('click', function () {
-                var idx = parseInt(btn.getAttribute('data-shs-lightbox'), 10);
-                if (!isNaN(idx)) openAt(idx);
-            });
-        });
+        lightboxState = { root: root, openAt: openAt, close: close, step: step };
 
         root.querySelectorAll('[data-shs-lightbox-close]').forEach(function (el) {
             el.addEventListener('click', close);
         });
 
-        if (prevBtn) prevBtn.addEventListener('click', function () { step(-1); });
-        if (nextBtn) nextBtn.addEventListener('click', function () { step(1); });
+        if (prevBtn) {
+            prevBtn.onclick = function () { step(-1); };
+        }
+        if (nextBtn) {
+            nextBtn.onclick = function () { step(1); };
+        }
 
         root.addEventListener('touchstart', function (e) {
             if (!e.touches || !e.touches[0]) return;
@@ -187,13 +199,63 @@
             if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
             step(dx < 0 ? 1 : -1);
         }, { passive: true });
+    }
 
-        document.addEventListener('keydown', function (e) {
-            if (root.hidden) return;
-            if (e.key === 'Escape') close();
-            else if (e.key === 'ArrowLeft') step(-1);
-            else if (e.key === 'ArrowRight') step(1);
-        });
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-shs-lightbox]');
+        if (!btn) return;
+        if (!lightboxState) shsBindScreenshotLightbox();
+        if (!lightboxState) return;
+        var idx = parseInt(btn.getAttribute('data-shs-lightbox'), 10);
+        if (!isNaN(idx)) lightboxState.openAt(idx);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (!lightboxState || lightboxState.root.hidden) return;
+        if (e.key === 'Escape') lightboxState.close();
+        else if (e.key === 'ArrowLeft') lightboxState.step(-1);
+        else if (e.key === 'ArrowRight') lightboxState.step(1);
+    });
+
+    (function initLazyScreenshots() {
+        var host = document.getElementById('shsScreenshotsHost');
+        if (!host) return;
+
+        var src = host.getAttribute('data-shs-carousel-src');
+        if (!src) return;
+
+        var loaded = false;
+
+        function loadCarousel() {
+            if (loaded) return;
+            loaded = true;
+            fetch(src, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('screenshots');
+                    return res.text();
+                })
+                .then(function (html) {
+                    host.innerHTML = html;
+                    shsBindScreenshotLightbox();
+                })
+                .catch(function () {
+                    host.innerHTML = '<p class="shs-screenshots-error">' + (host.getAttribute('data-shs-error') || 'Could not load gallery.') + '</p>';
+                });
+        }
+
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        loadCarousel();
+                        observer.disconnect();
+                    }
+                });
+            }, { rootMargin: '240px 0px' });
+            observer.observe(host);
+        } else {
+            loadCarousel();
+        }
     })();
 
     document.querySelectorAll('[data-eco-more-btn]').forEach(function (btn) {

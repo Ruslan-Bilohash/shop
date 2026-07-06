@@ -62,12 +62,12 @@ function shs_seo_json(array $graphs): string
 
 function shs_site_style_version(): string
 {
-    return '11';
+    return '12';
 }
 
 function shs_site_script_version(): string
 {
-    return '4';
+    return '5';
 }
 
 function shs_meta_description_fit(string $text, int $min = 150, int $max = 160): string

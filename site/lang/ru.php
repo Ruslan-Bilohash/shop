@@ -282,6 +282,8 @@ return array_replace_recursive($en, [
     'screenshots' => [
         'title' => 'Скриншоты и обзор админки',
         'intro' => 'Реальные снимки из live demo — сжатые WebP для быстрой загрузки. Войдите demo / demo2026.',
+        'loading' => 'Загрузка галереи…',
+        'load_error' => 'Не удалось загрузить галерею скриншотов.',
         'lightbox_prev' => 'Предыдущий скриншот',
         'lightbox_next' => 'Следующий скриншот',
         'lightbox_close' => 'Закрыть галерею',
