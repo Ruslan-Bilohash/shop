@@ -1,0 +1,38 @@
+.adm-settings-tabs {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+}
+.adm-settings-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--adm-muted, #64748b);
+    border: 1px solid var(--adm-border, #e2e8f0);
+    background: var(--adm-card, #fff);
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all .15s;
+}
+.adm-settings-tab:hover { border-color: var(--adm-accent, #2563eb); color: var(--adm-accent-dark, #1d4ed8); text-decoration: none; }
+.adm-settings-tab.active { background: var(--adm-accent, #2563eb); border-color: var(--adm-accent, #2563eb); color: #fff; }
+.adm-settings-tab i { font-size: 14px; }
+.adm-form-actions-sticky {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    background: linear-gradient(180deg, transparent, var(--adm-bg, #f8fafc) 30%);
+    padding: 16px 0 8px;
+}
+.adm-field input[type="color"] { width: 100%; height: 44px; padding: 4px; cursor: pointer; }
+.adm-color-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }

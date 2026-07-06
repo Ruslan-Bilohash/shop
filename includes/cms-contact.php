@@ -391,5 +391,6 @@ function cms_contact_ensure_csrf(): string
 
 function cms_contact_stylesheet_href(): string
 {
-    return '/includes/cms-contact.css?v=4';
+    $path = 'includes/cms-contact.css?v=4';
+    return function_exists('sh_url') ? sh_url($path) : '/' . $path;
 }

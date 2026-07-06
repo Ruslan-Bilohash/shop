@@ -1,0 +1,361 @@
+/* BILOHASH Chat Widget — slate-950 / cyan-400 ecosystem design */
+
+.bh-chat-root {
+    --bh-chat-bg: #020617;
+    --bh-chat-surface: rgba(15, 23, 42, 0.92);
+    --bh-chat-border: rgba(34, 211, 238, 0.28);
+    --bh-chat-cyan: #22d3ee;
+    --bh-chat-cyan-dim: #0891b2;
+    --bh-chat-text: #e2e8f0;
+    --bh-chat-muted: #94a3b8;
+    --bh-chat-bot: rgba(30, 41, 59, 0.95);
+    --bh-chat-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(34, 211, 238, 0.12);
+    --bh-chat-z: 99990;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.bh-chat-toggle {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: var(--bh-chat-z);
+    width: 3.75rem;
+    height: 3.75rem;
+    border: 1px solid var(--bh-chat-border);
+    border-radius: 1.25rem;
+    background: linear-gradient(135deg, var(--bh-chat-cyan), #2dd4bf);
+    color: #020617;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 32px rgba(34, 211, 238, 0.35);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+}
+
+.bh-chat-toggle:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 16px 40px rgba(34, 211, 238, 0.45);
+}
+
+.bh-chat-toggle:focus-visible {
+    outline: 2px solid var(--bh-chat-cyan);
+    outline-offset: 3px;
+}
+
+.bh-chat-toggle svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.bh-chat-toggle.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.85);
+}
+
+.bh-chat-panel {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    z-index: calc(var(--bh-chat-z) + 1);
+    width: min(400px, calc(100vw - 2rem));
+    height: min(620px, calc(100vh - 6rem));
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    border: 1px solid var(--bh-chat-border);
+    background: var(--bh-chat-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--bh-chat-shadow);
+    color: var(--bh-chat-text);
+    transform-origin: bottom right;
+    animation: bh-chat-in 0.28s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.bh-chat-panel.is-open {
+    display: flex;
+}
+
+@keyframes bh-chat-in {
+    from { opacity: 0; transform: scale(0.92) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.bh-chat-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1.125rem;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.6));
+}
+
+.bh-chat-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.bh-chat-avatar {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.875rem;
+    background: linear-gradient(135deg, var(--bh-chat-cyan), #2dd4bf);
+    color: #020617;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: -0.04em;
+}
+
+.bh-chat-meta {
+    min-width: 0;
+}
+
+.bh-chat-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bh-chat-subtitle {
+    font-size: 0.75rem;
+    color: var(--bh-chat-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.1rem;
+}
+
+.bh-chat-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.7);
+}
+
+.bh-chat-actions {
+    display: flex;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.bh-chat-icon-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 0.65rem;
+    background: rgba(15, 23, 42, 0.5);
+    color: var(--bh-chat-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.bh-chat-icon-btn:hover {
+    background: rgba(34, 211, 238, 0.15);
+    border-color: var(--bh-chat-border);
+}
+
+.bh-chat-icon-btn svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.bh-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem 1.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(34, 211, 238, 0.35) transparent;
+}
+
+.bh-chat-msg {
+    max-width: 88%;
+    padding: 0.7rem 0.95rem;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.bh-chat-msg--user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, var(--bh-chat-cyan), #2dd4bf);
+    color: #020617;
+    border-bottom-right-radius: 0.35rem;
+}
+
+.bh-chat-msg--bot {
+    align-self: flex-start;
+    background: var(--bh-chat-bot);
+    color: var(--bh-chat-text);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-bottom-left-radius: 0.35rem;
+}
+
+.bh-chat-msg--typing {
+    align-self: flex-start;
+    background: var(--bh-chat-bot);
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    padding: 0.65rem 1rem;
+    display: flex;
+    gap: 0.3rem;
+}
+
+.bh-chat-msg--typing span {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--bh-chat-cyan);
+    animation: bh-chat-dot 1.2s infinite ease-in-out;
+}
+
+.bh-chat-msg--typing span:nth-child(2) { animation-delay: 0.15s; }
+.bh-chat-msg--typing span:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes bh-chat-dot {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+    40% { opacity: 1; transform: scale(1); }
+}
+
+.bh-chat-compose {
+    flex-shrink: 0;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.875rem 1rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+    background: rgba(2, 6, 23, 0.65);
+}
+
+.bh-chat-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(15, 23, 42, 0.8);
+    color: #f8fafc;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s ease;
+}
+
+.bh-chat-input::placeholder {
+    color: var(--bh-chat-muted);
+}
+
+.bh-chat-input:focus {
+    border-color: var(--bh-chat-cyan);
+}
+
+.bh-chat-send {
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--bh-chat-cyan), #2dd4bf);
+    color: #020617;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease;
+}
+
+.bh-chat-send:hover {
+    transform: scale(1.05);
+}
+
+.bh-chat-send svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.bh-chat-footer {
+    flex-shrink: 0;
+    padding: 0.5rem 1rem 0.65rem;
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--bh-chat-muted);
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+    background: rgba(2, 6, 23, 0.5);
+}
+
+.bh-chat-footer a {
+    color: var(--bh-chat-cyan);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.bh-chat-footer a:hover {
+    text-decoration: underline;
+}
+
+/* GDPR banner offset */
+body.gdpr-banner-active .bh-chat-toggle,
+body.gdpr-banner-active .bh-chat-panel {
+    bottom: 7.5rem;
+}
+
+body.gdpr-reject-active .bh-chat-toggle {
+    top: auto;
+}
+
+/* Mobile: full-screen sheet */
+@media (max-width: 540px) {
+    .bh-chat-panel.is-open {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        max-height: none;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        bottom: 0;
+        right: 0;
+    }
+
+    .bh-chat-toggle {
+        bottom: 1rem;
+        right: 1rem;
+        width: 3.5rem;
+        height: 3.5rem;
+        border-radius: 1rem;
+    }
+
+    body.gdpr-banner-active .bh-chat-toggle,
+    body.gdpr-banner-active .bh-chat-panel.is-open {
+        bottom: 0;
+        padding-bottom: 7rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bh-chat-panel,
+    .bh-chat-toggle,
+    .bh-chat-send {
+        animation: none;
+        transition: none;
+    }
+}
