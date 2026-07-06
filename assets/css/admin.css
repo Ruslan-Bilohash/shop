@@ -234,6 +234,8 @@ body.adm-body {
 .adm-edit-tab.active { background: var(--adm-primary); border-color: var(--adm-primary); color: #fff; }
 .adm-edit-panel { display: none; }
 .adm-edit-panel.is-active { display: block; }
+.adm-product-edit-main .adm-edit-section { display: block; margin-bottom: 20px; }
+.adm-product-edit-main .adm-edit-section:last-of-type { margin-bottom: 0; }
 .adm-ai-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%; }
 .adm-ai-status { font-size: 12px; color: var(--adm-muted); }
 .adm-ai-status--success { color: var(--adm-green); }

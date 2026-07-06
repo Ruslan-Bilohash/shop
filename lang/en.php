@@ -911,7 +911,7 @@ return [
             'tab_general' => 'General',
             'tab_names' => 'Names & descriptions',
             'tab_seo' => 'SEO & Schema',
-            'names_required' => 'Fill product name and description for all languages (Names tab).',
+            'names_required' => 'Fill product name and description for all languages.',
             'ai_generate' => 'Generate with AI',
             'ai_generating' => 'Generating…',
             'ai_ok' => 'Generated and translated for all languages.',

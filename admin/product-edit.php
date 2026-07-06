@@ -13,9 +13,9 @@ $tp = $ta['products_page'] ?? [];
 $id = trim($_GET['id'] ?? '');
 $is_new = $id === '';
 $record = $is_new ? null : sh_product_by_id($id, true);
-$edit_tab = trim($_GET['tab'] ?? 'general');
-if (!in_array($edit_tab, ['general', 'names', 'seo'], true)) {
-    $edit_tab = 'general';
+$scroll_section = trim($_GET['tab'] ?? '');
+if (!in_array($scroll_section, ['general', 'names', 'seo'], true)) {
+    $scroll_section = '';
 }
 
 if (!$is_new && $record === null) {
@@ -44,7 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = $tp['id_exists'] ?? 'This product ID already exists.';
     }
 
-    $saveTab = trim($_POST['return_tab'] ?? 'general');
     $names = [];
     $descs = [];
     foreach (sh_langs() as $code => $_info) {
@@ -59,12 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
-    if ($is_new || $saveTab === 'names') {
-        foreach (sh_langs() as $code => $_info) {
-            if ($names[$code] === '' || $descs[$code] === '') {
-                $errors[] = $tp['names_required'] ?? 'Fill product name and description for all languages (Names tab).';
-                break;
-            }
+    foreach (sh_langs() as $code => $_info) {
+        if ($names[$code] === '' || $descs[$code] === '') {
+            $errors[] = $tp['names_required'] ?? 'Fill product name and description for all languages.';
+            break;
         }
     }
 
@@ -105,12 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($ok) {
             $_SESSION['sh_admin_flash'] = ['type' => 'success', 'msg' => $tp['saved'] ?? 'Product saved.'];
-            $redirectTab = trim($_POST['return_tab'] ?? 'general');
-            $url = sh_admin_url('product-edit.php?id=' . urlencode($post_id));
-            if ($redirectTab !== 'general') {
-                $url .= '&tab=' . urlencode($redirectTab);
-            }
-            header('Location: ' . $url);
+            header('Location: ' . sh_admin_url('product-edit.php?id=' . urlencode($post_id)));
             exit;
         }
         $errors[] = $tp['save_error'] ?? 'Could not save product.';
@@ -140,13 +132,6 @@ $seo_record = $record ?? ['seo' => []];
 $seo_ctx = 'product';
 $seo_tp = $ta['seo_editor'] ?? [];
 
-$edit_tabs = [
-    'general' => $tp['tab_general'] ?? 'General',
-    'names'   => $tp['tab_names'] ?? 'Names & descriptions',
-    'seo'     => $tp['tab_seo'] ?? 'SEO & Schema',
-];
-$edit_tab_base_url = sh_admin_url('product-edit.php' . ($is_new ? '' : '?id=' . urlencode($id)));
-
 $contentChecklistLabels = $tp['content_checklist'] ?? [];
 $seoChecklistLabels = $tp['seo_checklist'] ?? [];
 $contentChecklist = sh_product_content_checklist($record, $contentChecklistLabels);
@@ -157,7 +142,7 @@ foreach (sh_langs() as $code => $info) {
 }
 
 $admin_extra_js = [
-    sh_asset('js/admin-product.js') . '?v=4',
+    sh_asset('js/admin-product.js') . '?v=5',
     sh_asset('js/admin-product-images.js') . '?v=2',
     sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];
@@ -172,17 +157,13 @@ require __DIR__ . '/includes/layout.php';
 </div>
 <?php endif; ?>
 
-<?php require __DIR__ . '/includes/edit-tabs.php'; ?>
-
 <div class="adm-product-edit-layout">
 <div class="adm-product-edit-main">
 <form method="post" class="adm-settings-form" id="shProductForm"
       data-ai-url="<?= htmlspecialchars(sh_admin_url('api/ai-product.php')) ?>"
       data-ai-source-lang="<?= htmlspecialchars($aiSourceLang) ?>">
     <input type="hidden" name="orig_id" value="<?= htmlspecialchars($record['id'] ?? $id) ?>">
-    <input type="hidden" name="return_tab" value="<?= htmlspecialchars($edit_tab) ?>">
-
-    <div class="adm-edit-panel <?= $edit_tab === 'general' ? 'is-active' : '' ?>" data-panel="general">
+    <section class="adm-edit-section" id="product-section-general" data-panel="general">
         <div class="adm-card">
             <div class="adm-card-head">
                 <h2><?= htmlspecialchars($page_title) ?></h2>
@@ -267,9 +248,9 @@ require __DIR__ . '/includes/layout.php';
                 ?>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="adm-edit-panel <?= $edit_tab === 'names' ? 'is-active' : '' ?>" data-panel="names">
+    <section class="adm-edit-section" id="product-section-names" data-panel="names">
         <div class="adm-card">
             <div class="adm-card-head adm-card-head--stack">
                 <h2><?= htmlspecialchars($tp['names_title'] ?? 'Names & descriptions') ?></h2>
@@ -323,9 +304,9 @@ require __DIR__ . '/includes/layout.php';
                 <?php endforeach; ?>
             </div>
         </div>
-    </div>
+    </section>
 
-    <div class="adm-edit-panel <?= $edit_tab === 'seo' ? 'is-active' : '' ?>" data-panel="seo">
+    <section class="adm-edit-section" id="product-section-seo" data-panel="seo">
         <div class="adm-card">
             <div class="adm-card-head adm-card-head--stack">
                 <h2><?= htmlspecialchars($seo_tp['spoiler_title'] ?? 'SEO & Schema.org') ?></h2>
@@ -343,7 +324,7 @@ require __DIR__ . '/includes/layout.php';
             </div>
             <?php $seo_panel_mode = true; require __DIR__ . '/includes/seo-spoiler.php'; ?>
         </div>
-    </div>
+    </section>
 
     <div class="adm-form-actions adm-form-actions-sticky">
         <button type="submit" class="adm-btn adm-btn-primary"><i class="fas fa-save"></i> <?= htmlspecialchars($tp['save'] ?? 'Save') ?></button>
@@ -392,6 +373,18 @@ require __DIR__ . '/includes/layout.php';
 window.SH_CHECKLIST_LANGS = <?= json_encode($checklistLangs, JSON_UNESCAPED_UNICODE) ?>;
 window.SH_CONTENT_CHECKLIST_LABELS = <?= json_encode($contentChecklistLabels, JSON_UNESCAPED_UNICODE) ?>;
 window.SH_SEO_CHECKLIST_LABELS = <?= json_encode($seoChecklistLabels, JSON_UNESCAPED_UNICODE) ?>;
+(function () {
+    var section = <?= json_encode($scroll_section, JSON_UNESCAPED_UNICODE) ?>;
+    var hash = (window.location.hash || '').replace(/^#/, '');
+    var id = hash || (section ? 'product-section-' + section : '');
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (el) {
+        requestAnimationFrame(function () {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+})();
 </script>
 
 <?php require __DIR__ . '/includes/layout-end.php'; ?>

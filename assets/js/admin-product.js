@@ -78,10 +78,10 @@
     }
 
     function openLangSpoilers() {
-        form.querySelectorAll('.adm-edit-panel[data-panel="names"] details.adm-spoiler').forEach(function (d) {
+        form.querySelectorAll('[data-panel="names"] details.adm-spoiler').forEach(function (d) {
             d.setAttribute('open', '');
         });
-        form.querySelectorAll('.adm-edit-panel[data-panel="seo"] details.adm-spoiler').forEach(function (d) {
+        form.querySelectorAll('[data-panel="seo"] details.adm-spoiler').forEach(function (d) {
             d.setAttribute('open', '');
         });
     }

@@ -92,7 +92,7 @@ require __DIR__ . '/includes/layout.php';
                             <a href="<?= sh_admin_url('product-edit.php?id=' . urlencode($id)) ?>" class="adm-btn adm-btn-outline adm-btn-sm">
                                 <i class="fas fa-pen"></i> <?= htmlspecialchars($tp['edit'] ?? 'Edit') ?>
                             </a>
-                            <a href="<?= sh_admin_url('product-edit.php?id=' . urlencode($id) . '&tab=seo') ?>" class="adm-btn adm-btn-outline adm-btn-sm" title="<?= htmlspecialchars($tp['tab_seo'] ?? 'SEO & Schema') ?>">
+                            <a href="<?= sh_admin_url('product-edit.php?id=' . urlencode($id) . '#product-section-seo') ?>" class="adm-btn adm-btn-outline adm-btn-sm" title="<?= htmlspecialchars($tp['tab_seo'] ?? 'SEO & Schema') ?>">
                                 <i class="fas fa-chart-line"></i>
                             </a>
                             <a href="<?= sh_url('product.php?id=' . urlencode($id)) ?>" class="adm-btn adm-btn-outline adm-btn-sm" target="_blank">
