@@ -41,9 +41,14 @@ require __DIR__ . '/includes/layout.php';
 <div class="adm-card">
     <div class="adm-card-head">
         <h2><?= htmlspecialchars($tp['list_title'] ?? 'All products') ?></h2>
-        <a href="<?= sh_admin_url('product-edit.php') ?>" class="adm-btn adm-btn-primary adm-btn-sm">
-            <i class="fas fa-plus"></i> <?= htmlspecialchars($tp['add'] ?? 'Add product') ?>
-        </a>
+        <div class="adm-card-head-actions">
+            <a href="<?= sh_admin_url('products-io.php') ?>" class="adm-btn adm-btn-outline adm-btn-sm">
+                <i class="fas fa-file-import"></i> <?= htmlspecialchars($ta['products_io'] ?? 'Import / Export') ?>
+            </a>
+            <a href="<?= sh_admin_url('product-edit.php') ?>" class="adm-btn adm-btn-primary adm-btn-sm">
+                <i class="fas fa-plus"></i> <?= htmlspecialchars($tp['add'] ?? 'Add product') ?>
+            </a>
+        </div>
     </div>
     <div class="adm-card-body">
         <div class="adm-table-wrap">

@@ -249,6 +249,7 @@ return [
         'title_suffix' => 'Shop CMS Admin',
         'username' => 'Имя пользователя', 'password' => 'Пароль', 'login_btn' => 'Войти', 'login_error' => 'Неверное имя пользователя или пароль', 'logout' => 'Выйти',
         'demo_creds' => 'Демо-вход: demo / demo2026', 'dashboard' => 'Панель управления', 'products' => 'Товары',
+        'products_io' => 'Импорт / Экспорт',
         'view_site' => 'Открыть сайт', 'welcome' => 'С возвращением',
         'stats_products' => 'Активных товаров', 'stats_featured' => 'Рекомендуемые', 'stats_cats' => 'Категорий',
         'stats_cart' => 'Позиций в корзине (сессия)', 'stats_vol' => 'Стоимость каталога',

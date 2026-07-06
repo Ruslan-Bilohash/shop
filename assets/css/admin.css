@@ -236,6 +236,9 @@ body.adm-body {
 .adm-edit-panel.is-active { display: block; }
 .adm-product-edit-main .adm-edit-section { display: block; margin-bottom: 20px; }
 .adm-product-edit-main .adm-edit-section:last-of-type { margin-bottom: 0; }
+.adm-card-head-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.adm-io-grid { display: grid; gap: 20px; }
+@media (min-width: 960px) { .adm-io-grid { grid-template-columns: 1fr 1fr; align-items: start; } }
 .adm-ai-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%; }
 .adm-ai-toolbar--news { margin-top: 8px; }
 .adm-btn-ai-generate {

@@ -28,6 +28,7 @@ function sh_admin_sidebar_menu(): array
         'icon'      => 'boxes-stacked',
         'items'     => [
             ['label_key' => 'products', 'icon' => 'box', 'url' => 'products.php', 'page' => 'products'],
+            ['label_key' => 'products_io', 'icon' => 'file-import', 'url' => 'products-io.php', 'page' => 'products-io'],
             ['label_key' => 'categories', 'icon' => 'layer-group', 'url' => 'categories.php', 'page' => 'categories'],
             ['label_key' => 'quick_leads', 'icon' => 'bolt', 'url' => 'quick-leads.php', 'page' => 'quick-leads', 'badge' => 'leads'],
         ],

@@ -178,7 +178,7 @@ return array_replace_recursive($en, [
         'username' => 'Brukernavn', 'password' => 'Passord', 'login_btn' => 'Logg inn',
         'login_error' => 'Ugyldig brukernavn eller passord', 'logout' => 'Logg ut',
         'demo_creds' => 'Demo-innlogging: demo / demo2026', 'dashboard' => 'Dashboard',
-        'products' => 'Produkter', 'view_site' => 'Se nettsted', 'welcome' => 'Velkommen tilbake',
+        'products' => 'Produkter', 'products_io' => 'Import / Eksport', 'view_site' => 'Se nettsted', 'welcome' => 'Velkommen tilbake',
         'stats_products' => 'Aktive produkter', 'stats_featured' => 'Utvalgte', 'stats_cats' => 'Kategorier',
         'stats_cart' => 'Kurvvarer (session)', 'stats_vol' => 'Katalogverdi',
         'by_category' => 'Produkter per kategori', 'quick_actions' => 'Hurtighandlinger',
