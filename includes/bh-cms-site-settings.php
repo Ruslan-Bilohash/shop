@@ -242,7 +242,7 @@ function bh_cms_render_chat_widget(string $productLabel, ?array $settings = null
         $bh_chat_css_href = sh_asset('css/bh-chat-widget.css') . '?v=' . $v;
         $bh_chat_js_href = sh_asset('js/bh-chat-widget.js') . '?v=' . $v;
     }
-    include $widget;
+    include $widget; // file verified above
 }
 
 function bh_cms_render_theme_styles(string $product, ?array $settings = null): void

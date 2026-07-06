@@ -505,6 +505,8 @@ return [
         'invoice_print_design' => 'Дизайн (12 стилів)',
         'invoice_print_format' => 'Розмір паперу',
         'invoice_print_margin' => 'Поля друку',
+        'invoice_preview_title' => 'Попередній перегляд фактури',
+        'invoice_preview_help' => 'Зразок фактури з демо-даними компанії та товарами. Оновлюється після збереження при зміні дизайну або формату.',
         'orders' => 'Замовлення',
         'orders_page' => [
             'title' => 'Замовлення та фактури',

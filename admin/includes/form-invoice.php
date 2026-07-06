@@ -1,12 +1,20 @@
 <?php
 /** @var array $settings @var array $ta */
 require_once dirname(__DIR__, 2) . '/includes/invoice-settings.php';
+require_once dirname(__DIR__, 2) . '/includes/invoice-render.php';
 require_once __DIR__ . '/admin-field-help.php';
 
 $tab = 'invoice';
 $sections = sh_admin_settings_sections($tab, $ta);
 $settings = sh_invoice_merge_settings($settings);
 $lang = $lang ?? 'en';
+$invPreviewDoc = sh_invoice_demo_preview_doc($settings);
+$invPreviewLabels = sh_invoice_labels($lang);
+$invPreviewDesign = (string) ($settings['invoice_print_design'] ?? 'classic-blue');
+$invPreviewFormat = (string) ($settings['invoice_print_format'] ?? 'a4');
+$extra_css = array_merge($extra_css ?? [], [
+    sh_asset('css/invoice-print.css') . '?v=2',
+]);
 ?>
 <form method="post" class="adm-settings-form" id="shInvoiceForm">
     <div class="adm-card adm-settings-section" id="invoice-enable">
@@ -152,7 +160,39 @@ $lang = $lang ?? 'en';
         </div>
     </div>
 
+    <div class="adm-card adm-settings-section" id="invoice-preview">
+        <div class="adm-card-head">
+            <h2><i class="fas fa-eye"></i> <?= htmlspecialchars(sh_settings_admin_label('invoice_preview_title', $ta)) ?></h2>
+        </div>
+        <div class="adm-card-body padded">
+            <p class="adm-help"><?= htmlspecialchars(sh_settings_admin_label('invoice_preview_help', $ta)) ?></p>
+            <div class="adm-order-invoice-preview" id="shInvAdminPreview">
+                <?php sh_render_invoice_article($invPreviewDoc, $invPreviewLabels, $invPreviewDesign, $invPreviewFormat, true, $settings); ?>
+            </div>
+            <button type="button" class="adm-btn adm-btn-outline adm-btn-sm" id="shInvAdminPrint">
+                <i class="fas fa-print"></i> <?= htmlspecialchars($invPreviewLabels['print'] ?? 'Print PDF') ?>
+            </button>
+        </div>
+    </div>
+
     <div class="adm-form-actions adm-form-actions-sticky">
         <button type="submit" class="adm-btn adm-btn-primary"><i class="fas fa-save"></i> <?= htmlspecialchars(sh_settings_admin_label('save', $ta)) ?></button>
     </div>
 </form>
+<script>
+(function () {
+    var btn = document.getElementById('shInvAdminPrint');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+        var margin = <?= json_encode($settings['invoice_print_margin'] ?? '8mm') ?>;
+        var fmt = document.getElementById('shInvFormat');
+        var formats = <?= json_encode(sh_inv_print_formats()) ?>;
+        var key = fmt ? fmt.value : 'a4';
+        var pageCss = (formats[key] && formats[key].css) ? formats[key].css : 'A4';
+        var s = document.getElementById('sh-inv-dynamic-page');
+        if (!s) { s = document.createElement('style'); s.id = 'sh-inv-dynamic-page'; document.head.appendChild(s); }
+        s.textContent = '@page { size: ' + pageCss + '; margin: ' + margin + '; } @media print { .adm-sidebar, .adm-topbar, .adm-settings-layout > aside, .adm-form-actions, #invoice-preview .adm-help, #shInvAdminPrint { display:none !important; } }';
+        window.print();
+    });
+})();
+</script>

@@ -518,6 +518,8 @@ return [
         'invoice_print_design' => 'Design (12 styles)',
         'invoice_print_format' => 'Paper size',
         'invoice_print_margin' => 'Print margins',
+        'invoice_preview_title' => 'Invoice preview',
+        'invoice_preview_help' => 'Sample invoice with demo company data and products. Updates after save when you change design or format.',
         'orders' => 'Orders',
         'orders_page' => [
             'title' => 'Orders & invoices',

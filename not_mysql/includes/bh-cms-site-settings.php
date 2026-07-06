@@ -233,7 +233,16 @@ function bh_cms_render_chat_widget(string $productLabel, ?array $settings = null
         : bh_cms_hex_color($settings['color_primary'] ?? '', bh_cms_product_accent('shop'));
     $icon = preg_replace('/[^a-z0-9-]/', '', strtolower(trim((string) ($settings['chat_widget_icon'] ?? 'comments'))));
     $bh_chat_toggle_icon = $icon !== '' ? $icon : 'comments';
-    include __DIR__ . '/bh-chat-widget.php';
+    $widget = __DIR__ . '/bh-chat-widget.php';
+    if (!is_file($widget)) {
+        return;
+    }
+    if (function_exists('sh_asset')) {
+        $v = '2';
+        $bh_chat_css_href = sh_asset('css/bh-chat-widget.css') . '?v=' . $v;
+        $bh_chat_js_href = sh_asset('js/bh-chat-widget.js') . '?v=' . $v;
+    }
+    include $widget; // file verified above
 }
 
 function bh_cms_render_theme_styles(string $product, ?array $settings = null): void
@@ -269,7 +278,8 @@ function bh_cms_render_theme_styles(string $product, ?array $settings = null): v
 
 function bh_cms_admin_settings_css_href(): string
 {
-    return '/includes/bh-cms-admin/admin-settings.css?v=1';
+    $path = 'includes/bh-cms-admin/admin-settings.css?v=1';
+    return function_exists('sh_url') ? sh_url($path) : '/' . $path;
 }
 
 function bh_cms_render_settings_tabs(callable $adminUrlFn, array $ta = []): void

@@ -35,7 +35,8 @@ $assetFiles = @(
 
 $includeTargets = @(
     (Join-Path $root 'includes'),
-    (Join-Path $root 'install\includes')
+    (Join-Path $root 'install\includes'),
+    (Join-Path $root 'not_mysql\includes')
 )
 
 foreach ($dst in $includeTargets) {
