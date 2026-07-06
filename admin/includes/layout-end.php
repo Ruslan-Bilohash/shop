@@ -7,7 +7,7 @@
     <?php endforeach; ?>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'ai'): ?>
-<script src="<?= htmlspecialchars(sh_asset('js/admin-ai-settings.js')) ?>?v=1" defer></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-ai-settings.js')) ?>?v=2" defer></script>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'footer'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-footer.js')) ?>?v=1" defer></script>

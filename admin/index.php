@@ -108,13 +108,6 @@ require __DIR__ . '/includes/layout.php';
             <?php endif; ?>
         </div>
     </div>
-    <div class="adm-stat">
-        <div class="adm-stat-icon blue"><i class="fas fa-language"></i></div>
-        <div>
-            <div class="adm-stat-val"><?= (int) $stats['languages'] ?></div>
-            <div class="adm-stat-label"><?= htmlspecialchars($dp['stat_langs'] ?? 'Languages') ?></div>
-        </div>
-    </div>
 </div>
 
 <div class="adm-dash-grid <?= $health_all_ok ? 'adm-dash-grid--2' : 'adm-dash-grid--3' ?>">

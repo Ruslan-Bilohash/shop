@@ -26,7 +26,7 @@ $avgScore = $totalProducts > 0
     : 0;
 $pagesNeedWork = count(array_filter($pageRows, static fn(array $r): bool => ($r['score'] ?? 0) < 75));
 ?>
-<div class="adm-seo-analysis" id="shSeoAnalysis"
+<div class="adm-seo-analysis adm-seo-analysis-page" id="shSeoAnalysis"
      data-label-none="<?= htmlspecialchars($ap['filter_none'] ?? 'No products match filters.') ?>"
      data-label-count="<?= htmlspecialchars($ap['filter_count'] ?? 'Showing {n} of {total}') ?>">
 

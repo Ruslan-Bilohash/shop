@@ -155,7 +155,7 @@ if ($aiSeoTips === [] && !empty($tp['seo_checklist'])) {
 }
 
 $admin_extra_js = [
-    sh_asset('js/admin-product.js') . '?v=6',
+    sh_asset('js/admin-product.js') . '?v=7',
     sh_asset('js/admin-product-images.js') . '?v=2',
     sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];
@@ -281,13 +281,10 @@ require __DIR__ . '/includes/layout.php';
                             <label for="shAiProductBrief"><?= htmlspecialchars($tp['ai_product_brief_label'] ?? 'Brief description for AI') ?></label>
                             <textarea id="shAiProductBrief" rows="3" class="adm-textarea"
                                       placeholder="<?= htmlspecialchars($tp['ai_product_brief_ph'] ?? 'e.g. Wireless ANC headphones, 40h battery, USB-C, for gym and travel') ?>"><?= htmlspecialchars($record !== null ? ($record['desc'][$aiSourceLang] ?? '') : '') ?></textarea>
-                            <small class="adm-field-hint"><?= htmlspecialchars($tp['ai_product_name_hint'] ?? 'AI fills names, descriptions, meta title, meta description (OG) and keywords for all languages.') ?></small>
                         </div>
                     </div>
-                </div>
-
-                <div class="adm-ai-generate-panel">
-                    <div class="adm-ai-generate-actions">
+                    <p class="adm-help adm-help-compact adm-ai-source-hint"><?= htmlspecialchars($tp['ai_product_name_hint'] ?? 'Enter name and a short brief — AI fills names, descriptions, meta title, meta description (OG) and keywords for all languages.') ?></p>
+                    <div class="adm-ai-source-actions">
                         <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate" id="shAiGenerateBtn"
                                 data-generating="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating…') ?>"
                                 data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Generated and translated for all languages.') ?>"
@@ -297,10 +294,10 @@ require __DIR__ . '/includes/layout.php';
                             <i class="fas fa-wand-magic-sparkles adm-ai-btn-icon" aria-hidden="true"></i>
                             <span class="adm-ai-btn-label"><?= htmlspecialchars($tp['ai_generate'] ?? 'Generate all with AI') ?></span>
                         </button>
-                        <p id="shAiStatus" class="adm-ai-status adm-ai-status--block" hidden></p>
+                        <p id="shAiStatus" class="adm-ai-status adm-ai-status--inline" hidden></p>
                     </div>
                     <?php if ($aiSeoTips !== []): ?>
-                    <aside class="adm-seo-tips-box">
+                    <aside class="adm-seo-tips-box adm-seo-tips-box--compact">
                         <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> <?= htmlspecialchars($tp['ai_seo_tips_title'] ?? 'SEO tips') ?></h3>
                         <ul>
                             <?php foreach ($aiSeoTips as $tip): ?>

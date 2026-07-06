@@ -1,21 +1,39 @@
 (function () {
     var providers = window.SH_AI_PROVIDERS || {};
+    var labels = window.SH_AI_LABELS || {};
     var providerEl = document.getElementById('sh-ai-provider');
     var apiBase = document.getElementById('sh-ai-api-base');
+    var CUSTOM = '__custom__';
     if (!providerEl) return;
 
-    function syncModelField(select, custom, preset, isDefault) {
-        if (!select) return;
-        var current = custom ? custom.value.trim() : '';
+    function useDefaultLabel() {
+        return labels.use_default || 'Use default model';
+    }
+
+    function customOptionLabel() {
+        return labels.custom_option || 'Custom model…';
+    }
+
+    function getPreset(key) {
+        return providers[key] || { models: [], api_base: '' };
+    }
+
+    function syncModelField(wrap, preset) {
+        if (!wrap) return;
+        var ctx = wrap.getAttribute('data-context') || 'default';
+        var isDefault = ctx === 'default';
+        var select = wrap.querySelector('.sh-ai-model-select');
+        var custom = wrap.querySelector('.sh-ai-model-custom');
+        var valueInput = wrap.querySelector('.sh-ai-model-value');
+        if (!select || !valueInput) return;
+
+        var current = valueInput.value.trim();
         select.innerHTML = '';
 
         if (!isDefault) {
             var emptyOpt = document.createElement('option');
             emptyOpt.value = '';
-            emptyOpt.textContent = '— ' + (window.SH_AI_LABELS && SH_AI_LABELS.use_default ? SH_AI_LABELS.use_default : 'use default') + ' —';
-            if (current === '') {
-                emptyOpt.selected = true;
-            }
+            emptyOpt.textContent = '— ' + useDefaultLabel() + ' —';
             select.appendChild(emptyOpt);
         }
 
@@ -23,29 +41,84 @@
             var opt = document.createElement('option');
             opt.value = m;
             opt.textContent = m;
-            if (current === m) {
-                opt.selected = true;
-            }
             select.appendChild(opt);
         });
 
-        if (current && preset.models.indexOf(current) === -1) {
-            var customOpt = document.createElement('option');
-            customOpt.value = current;
-            customOpt.textContent = current + ' (current)';
-            customOpt.selected = true;
-            select.appendChild(customOpt);
+        var customOpt = document.createElement('option');
+        customOpt.value = CUSTOM;
+        customOpt.textContent = customOptionLabel();
+        select.appendChild(customOpt);
+
+        var matched = false;
+        if (!isDefault && current === '') {
+            select.value = '';
+            matched = true;
+            if (custom) {
+                custom.hidden = true;
+                custom.value = '';
+            }
+        } else if (current && (preset.models || []).indexOf(current) !== -1) {
+            select.value = current;
+            matched = true;
+            if (custom) {
+                custom.hidden = true;
+                custom.value = current;
+            }
+        } else if (current) {
+            select.value = CUSTOM;
+            matched = true;
+            if (custom) {
+                custom.hidden = false;
+                custom.value = current;
+            }
+        } else if (isDefault && (preset.models || []).length) {
+            select.value = preset.models[0];
+            valueInput.value = preset.models[0];
+            matched = true;
+            if (custom) {
+                custom.hidden = true;
+                custom.value = preset.models[0];
+            }
+        }
+
+        if (!matched && select.options.length) {
+            select.selectedIndex = 0;
+            applySelectValue(wrap);
         }
     }
 
+    function applySelectValue(wrap) {
+        var select = wrap.querySelector('.sh-ai-model-select');
+        var custom = wrap.querySelector('.sh-ai-model-custom');
+        var valueInput = wrap.querySelector('.sh-ai-model-value');
+        if (!select || !valueInput) return;
+
+        var val = select.value;
+        if (val === CUSTOM) {
+            if (custom) {
+                custom.hidden = false;
+                if (!custom.value.trim() && valueInput.value.trim()) {
+                    custom.value = valueInput.value.trim();
+                }
+                valueInput.value = custom.value.trim();
+                custom.focus();
+            }
+            return;
+        }
+
+        if (custom) {
+            custom.hidden = true;
+            if (val !== '') {
+                custom.value = val;
+            }
+        }
+        valueInput.value = val;
+    }
+
     function syncAllModels() {
-        var key = providerEl.value;
-        var preset = providers[key] || { models: [], api_base: '' };
+        var preset = getPreset(providerEl.value);
         document.querySelectorAll('.sh-ai-model-field').forEach(function (wrap) {
-            var ctx = wrap.getAttribute('data-context') || 'default';
-            var select = wrap.querySelector('.sh-ai-model-select');
-            var custom = wrap.querySelector('.sh-ai-model-custom');
-            syncModelField(select, custom, preset, ctx === 'default');
+            syncModelField(wrap, preset);
         });
         if (apiBase && (!apiBase.value || apiBase.dataset.auto === '1')) {
             apiBase.value = preset.api_base || '';
@@ -62,15 +135,32 @@
         apiBase.addEventListener('input', function () { apiBase.dataset.auto = '0'; });
     }
 
-    document.querySelectorAll('.sh-ai-model-select').forEach(function (select) {
-        select.addEventListener('change', function () {
-            var wrap = select.closest('.sh-ai-model-field');
-            var custom = wrap ? wrap.querySelector('.sh-ai-model-custom') : null;
-            if (custom) {
-                custom.value = select.value;
-            }
-        });
+    document.querySelectorAll('.sh-ai-model-field').forEach(function (wrap) {
+        var select = wrap.querySelector('.sh-ai-model-select');
+        var custom = wrap.querySelector('.sh-ai-model-custom');
+        if (select) {
+            select.addEventListener('change', function () {
+                applySelectValue(wrap);
+            });
+        }
+        if (custom) {
+            custom.addEventListener('input', function () {
+                var valueInput = wrap.querySelector('.sh-ai-model-value');
+                if (valueInput && select && select.value === CUSTOM) {
+                    valueInput.value = custom.value.trim();
+                }
+            });
+        }
     });
+
+    var form = document.getElementById('sh-ai-settings-form');
+    if (form) {
+        form.addEventListener('submit', function () {
+            document.querySelectorAll('.sh-ai-model-field').forEach(function (wrap) {
+                applySelectValue(wrap);
+            });
+        });
+    }
 
     syncAllModels();
 })();

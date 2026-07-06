@@ -793,9 +793,22 @@ body.adm-modal-open { overflow: hidden; }
 /* AI source + sitemap actions */
 .adm-ai-source-card { margin-bottom: 16px; border-color: #c7d2fe; background: linear-gradient(135deg, #eef2ff, #fff); }
 .adm-ai-source-box { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; }
-.adm-ai-source-box--product { margin-bottom: 0; padding: 16px; border: 1px solid #c7d2fe; border-radius: 10px; background: #f5f7ff; }
-.adm-ai-source-fields { flex: 1 1 260px; min-width: 0; }
-.adm-ai-source-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.adm-ai-source-box--product {
+    margin-bottom: 16px; padding: 16px; border: 1px solid #c7d2fe; border-radius: 10px;
+    background: #f5f7ff; display: flex; flex-direction: column; gap: 12px;
+}
+.adm-ai-source-fields { flex: 1 1 260px; min-width: 0; width: 100%; }
+.adm-ai-source-hint { margin: 0; }
+.adm-ai-source-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; width: 100%; }
+.adm-ai-status--inline { margin: 0; flex: 1 1 180px; }
+.adm-seo-tips-box--compact { margin-top: 4px; }
+.adm-ai-model-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+}
+.adm-ai-model-row { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.adm-ai-model-label { font-size: 13px; font-weight: 600; color: var(--adm-text); }
+.adm-ai-model-row .sh-ai-model-custom:not([hidden]) { margin-top: 4px; }
 .adm-ai-generate-panel {
     display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start;
     margin: 18px 0 20px; padding: 20px;
@@ -1189,13 +1202,27 @@ body.adm-modal-open { overflow: hidden; }
 .adm-checklist-tip i { color: #f59e0b; margin-right: 4px; }
 
 /* SEO analysis */
-.adm-seo-analysis-stats { margin-bottom: 16px; }
+.adm-seo-analysis { min-width: 0; }
+.adm-seo-analysis-page .adm-settings-main { min-width: 0; overflow-x: hidden; }
+.adm-seo-analysis-stats {
+    margin-bottom: 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 900px) {
+    .adm-seo-analysis-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 .adm-seo-analysis-toolbar {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    grid-template-columns: 1fr;
     gap: 12px;
     margin: 12px 0;
     align-items: end;
+}
+@media (min-width: 640px) {
+    .adm-seo-analysis-toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1100px) {
+    .adm-seo-analysis-toolbar { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .adm-field--compact label { font-size: 11px; font-weight: 600; color: var(--adm-muted); }
 .adm-seo-analysis-count { font-size: 12px; color: var(--adm-muted); margin: 0 0 10px; }
@@ -1211,6 +1238,22 @@ body.adm-modal-open { overflow: hidden; }
 .adm-seo-issues { font-size: 12px; line-height: 1.4; }
 .adm-seo-analysis-empty { margin-top: 12px; }
 .adm-seo-analysis-table .adm-btn + .adm-btn { margin-left: 4px; }
+.adm-seo-analysis-table td[data-label*="Actions"],
+.adm-seo-pages-table td[data-label*="Actions"],
+.adm-seo-pages-table td[data-label*="Дії"] {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+@media (max-width: 720px) {
+    .adm-seo-analysis-table td[data-label*="Actions"] .adm-btn,
+    .adm-seo-pages-table td[data-label*="Actions"] .adm-btn,
+    .adm-seo-pages-table td[data-label*="Дії"] .adm-btn {
+        margin-left: 0; flex: 1 1 auto;
+    }
+    .adm-seo-analysis-table td::before,
+    .adm-seo-pages-table td::before { flex: 0 0 38%; max-width: 42%; }
+    .adm-seo-analysis-table td,
+    .adm-seo-pages-table td { align-items: flex-start; }
+}
 
 /* Nova Poshta admin */
 .adm-np-suggest {

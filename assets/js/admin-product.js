@@ -20,7 +20,10 @@
     function setStatus(el, msg, type) {
         if (!el) return;
         el.textContent = msg;
-        el.className = 'adm-ai-status adm-ai-status--block' + (type ? ' adm-ai-status--' + type : '');
+        var base = el.classList.contains('adm-ai-status--inline')
+            ? 'adm-ai-status adm-ai-status--inline'
+            : 'adm-ai-status adm-ai-status--block';
+        el.className = base + (type ? ' adm-ai-status--' + type : '');
         el.hidden = !msg;
     }
 
@@ -222,6 +225,10 @@
     }
 
     function runAi(btn, statusEl) {
+        if (!apiUrl) {
+            setStatus(statusEl, btn.getAttribute('data-failed') || 'AI endpoint not configured.', 'error');
+            return;
+        }
         var productName = getProductName();
         var categoryEl = field('category');
         var category = categoryEl ? categoryEl.value : '';
