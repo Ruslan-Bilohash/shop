@@ -160,15 +160,22 @@ $presetColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#0d9488', '#dc2626
                 <summary>
                     <strong><?= htmlspecialchars($tpl['name'] ?? $tpl['id']) ?></strong>
                     <span class="adm-muted">— <?= htmlspecialchars(sh_settings_admin_label('block_builder_placement_' . ($tpl['placement'] ?? 'none'), $ta)) ?></span>
-                    <button type="button"
-                            class="adm-btn adm-btn-danger adm-btn-sm sh-tpl-delete-btn"
-                            data-tpl-id="<?= htmlspecialchars($tpl['id']) ?>"
-                            data-confirm="<?= htmlspecialchars(sh_settings_admin_label('block_builder_delete_confirm', $ta)) ?>"
-                            title="<?= htmlspecialchars(sh_settings_admin_label('block_builder_delete', $ta)) ?>">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
                 </summary>
                 <div class="adm-spoiler-body">
+                    <div class="adm-block-builder-saved-actions">
+                        <label class="adm-toggle adm-toggle--compact adm-toggle--danger">
+                            <input type="checkbox" name="tpl_delete_<?= (int) $i ?>" value="1" class="sh-tpl-delete-check" data-tpl-id="<?= htmlspecialchars($tpl['id']) ?>">
+                            <span class="adm-toggle-track"><span class="adm-toggle-thumb"></span></span>
+                            <span class="adm-toggle-label"><?= htmlspecialchars(sh_settings_admin_label('block_builder_delete_mark', $ta)) ?></span>
+                        </label>
+                        <button type="button"
+                                class="adm-btn adm-btn-danger adm-btn-sm sh-tpl-delete-btn"
+                                data-tpl-id="<?= htmlspecialchars($tpl['id']) ?>"
+                                data-idx="<?= (int) $i ?>"
+                                data-confirm="<?= htmlspecialchars(sh_settings_admin_label('block_builder_delete_confirm', $ta)) ?>">
+                            <i class="fas fa-trash-alt"></i> <?= htmlspecialchars(sh_settings_admin_label('block_builder_delete', $ta)) ?>
+                        </button>
+                    </div>
                     <input type="hidden" name="tpl_id[]" value="<?= (int) $i ?>">
                     <input type="hidden" name="tpl_id_val_<?= (int) $i ?>" value="<?= htmlspecialchars($tpl['id']) ?>">
                     <div class="adm-form-grid">

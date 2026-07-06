@@ -92,7 +92,7 @@ $sitemapUrl = sh_absolute_url(sh_url('sitemap.xml'));
             <?php
             $sitemapToggles = [];
             foreach ([
-                'sitemap_enabled', 'sitemap_include_products', 'sitemap_include_categories', 'sitemap_include_verticals',
+                'sitemap_enabled', 'sitemap_include_products', 'sitemap_include_categories', 'sitemap_include_verticals', 'sitemap_include_news',
             ] as $labelKey) {
                 $sitemapToggles[] = [
                     'name' => $labelKey,

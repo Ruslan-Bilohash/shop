@@ -254,8 +254,11 @@ body.adm-body {
 .adm-btn-ai-generate.is-loading .adm-btn-ai-spinner { display: inline-block !important; }
 @keyframes adm-ai-spin { to { transform: rotate(360deg); } }
 @keyframes adm-ai-pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.08); opacity: .75; } }
-.adm-block-builder-saved-row summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.adm-block-builder-saved-row .sh-tpl-delete-btn { margin-left: auto; }
+.adm-block-builder-saved-actions {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+    margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--adm-border);
+}
+.adm-toggle--danger .adm-toggle-label { color: var(--adm-red); }
 .adm-ai-status { font-size: 12px; color: var(--adm-muted); }
 .adm-ai-status--success { color: var(--adm-green); }
 .adm-ai-status--error { color: var(--adm-red); }

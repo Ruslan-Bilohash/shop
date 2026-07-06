@@ -20,7 +20,27 @@ function sh_news_load(): array
 function sh_news_save(array $list): bool
 {
     $json = json_encode(array_values($list), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
-    return file_put_contents(sh_news_file(), $json, LOCK_EX) !== false;
+    $ok = file_put_contents(sh_news_file(), $json, LOCK_EX) !== false;
+    if ($ok) {
+        sh_news_touch_sitemap();
+    }
+    return $ok;
+}
+
+function sh_news_touch_sitemap(): void
+{
+    if (!function_exists('sh_load_settings')) {
+        require_once __DIR__ . '/payment-settings.php';
+    }
+    if (!function_exists('sh_sitemap_regenerate')) {
+        require_once __DIR__ . '/site-settings.php';
+    }
+    $settings = sh_load_settings();
+    if (empty($settings['sitemap_enabled'])) {
+        return;
+    }
+    $settings = sh_sitemap_regenerate($settings);
+    sh_save_settings($settings);
 }
 
 function sh_default_news_from_seed(): ?array

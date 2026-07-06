@@ -129,7 +129,7 @@ function sh_sitemap_page_entries(array $settings): array
         ['loc' => sh_sitemap_lang_url(sh_url('cart.php'), 'no'), 'priority' => '0.5', 'changefreq' => 'monthly', 'hreflang_path' => sh_url('cart.php')],
         ['loc' => sh_absolute_url(sh_url('llms.txt')), 'priority' => '0.4', 'changefreq' => 'monthly', 'hreflang_path' => null],
     ]);
-    return array_merge($entries, sh_sitemap_news_entries());
+    return $entries;
 }
 
 /** @return list<array{loc:string,priority:string,changefreq:string,hreflang_path:?string,lastmod:?string}> */
@@ -227,6 +227,9 @@ function sh_sitemap_index_entries(array $settings): array
     }
     if (!empty($settings['sitemap_include_verticals'])) {
         $maps[] = ['loc' => sh_absolute_url(sh_url('sitemap-verticals.xml')), 'lastmod' => $lastmod];
+    }
+    if (!empty($settings['sitemap_include_news']) && sh_sitemap_news_entries() !== []) {
+        $maps[] = ['loc' => sh_absolute_url(sh_url('sitemap-news.xml')), 'lastmod' => $lastmod];
     }
     return $maps;
 }

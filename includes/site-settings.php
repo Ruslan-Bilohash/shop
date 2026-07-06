@@ -19,6 +19,7 @@ function sh_seo_settings_defaults(): array
         'sitemap_include_products'  => true,
         'sitemap_include_categories'=> true,
         'sitemap_include_verticals' => true,
+        'sitemap_include_news'      => true,
         'sitemap_priority_home'     => '1.0',
         'sitemap_priority_product'  => '0.8',
         'sitemap_priority_category' => '0.85',
@@ -157,6 +158,7 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings['sitemap_include_products'] = !empty($post['sitemap_include_products']);
         $settings['sitemap_include_categories'] = !empty($post['sitemap_include_categories']);
         $settings['sitemap_include_verticals'] = !empty($post['sitemap_include_verticals']);
+        $settings['sitemap_include_news'] = !empty($post['sitemap_include_news']);
         $settings['sitemap_priority_home'] = sh_sitemap_priority_value($post['sitemap_priority_home'] ?? '1.0', '1.0');
         $settings['sitemap_priority_product'] = sh_sitemap_priority_value($post['sitemap_priority_product'] ?? '0.8', '0.8');
         $settings['sitemap_priority_category'] = sh_sitemap_priority_value($post['sitemap_priority_category'] ?? '0.85', '0.85');

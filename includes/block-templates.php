@@ -96,6 +96,9 @@ function sh_block_templates_apply_post(array $post, array $settings): array
     $templates = [];
     foreach ($ids as $i) {
         $i = (int) $i;
+        if (!empty($post['tpl_delete_' . $i])) {
+            continue;
+        }
         $id = trim((string) ($post['tpl_id_val_' . $i] ?? ''));
         $id = preg_replace('/[^a-z0-9_-]/', '', strtolower($id));
         if ($id === '' || in_array($id, $deleteIds, true)) {
@@ -164,6 +167,11 @@ function sh_block_templates_apply_post(array $post, array $settings): array
         $templates[] = $newTpl;
     }
 
+    $templates = array_values(array_filter(
+        $templates,
+        static fn(array $tpl): bool => !in_array((string) ($tpl['id'] ?? ''), $deleteIds, true)
+    ));
+
     $settings['block_templates'] = $templates;
     return sh_block_templates_sync_placements($settings);
 }
@@ -181,7 +189,11 @@ function sh_block_templates_sync_placements(array $settings): array
     $linkedHome = [];
     foreach ($blocks as $idx => $block) {
         $tplId = (string) ($block['template_id'] ?? '');
-        if ($tplId === '' || !isset($tplById[$tplId])) {
+        if ($tplId !== '' && !isset($tplById[$tplId])) {
+            unset($blocks[$idx]);
+            continue;
+        }
+        if ($tplId === '') {
             continue;
         }
         $tpl = $tplById[$tplId];

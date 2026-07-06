@@ -271,26 +271,6 @@
             }
         }
 
-        var deleteBucket = document.getElementById('shTplDeleteIds');
-        form.querySelectorAll('.sh-tpl-delete-btn').forEach(function (btn) {
-            btn.addEventListener('click', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                var tplId = btn.getAttribute('data-tpl-id') || '';
-                var msg = btn.getAttribute('data-confirm') || 'Delete this template?';
-                if (!tplId || !window.confirm(msg)) return;
-                var row = btn.closest('.adm-block-builder-saved-row');
-                if (deleteBucket) {
-                    var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'delete_tpl_ids[]';
-                    input.value = tplId;
-                    deleteBucket.appendChild(input);
-                }
-                if (row) row.remove();
-            });
-        });
-
         setActiveColor(activeColor);
         updatePreview();
     }
