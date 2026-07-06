@@ -168,24 +168,119 @@ shop/
 
 ## Screenshots
 
-| Screen | File |
-|--------|------|
-| Admin dashboard | `screenshot/dashboard.jpg` |
-| Products catalog | `screenshot/catalog_product.jpg` |
-| Categories | `screenshot/catalog_categories.jpg` |
-| Store settings | `screenshot/store_setting.jpg` |
-| Homepage blocks | `screenshot/main_block.jpg` |
-| Service page editor | `screenshot/servise_page_editor.jpg` |
-| Footer links | `screenshot/footer_link_editor.jpg` |
-| Header settings | `screenshot/header_setting.jpg` |
-| Appearance / colours | `screenshot/seting_color.jpg` |
-| SEO & Schema | `screenshot/seo_schema.jpg` |
-| Sitemap generator | `screenshot/generate_schema_sitemap.jpg` |
-| AI chat widget | `screenshot/integrations_chat.jpg` |
-| AI assistant | `screenshot/integrations_ai_assistant.jpg` |
-| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
-| Bring tracking | `screenshot/integrations_bring_posten_api.jpg` |
-| Advanced settings | `screenshot/advanced_settings.jpg` |
+### Dashboard & catalog
+
+**Admin dashboard**
+
+![Admin dashboard](screenshot/dashboard.jpg)
+
+**Products catalog**
+
+![Products catalog](screenshot/catalog_product.jpg)
+
+**Categories**
+
+![Categories](screenshot/catalog_categories.jpg)
+
+### Store & design
+
+**Store settings**
+
+![Store settings](screenshot/store_setting.jpg)
+
+**Shop settings**
+
+![Shop settings](screenshot/setting_shop.jpg)
+
+**Appearance / colours**
+
+![Appearance and colours](screenshot/seting_color.jpg)
+
+**Header settings**
+
+![Header settings](screenshot/header_setting.jpg)
+
+**Footer link editor**
+
+![Footer link editor](screenshot/footer_link_editor.jpg)
+
+### Content
+
+**Homepage blocks**
+
+![Homepage blocks](screenshot/main_block.jpg)
+
+**Service page editor**
+
+![Service page editor](screenshot/servise_page_editor.jpg)
+
+![Service page editor — blocks](screenshot/servise_page_editor_2.jpg)
+
+### SEO & marketing
+
+**SEO & Schema.org**
+
+![SEO and Schema.org](screenshot/seo_schema.jpg)
+
+**Sitemap generator**
+
+![Sitemap generator](screenshot/generate_schema_sitemap.jpg)
+
+### Integrations — AI
+
+**AI assistant**
+
+![AI assistant](screenshot/integrations_ai_assistant.jpg)
+
+![AI assistant — settings](screenshot/integrations_ai_assistant2.jpg)
+
+**Public AI chat**
+
+![Public AI chat widget](screenshot/integrations_chat.jpg)
+
+![AI chat design](screenshot/integrations_chat_design.jpg)
+
+**reCAPTCHA**
+
+![reCAPTCHA integration](screenshot/integrations_recapcha.jpg)
+
+### Integrations — payments
+
+**PayPal**
+
+![PayPal integration](screenshot/integrations_paypal.jpg)
+
+**Stripe**
+
+![Stripe integration](screenshot/integrations_stripe.jpg)
+
+**Vipps**
+
+![Vipps integration](screenshot/integrations_vipps.jpg)
+
+**Cash on delivery**
+
+![Cash on delivery](screenshot/integrations_cash_on_delivery.jpg)
+
+**Google Pay**
+
+![Google Pay](screenshot/integrations_google_pay.jpg)
+
+**Apple Pay**
+
+![Apple Pay](screenshot/integrations_apple_pay.jpg)
+
+### Integrations — shipping
+
+**Bring / Posten tracking**
+
+![Bring and Posten API](screenshot/integrations_bring_posten_api.jpg)
+
+### Advanced
+
+**Advanced settings**
+
+![Advanced settings](screenshot/advanced_settings.jpg)
 
 ---
 

@@ -168,24 +168,119 @@ shop/
 
 ## Ekrano nuotraukos
 
-| Ekranas | Failas |
-|---------|--------|
-| Admin dashboard | `screenshot/dashboard.jpg` |
-| Produktų katalogas | `screenshot/catalog_product.jpg` |
-| Kategorijos | `screenshot/catalog_categories.jpg` |
-| Parduotuvės nustatymai | `screenshot/store_setting.jpg` |
-| Pagrindinio puslapio blokai | `screenshot/main_block.jpg` |
-| Paslaugų puslapio redaktorius | `screenshot/servise_page_editor.jpg` |
-| Poraštės nuorodos | `screenshot/footer_link_editor.jpg` |
-| Antraštės nustatymai | `screenshot/header_setting.jpg` |
-| Išvaizda / spalvos | `screenshot/seting_color.jpg` |
-| SEO ir Schema | `screenshot/seo_schema.jpg` |
-| Sitemap generatorius | `screenshot/generate_schema_sitemap.jpg` |
-| AI chat valdiklis | `screenshot/integrations_chat.jpg` |
-| AI asistentas | `screenshot/integrations_ai_assistant.jpg` |
-| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
-| Bring sekimas | `screenshot/integrations_bring_posten_api.jpg` |
-| Išplėstiniai nustatymai | `screenshot/advanced_settings.jpg` |
+### Dashboard ir katalogas
+
+**Admin dashboard**
+
+![Admin dashboard](screenshot/dashboard.jpg)
+
+**Produktų katalogas**
+
+![Produktų katalogas](screenshot/catalog_product.jpg)
+
+**Kategorijos**
+
+![Kategorijos](screenshot/catalog_categories.jpg)
+
+### Parduotuvė ir dizainas
+
+**Parduotuvės nustatymai**
+
+![Parduotuvės nustatymai](screenshot/store_setting.jpg)
+
+**Parduotuvės konfigūracija**
+
+![Parduotuvės konfigūracija](screenshot/setting_shop.jpg)
+
+**Išvaizda / spalvos**
+
+![Išvaizda ir spalvos](screenshot/seting_color.jpg)
+
+**Antraštės nustatymai**
+
+![Antraštės nustatymai](screenshot/header_setting.jpg)
+
+**Poraštės nuorodos**
+
+![Poraštės nuorodos](screenshot/footer_link_editor.jpg)
+
+### Turinys
+
+**Pagrindinio puslapio blokai**
+
+![Pagrindinio puslapio blokai](screenshot/main_block.jpg)
+
+**Paslaugų puslapio redaktorius**
+
+![Paslaugų puslapio redaktorius](screenshot/servise_page_editor.jpg)
+
+![Paslaugų puslapio redaktorius — blokai](screenshot/servise_page_editor_2.jpg)
+
+### SEO ir rinkodara
+
+**SEO ir Schema.org**
+
+![SEO ir Schema.org](screenshot/seo_schema.jpg)
+
+**Sitemap generatorius**
+
+![Sitemap generatorius](screenshot/generate_schema_sitemap.jpg)
+
+### Integracijos — AI
+
+**AI asistentas**
+
+![AI asistentas](screenshot/integrations_ai_assistant.jpg)
+
+![AI asistentas — nustatymai](screenshot/integrations_ai_assistant2.jpg)
+
+**Viešas AI pokalbis**
+
+![Viešas AI pokalbis](screenshot/integrations_chat.jpg)
+
+![AI pokalbio dizainas](screenshot/integrations_chat_design.jpg)
+
+**reCAPTCHA**
+
+![reCAPTCHA integracija](screenshot/integrations_recapcha.jpg)
+
+### Integracijos — mokėjimai
+
+**PayPal**
+
+![PayPal integracija](screenshot/integrations_paypal.jpg)
+
+**Stripe**
+
+![Stripe integracija](screenshot/integrations_stripe.jpg)
+
+**Vipps**
+
+![Vipps integracija](screenshot/integrations_vipps.jpg)
+
+**Atsiskaitymas pristatymo metu**
+
+![Atsiskaitymas pristatymo metu](screenshot/integrations_cash_on_delivery.jpg)
+
+**Google Pay**
+
+![Google Pay](screenshot/integrations_google_pay.jpg)
+
+**Apple Pay**
+
+![Apple Pay](screenshot/integrations_apple_pay.jpg)
+
+### Integracijos — pristatymas
+
+**Bring / Posten sekimas**
+
+![Bring ir Posten API](screenshot/integrations_bring_posten_api.jpg)
+
+### Išplėstiniai
+
+**Išplėstiniai nustatymai**
+
+![Išplėstiniai nustatymai](screenshot/advanced_settings.jpg)
 
 ---
 

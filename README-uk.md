@@ -168,24 +168,119 @@ shop/
 
 ## Скріншоти
 
-| Екран | Файл |
-|-------|------|
-| Адмін dashboard | `screenshot/dashboard.jpg` |
-| Каталог товарів | `screenshot/catalog_product.jpg` |
-| Категорії | `screenshot/catalog_categories.jpg` |
-| Налаштування магазину | `screenshot/store_setting.jpg` |
-| Блоки головної | `screenshot/main_block.jpg` |
-| Редактор сервісних сторінок | `screenshot/servise_page_editor.jpg` |
-| Посилання у футері | `screenshot/footer_link_editor.jpg` |
-| Налаштування шапки | `screenshot/header_setting.jpg` |
-| Зовнішній вигляд / кольори | `screenshot/seting_color.jpg` |
-| SEO та Schema | `screenshot/seo_schema.jpg` |
-| Генератор sitemap | `screenshot/generate_schema_sitemap.jpg` |
-| AI-чат віджет | `screenshot/integrations_chat.jpg` |
-| AI-асистент | `screenshot/integrations_ai_assistant.jpg` |
-| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
-| Bring відстеження | `screenshot/integrations_bring_posten_api.jpg` |
-| Розширені налаштування | `screenshot/advanced_settings.jpg` |
+### Dashboard і каталог
+
+**Адмін dashboard**
+
+![Адмін dashboard](screenshot/dashboard.jpg)
+
+**Каталог товарів**
+
+![Каталог товарів](screenshot/catalog_product.jpg)
+
+**Категорії**
+
+![Категорії](screenshot/catalog_categories.jpg)
+
+### Магазин і дизайн
+
+**Налаштування магазину**
+
+![Налаштування магазину](screenshot/store_setting.jpg)
+
+**Налаштування вітрини**
+
+![Налаштування вітрини](screenshot/setting_shop.jpg)
+
+**Зовнішній вигляд / кольори**
+
+![Зовнішній вигляд і кольори](screenshot/seting_color.jpg)
+
+**Налаштування шапки**
+
+![Налаштування шапки](screenshot/header_setting.jpg)
+
+**Посилання у футері**
+
+![Посилання у футері](screenshot/footer_link_editor.jpg)
+
+### Контент
+
+**Блоки головної**
+
+![Блоки головної](screenshot/main_block.jpg)
+
+**Редактор сервісних сторінок**
+
+![Редактор сервісних сторінок](screenshot/servise_page_editor.jpg)
+
+![Редактор сервісних сторінок — блоки](screenshot/servise_page_editor_2.jpg)
+
+### SEO і маркетинг
+
+**SEO та Schema.org**
+
+![SEO та Schema.org](screenshot/seo_schema.jpg)
+
+**Генератор sitemap**
+
+![Генератор sitemap](screenshot/generate_schema_sitemap.jpg)
+
+### Інтеграції — AI
+
+**AI-асистент**
+
+![AI-асистент](screenshot/integrations_ai_assistant.jpg)
+
+![AI-асистент — налаштування](screenshot/integrations_ai_assistant2.jpg)
+
+**Публічний AI-чат**
+
+![Публічний AI-чат](screenshot/integrations_chat.jpg)
+
+![Дизайн AI-чату](screenshot/integrations_chat_design.jpg)
+
+**reCAPTCHA**
+
+![Інтеграція reCAPTCHA](screenshot/integrations_recapcha.jpg)
+
+### Інтеграції — платежі
+
+**PayPal**
+
+![Інтеграція PayPal](screenshot/integrations_paypal.jpg)
+
+**Stripe**
+
+![Інтеграція Stripe](screenshot/integrations_stripe.jpg)
+
+**Vipps**
+
+![Інтеграція Vipps](screenshot/integrations_vipps.jpg)
+
+**Оплата при доставці**
+
+![Оплата при доставці](screenshot/integrations_cash_on_delivery.jpg)
+
+**Google Pay**
+
+![Google Pay](screenshot/integrations_google_pay.jpg)
+
+**Apple Pay**
+
+![Apple Pay](screenshot/integrations_apple_pay.jpg)
+
+### Інтеграції — доставка
+
+**Bring / Posten відстеження**
+
+![Bring і Posten API](screenshot/integrations_bring_posten_api.jpg)
+
+### Розширені
+
+**Розширені налаштування**
+
+![Розширені налаштування](screenshot/advanced_settings.jpg)
 
 ---
 

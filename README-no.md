@@ -168,24 +168,119 @@ shop/
 
 ## Skjermbilder
 
-| Skjerm | Fil |
-|--------|-----|
-| Admin dashboard | `screenshot/dashboard.jpg` |
-| Produktkatalog | `screenshot/catalog_product.jpg` |
-| Kategorier | `screenshot/catalog_categories.jpg` |
-| Butikkinnstillinger | `screenshot/store_setting.jpg` |
-| Forsideblokker | `screenshot/main_block.jpg` |
-| Tjenesteside-redigerer | `screenshot/servise_page_editor.jpg` |
-| Bunntekst-lenker | `screenshot/footer_link_editor.jpg` |
-| Header-innstillinger | `screenshot/header_setting.jpg` |
-| Utseende / farger | `screenshot/seting_color.jpg` |
-| SEO og Schema | `screenshot/seo_schema.jpg` |
-| Sitemap-generator | `screenshot/generate_schema_sitemap.jpg` |
-| AI-chat-widget | `screenshot/integrations_chat.jpg` |
-| AI-assistent | `screenshot/integrations_ai_assistant.jpg` |
-| PayPal / Stripe / Vipps | `screenshot/integrations_paypal.jpg` |
-| Bring-sporing | `screenshot/integrations_bring_posten_api.jpg` |
-| Avanserte innstillinger | `screenshot/advanced_settings.jpg` |
+### Dashboard og katalog
+
+**Admin dashboard**
+
+![Admin dashboard](screenshot/dashboard.jpg)
+
+**Produktkatalog**
+
+![Produktkatalog](screenshot/catalog_product.jpg)
+
+**Kategorier**
+
+![Kategorier](screenshot/catalog_categories.jpg)
+
+### Butikk og design
+
+**Butikkinnstillinger**
+
+![Butikkinnstillinger](screenshot/store_setting.jpg)
+
+**Butikkoppsett**
+
+![Butikkoppsett](screenshot/setting_shop.jpg)
+
+**Utseende / farger**
+
+![Utseende og farger](screenshot/seting_color.jpg)
+
+**Header-innstillinger**
+
+![Header-innstillinger](screenshot/header_setting.jpg)
+
+**Bunntekst-lenker**
+
+![Bunntekst-lenker](screenshot/footer_link_editor.jpg)
+
+### Innhold
+
+**Forsideblokker**
+
+![Forsideblokker](screenshot/main_block.jpg)
+
+**Tjenesteside-redigerer**
+
+![Tjenesteside-redigerer](screenshot/servise_page_editor.jpg)
+
+![Tjenesteside-redigerer — blokker](screenshot/servise_page_editor_2.jpg)
+
+### SEO og markedsføring
+
+**SEO og Schema.org**
+
+![SEO og Schema.org](screenshot/seo_schema.jpg)
+
+**Sitemap-generator**
+
+![Sitemap-generator](screenshot/generate_schema_sitemap.jpg)
+
+### Integrasjoner — AI
+
+**AI-assistent**
+
+![AI-assistent](screenshot/integrations_ai_assistant.jpg)
+
+![AI-assistent — innstillinger](screenshot/integrations_ai_assistant2.jpg)
+
+**Offentlig AI-chat**
+
+![Offentlig AI-chat](screenshot/integrations_chat.jpg)
+
+![AI-chat design](screenshot/integrations_chat_design.jpg)
+
+**reCAPTCHA**
+
+![reCAPTCHA-integrasjon](screenshot/integrations_recapcha.jpg)
+
+### Integrasjoner — betalinger
+
+**PayPal**
+
+![PayPal-integrasjon](screenshot/integrations_paypal.jpg)
+
+**Stripe**
+
+![Stripe-integrasjon](screenshot/integrations_stripe.jpg)
+
+**Vipps**
+
+![Vipps-integrasjon](screenshot/integrations_vipps.jpg)
+
+**Kontant ved levering**
+
+![Kontant ved levering](screenshot/integrations_cash_on_delivery.jpg)
+
+**Google Pay**
+
+![Google Pay](screenshot/integrations_google_pay.jpg)
+
+**Apple Pay**
+
+![Apple Pay](screenshot/integrations_apple_pay.jpg)
+
+### Integrasjoner — frakt
+
+**Bring / Posten-sporing**
+
+![Bring og Posten API](screenshot/integrations_bring_posten_api.jpg)
+
+### Avansert
+
+**Avanserte innstillinger**
+
+![Avanserte innstillinger](screenshot/advanced_settings.jpg)
 
 ---
 
