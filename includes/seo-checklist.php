@@ -340,3 +340,342 @@ function sh_admin_render_checklist_panel(array $report, array $labels, string $p
     </div>
     <?php
 }
+
+/** @param list<array{key:string,status:string}> $items @return list<string> */
+function sh_checklist_issue_tags(array $items): array
+{
+    $tags = [];
+    foreach ($items as $item) {
+        $st = $item['status'] ?? 'bad';
+        if ($st === 'good') {
+            continue;
+        }
+        $key = (string) ($item['key'] ?? '');
+        if (str_starts_with($key, 'meta_title_')) {
+            $tags[] = $st === 'bad' ? 'missing_title' : 'title_length';
+        } elseif (str_starts_with($key, 'meta_desc_')) {
+            $tags[] = $st === 'bad' ? 'missing_desc' : 'desc_length';
+        } elseif (str_starts_with($key, 'meta_kw_')) {
+            $tags[] = 'missing_keywords';
+        } elseif (str_starts_with($key, 'intro_')) {
+            $tags[] = $st === 'bad' ? 'missing_intro' : 'intro_length';
+        } elseif ($key === 'og_image') {
+            $tags[] = 'missing_og';
+        } elseif ($key === 'brand') {
+            $tags[] = 'missing_brand';
+        } elseif ($key === 'identifiers') {
+            $tags[] = 'missing_identifiers';
+        } elseif ($key === 'schema') {
+            $tags[] = 'missing_schema';
+        } elseif ($key === 'sitemap') {
+            $tags[] = 'missing_sitemap';
+        } elseif ($key === 'site_name' || $key === 'org') {
+            $tags[] = 'missing_global';
+        }
+    }
+    return array_values(array_unique($tags));
+}
+
+/**
+ * @param array<string, mixed>|null $product
+ * @return array{id:string,name:string,category:string,active:bool,score:int,grade:array{key:string,label:string},issues:list<string>,bad_count:int,warn_count:int,report:array}
+ */
+function sh_seo_analysis_product_row(?array $product, array $labels, string $lang): array
+{
+    $product = is_array($product) ? $product : [];
+    $report = sh_product_seo_checklist($product, $labels);
+    $issues = sh_checklist_issue_tags($report['items']);
+    $bad = 0;
+    $warn = 0;
+    foreach ($report['items'] as $item) {
+        if (($item['status'] ?? '') === 'bad') {
+            $bad++;
+        } elseif (($item['status'] ?? '') === 'warn') {
+            $warn++;
+        }
+    }
+    return [
+        'id'        => (string) ($product['id'] ?? ''),
+        'name'      => sh_localized($product, 'name', $lang),
+        'category'  => (string) ($product['category'] ?? ''),
+        'active'    => ($product['active'] ?? true) !== false,
+        'score'     => (int) ($report['score'] ?? 0),
+        'grade'     => $report['grade'],
+        'issues'    => $issues,
+        'bad_count' => $bad,
+        'warn_count'=> $warn,
+        'report'    => $report,
+    ];
+}
+
+/** @return list<array<string,mixed>> */
+function sh_seo_analysis_products(array $labels, string $lang, bool $activeOnly = true): array
+{
+    $rows = [];
+    foreach (sh_products(!$activeOnly) as $product) {
+        if ($activeOnly && ($product['active'] ?? true) === false) {
+            continue;
+        }
+        $rows[] = sh_seo_analysis_product_row($product, $labels, $lang);
+    }
+    usort($rows, static function (array $a, array $b): int {
+        $cmp = ($a['score'] ?? 0) <=> ($b['score'] ?? 0);
+        return $cmp !== 0 ? $cmp : strcmp($a['name'] ?? '', $b['name'] ?? '');
+    });
+    return $rows;
+}
+
+/**
+ * @param array<string, mixed>|null $category
+ * @return array{score:int,grade:array{key:string,label:string},items:list<array<string,mixed>>}
+ */
+function sh_category_seo_checklist(?array $category, array $labels): array
+{
+    $category = is_array($category) ? $category : [];
+    $seo = is_array($category['seo'] ?? null) ? $category['seo'] : [];
+    $defaultLang = sh_site_default_lang();
+    $items = [];
+
+    foreach (sh_langs() as $code => $_info) {
+        $title = trim((string) ($seo['meta_title'][$code] ?? ''));
+        $desc = trim((string) ($seo['meta_description'][$code] ?? ''));
+        $kw = trim((string) ($seo['meta_keywords'][$code] ?? ''));
+        $intro = trim((string) ($seo['intro'][$code] ?? ''));
+        $w = $code === $defaultLang ? 3 : 2;
+
+        $items[] = [
+            'key' => 'meta_title_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($title), 30, 60, 12),
+            'label' => ($labels['meta_title'] ?? 'Meta title') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_title_hint'] ?? '',
+            'weight' => $w,
+        ];
+        $items[] = [
+            'key' => 'meta_desc_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($desc), 120, 160, 40),
+            'label' => ($labels['meta_desc'] ?? 'Meta description') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_desc_hint'] ?? '',
+            'weight' => $w,
+        ];
+        $items[] = [
+            'key' => 'meta_kw_' . $code,
+            'status' => $kw !== '' ? 'good' : 'warn',
+            'label' => ($labels['meta_keywords'] ?? 'Keywords') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_keywords_hint'] ?? '',
+            'weight' => 1,
+        ];
+        $items[] = [
+            'key' => 'intro_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($intro), 80, 400, 20),
+            'label' => ($labels['intro'] ?? 'Category intro') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['intro_hint'] ?? '',
+            'weight' => $w,
+        ];
+    }
+
+    $score = sh_checklist_score($items);
+    return [
+        'score' => $score,
+        'grade' => sh_checklist_grade($score, $labels),
+        'items' => $items,
+    ];
+}
+
+/**
+ * @param array<string, mixed> $page
+ * @return array{score:int,grade:array{key:string,label:string},items:list<array<string,mixed>>}
+ */
+function sh_service_page_seo_checklist(array $page, array $labels): array
+{
+    $defaultLang = sh_site_default_lang();
+    $items = [];
+
+    foreach (sh_langs() as $code => $_info) {
+        $title = trim((string) ($page['meta_title'][$code] ?? ''));
+        $desc = trim((string) ($page['meta_description'][$code] ?? ''));
+        $body = trim((string) ($page['content'][$code] ?? ''));
+        $w = $code === $defaultLang ? 3 : 2;
+
+        $items[] = [
+            'key' => 'meta_title_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($title), 30, 60, 12),
+            'label' => ($labels['meta_title'] ?? 'Meta title') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_title_hint'] ?? '',
+            'weight' => $w,
+        ];
+        $items[] = [
+            'key' => 'meta_desc_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($desc), 120, 160, 40),
+            'label' => ($labels['meta_desc'] ?? 'Meta description') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_desc_hint'] ?? '',
+            'weight' => $w,
+        ];
+        $items[] = [
+            'key' => 'content_' . $code,
+            'status' => mb_strlen($body) >= 80 ? 'good' : ($body !== '' ? 'warn' : 'bad'),
+            'label' => ($labels['content'] ?? 'Page content') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['content_hint'] ?? '',
+            'weight' => 1,
+        ];
+    }
+
+    $score = sh_checklist_score($items);
+    return [
+        'score' => $score,
+        'grade' => sh_checklist_grade($score, $labels),
+        'items' => $items,
+    ];
+}
+
+/**
+ * @param array<string, mixed> $settings
+ * @return array{score:int,grade:array{key:string,label:string},items:list<array<string,mixed>>}
+ */
+function sh_site_global_seo_checklist(array $settings, array $labels): array
+{
+    $items = [
+        [
+            'key' => 'site_name',
+            'status' => trim($settings['seo_site_name'] ?? '') !== '' ? 'good' : 'bad',
+            'label' => $labels['site_name'] ?? 'Site name',
+            'hint' => $labels['site_name_hint'] ?? '',
+            'weight' => 3,
+        ],
+        [
+            'key' => 'org',
+            'status' => trim($settings['seo_org_name'] ?? '') !== '' ? 'good' : 'warn',
+            'label' => $labels['org_name'] ?? 'Organization name',
+            'hint' => $labels['org_name_hint'] ?? '',
+            'weight' => 2,
+        ],
+        [
+            'key' => 'og_image',
+            'status' => trim($settings['seo_default_og_image'] ?? '') !== '' ? 'good' : 'bad',
+            'label' => $labels['og_image'] ?? 'Default OG image',
+            'hint' => $labels['og_image_hint'] ?? '',
+            'weight' => 3,
+        ],
+        [
+            'key' => 'sitemap',
+            'status' => !empty($settings['sitemap_enabled']) ? 'good' : 'warn',
+            'label' => $labels['sitemap'] ?? 'XML sitemap',
+            'hint' => $labels['sitemap_hint'] ?? '',
+            'weight' => 2,
+        ],
+        [
+            'key' => 'schema',
+            'status' => !empty($settings['seo_schema_product']) && !empty($settings['seo_schema_organization']) ? 'good' : 'bad',
+            'label' => $labels['schema'] ?? 'Product + Organization schema',
+            'hint' => $labels['schema_hint'] ?? '',
+            'weight' => 3,
+        ],
+    ];
+
+    $score = sh_checklist_score($items);
+    return [
+        'score' => $score,
+        'grade' => sh_checklist_grade($score, $labels),
+        'items' => $items,
+    ];
+}
+
+/**
+ * @return list<array{key:string,type:string,label:string,score:int,grade:array{key:string,label:string},issues:list<string>,edit_url:string,public_url:string}>
+ */
+function sh_seo_pages_audit(array $settings, array $labels, string $lang): array
+{
+    require_once __DIR__ . '/category-storage.php';
+    require_once __DIR__ . '/service-pages.php';
+
+    $pages = [];
+    $global = sh_site_global_seo_checklist($settings, $labels['global'] ?? $labels);
+    $pages[] = [
+        'key'        => 'global',
+        'type'       => 'settings',
+        'label'      => $labels['page_global'] ?? 'Global SEO settings',
+        'score'      => $global['score'],
+        'grade'      => $global['grade'],
+        'issues'     => sh_checklist_issue_tags($global['items']),
+        'edit_url'   => sh_admin_url('settings-seo.php'),
+        'public_url' => sh_url('index.php'),
+    ];
+
+    $pages[] = [
+        'key'        => 'homepage',
+        'type'       => 'system',
+        'label'      => $labels['page_homepage'] ?? 'Homepage',
+        'score'      => trim($settings['seo_site_name'] ?? '') !== '' ? 85 : 45,
+        'grade'      => sh_checklist_grade(trim($settings['seo_site_name'] ?? '') !== '' ? 85 : 45, $labels),
+        'issues'     => trim($settings['seo_site_name'] ?? '') !== '' ? [] : ['missing_global'],
+        'edit_url'   => sh_admin_url('settings-homepage.php'),
+        'public_url' => sh_url('index.php'),
+    ];
+
+    $catLabels = $labels['category'] ?? $labels;
+    foreach (sh_category_records(true) as $category) {
+        $slug = (string) ($category['slug'] ?? '');
+        if ($slug === '') {
+            continue;
+        }
+        $report = sh_category_seo_checklist($category, $catLabels);
+        $pages[] = [
+            'key'        => 'category:' . $slug,
+            'type'       => 'category',
+            'label'      => sh_localized($category, 'name', $lang) . ' (' . $slug . ')',
+            'score'      => $report['score'],
+            'grade'      => $report['grade'],
+            'issues'     => sh_checklist_issue_tags($report['items']),
+            'edit_url'   => sh_admin_url('category-edit.php?slug=' . urlencode($slug) . '&tab=seo'),
+            'public_url' => sh_url('category.php?cat=' . urlencode($slug)),
+        ];
+    }
+
+    $pageLabels = $labels['service'] ?? $labels;
+    $settings = sh_merge_service_settings($settings);
+    foreach (sh_service_page_slugs($settings) as $slug) {
+        $page = $settings['service_pages'][$slug] ?? null;
+        if (!is_array($page) || ($page['active'] ?? true) === false) {
+            continue;
+        }
+        $report = sh_service_page_seo_checklist($page, $pageLabels);
+        $def = sh_service_page_defs($settings)[$slug] ?? [];
+        $pages[] = [
+            'key'        => 'page:' . $slug,
+            'type'       => 'service',
+            'label'      => (string) ($def['admin_label'] ?? $slug),
+            'score'      => $report['score'],
+            'grade'      => $report['grade'],
+            'issues'     => sh_checklist_issue_tags($report['items']),
+            'edit_url'   => sh_admin_url('settings-pages.php?page=' . urlencode($slug)),
+            'public_url' => sh_url('page.php?slug=' . urlencode($slug)),
+        ];
+    }
+
+    usort($pages, static fn(array $a, array $b): int => ($a['score'] ?? 0) <=> ($b['score'] ?? 0));
+
+    return $pages;
+}
+
+/** @param list<string> $issues @param array<string, string> $map */
+function sh_seo_analysis_issue_labels(array $issues, array $map): string
+{
+    $parts = [];
+    foreach ($issues as $tag) {
+        $parts[] = $map[$tag] ?? $tag;
+    }
+    return implode(', ', $parts);
+}
+
+function sh_seo_score_grade_key(int $score): string
+{
+    if ($score >= 90) {
+        return 'excellent';
+    }
+    if ($score >= 75) {
+        return 'good';
+    }
+    if ($score >= 50) {
+        return 'fair';
+    }
+    return 'poor';
+}

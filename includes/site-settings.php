@@ -237,8 +237,9 @@ function sh_settings_tabs(): array
         'posten'      => ['file' => 'settings-posten.php',      'icon' => 'truck', 'group' => 'integrations'],
         'nova_poshta' => ['file' => 'settings-nova-poshta.php', 'icon' => 'warehouse', 'group' => 'integrations'],
         'appearance' => ['file' => 'settings-appearance.php', 'icon' => 'palette', 'group' => 'design'],
-        'seo'        => ['file' => 'settings-seo.php',        'icon' => 'chart-line', 'group' => 'marketing'],
-        'analytics'  => ['file' => 'settings-analytics.php',  'icon' => 'chart-pie', 'group' => 'marketing'],
+        'seo'           => ['file' => 'settings-seo.php',           'icon' => 'chart-line', 'group' => 'marketing'],
+        'seo_analysis'  => ['file' => 'settings-seo-analysis.php',  'icon' => 'magnifying-glass-chart', 'group' => 'marketing'],
+        'analytics'     => ['file' => 'settings-analytics.php',       'icon' => 'chart-pie', 'group' => 'marketing'],
         'chat'          => ['file' => 'settings-chat.php',          'icon' => 'comments', 'group' => 'integrations'],
         'ai'            => ['file' => 'settings-ai.php',            'icon' => 'wand-magic-sparkles', 'group' => 'integrations'],
         'recaptcha'     => ['file' => 'settings-recaptcha.php',     'icon' => 'shield-alt', 'group' => 'integrations'],
@@ -269,7 +270,7 @@ function sh_settings_tab_groups(): array
         'marketing' => [
             'label_key' => 'settings_group_marketing',
             'icon'      => 'bullhorn',
-            'tabs'      => ['seo', 'analytics'],
+            'tabs'      => ['seo', 'seo_analysis', 'analytics'],
         ],
         'integrations' => [
             'label_key' => 'settings_group_integrations',

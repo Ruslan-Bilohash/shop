@@ -102,6 +102,28 @@ $en = [
             'sitemap_priority_product' => '0.0–1.0 — relative importance for product URLs in sitemap.',
         ],
     ],
+    'seo_analysis' => [
+        'intro' => 'Audit product SEO scores and page-level meta in one place. Filter weak listings and open the editor with one click.',
+        'guide' => [
+            'title' => 'SEO analysis',
+            'intro' => 'Use filters to find products missing meta titles, descriptions or schema. The pages checklist covers global settings, categories and service pages.',
+            'steps' => [
+                'Start with products scored below 75 — fix meta title (30–60 chars) and description (120–160 chars) per language.',
+                'Filter by issue type (missing title, description length, schema) to batch similar fixes.',
+                'Review the pages checklist — global SEO, categories and service pages.',
+                'After bulk fixes, regenerate the XML sitemap under SEO & Schema.',
+            ],
+            'links' => [
+                ['label' => 'Google Search Console', 'url' => 'https://search.google.com/search-console'],
+            ],
+            'note' => 'Product SEO checklist also appears in Products → Edit on the right sidebar.',
+        ],
+        'sections' => [
+            'seo-analysis-products' => 'Products to optimize',
+            'seo-analysis-pages' => 'SEO pages checklist',
+        ],
+        'hints' => [],
+    ],
     'recaptcha' => [
         'intro' => 'Protect contact and lead forms from bots with Google reCAPTCHA v2 checkbox.',
         'guide' => [
@@ -485,6 +507,28 @@ $uk = [
             'seo_geo_region' => 'Регіон ISO: NO, UA, SE…',
             'seo_twitter_site' => '@нік для Twitter/X (необовʼязково).',
         ],
+    ],
+    'seo_analysis' => [
+        'intro' => 'Аудит SEO товарів і meta сторінок в одному місці. Фільтруйте слабкі позиції та відкривайте редактор одним кліком.',
+        'guide' => [
+            'title' => 'Аналіз SEO',
+            'intro' => 'Фільтри показують товари без meta title, description або schema. Чеклист сторінок охоплює глобальні налаштування, категорії та сервісні сторінки.',
+            'steps' => [
+                'Почніть з товарів з балом нижче 75 — meta title 30–60 символів, description 120–160 для кожної мови.',
+                'Фільтр за типом проблеми — групуйте однакові правки.',
+                'Перегляньте чеклист сторінок: глобальні SEO, категорії, сервісні сторінки.',
+                'Після масових змін оновіть XML sitemap у SEO та Schema.',
+            ],
+            'links' => [
+                ['label' => 'Google Search Console', 'url' => 'https://search.google.com/search-console'],
+            ],
+            'note' => 'Чеклист SEO товару також є в Товари → Редагувати (панель справа).',
+        ],
+        'sections' => [
+            'seo-analysis-products' => 'Товари для оптимізації',
+            'seo-analysis-pages' => 'Чеклист SEO сторінок',
+        ],
+        'hints' => [],
     ],
     'recaptcha' => [
         'intro' => 'Захист контактних форм від ботів через Google reCAPTCHA v2.',
