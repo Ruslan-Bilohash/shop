@@ -818,7 +818,7 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
 .sh-empty-sub { display: block; color: var(--sh-text-muted); margin-bottom: 16px; }
 
 /* Footer */
-.sh-footer { background: linear-gradient(180deg, #f8fafc 0%, var(--sh-bg-card) 100%); border-top: 1px solid var(--sh-border); margin-top: 0; }
+.sh-footer { background: linear-gradient(180deg, #f8fafc 0%, var(--sh-bg-card) 100%); border-top: 1px solid var(--sh-border); margin-top: 48px; }
 .sh-footer-cta {
     position: relative; overflow: hidden;
     background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #3b82f6 100%);

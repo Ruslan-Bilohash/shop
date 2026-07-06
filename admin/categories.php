@@ -12,10 +12,22 @@ unset($_SESSION['sh_admin_flash']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_slug'])) {
     $slug = trim($_POST['delete_slug'] ?? '');
-    if ($slug !== '' && sh_category_delete($slug)) {
-        $_SESSION['sh_admin_flash'] = ['type' => 'success', 'msg' => $tp['deleted'] ?? 'Category deleted.'];
+    if ($slug === '') {
+        $_SESSION['sh_admin_flash'] = ['type' => 'error', 'msg' => $tp['delete_error'] ?? 'Cannot delete category.'];
+    } elseif (sh_category_by_slug($slug, true) === null) {
+        $_SESSION['sh_admin_flash'] = ['type' => 'error', 'msg' => $tp['not_found'] ?? 'Category not found.'];
     } else {
-        $_SESSION['sh_admin_flash'] = ['type' => 'error', 'msg' => $tp['delete_error'] ?? 'Cannot delete category with products.'];
+        $hadProducts = sh_category_product_count($slug) > 0;
+        if (sh_category_delete($slug)) {
+        $_SESSION['sh_admin_flash'] = [
+            'type' => 'success',
+            'msg'  => $hadProducts
+                ? ($tp['deleted_with_products'] ?? 'Category deleted. Linked products are now uncategorized.')
+                : ($tp['deleted'] ?? 'Category deleted.'),
+        ];
+        } else {
+        $_SESSION['sh_admin_flash'] = ['type' => 'error', 'msg' => $tp['delete_error'] ?? 'Cannot delete category.'];
+        }
     }
     header('Location: ' . sh_admin_url('categories.php'));
     exit;

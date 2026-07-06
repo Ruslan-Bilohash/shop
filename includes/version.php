@@ -50,7 +50,7 @@ function sh_version_releases_public(): array
 
 function sh_public_style_version(): string
 {
-    return '21';
+    return '22';
 }
 
 function sh_public_script_version(): string

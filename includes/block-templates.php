@@ -112,7 +112,14 @@ function sh_block_templates_apply_post(array $post, array $settings): array
     foreach (sh_langs() as $code => $_info) {
         $newBodies[$code] = trim((string) ($post['new_tpl_body_' . $code] ?? ''));
     }
-    $hasNew = $newName !== '' || $newPrompt !== '' || max($newBodies) !== '';
+    $hasNewBody = false;
+    foreach ($newBodies as $body) {
+        if ($body !== '') {
+            $hasNewBody = true;
+            break;
+        }
+    }
+    $hasNew = $newName !== '' || $newPrompt !== '' || $hasNewBody;
     if ($hasNew) {
         $newId = 'tpl' . substr((string) time(), -8);
         $placement = (string) ($post['new_tpl_placement'] ?? 'none');

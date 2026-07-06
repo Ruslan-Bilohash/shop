@@ -2,6 +2,9 @@
     var form = document.getElementById('shBlockBuilderForm');
     if (!form) return;
 
+    var getCmValue = window.shAdminGetCmValue || function (ta) { return ta ? (ta.value || '') : ''; };
+    var setCmValue = window.shAdminSetCmValue || function (ta, v) { if (ta) ta.value = v || ''; };
+
     var previewLang = form.getAttribute('data-preview-lang') || 'en';
     var preview = document.getElementById('shTplPreview');
     var promptInput = document.getElementById('shTplPrompt');
@@ -20,17 +23,15 @@
 
     function getBodyValue(lang) {
         var ta = form.querySelector('.sh-tpl-body-input[data-lang="' + lang + '"]');
-        if (!ta) return '';
-        if (ta.nextSibling && ta.nextSibling.CodeMirror) {
-            return ta.nextSibling.CodeMirror.getValue();
-        }
-        return ta.value || '';
+        return getCmValue(ta);
     }
 
     function updatePreview() {
         if (!preview) return;
-        var title = (form.querySelector('.sh-tpl-text-input[data-field="title"][data-lang="' + previewLang + '"]') || {}).value || '';
-        var subtitle = (form.querySelector('.sh-tpl-text-input[data-field="subtitle"][data-lang="' + previewLang + '"]') || {}).value || '';
+        var titleEl = form.querySelector('.sh-tpl-text-input[data-field="title"][data-lang="' + previewLang + '"]');
+        var subtitleEl = form.querySelector('.sh-tpl-text-input[data-field="subtitle"][data-lang="' + previewLang + '"]');
+        var title = titleEl ? titleEl.value : '';
+        var subtitle = subtitleEl ? subtitleEl.value : '';
         var body = getBodyValue(previewLang);
         var html = '<!DOCTYPE html><html><head><meta charset="utf-8">'
             + '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">'
@@ -58,11 +59,7 @@
         });
         Object.keys(data.body || {}).forEach(function (code) {
             var ta = form.querySelector('.sh-tpl-body-input[data-lang="' + code + '"]');
-            if (!ta) return;
-            ta.value = data.body[code] || '';
-            if (ta.nextSibling && ta.nextSibling.CodeMirror) {
-                ta.nextSibling.CodeMirror.setValue(ta.value);
-            }
+            if (ta) setCmValue(ta, data.body[code] || '');
         });
         updatePreview();
     }
@@ -83,7 +80,7 @@
         bindPlacement(sel, wrap);
     });
 
-    form.querySelectorAll('.sh-tpl-text-input, .sh-tpl-body-input').forEach(function (el) {
+    form.querySelectorAll('.sh-tpl-text-input').forEach(function (el) {
         el.addEventListener('input', updatePreview);
     });
 
@@ -95,19 +92,30 @@
                 return;
             }
             var url = form.getAttribute('data-ai-url') || '';
+            if (!url) {
+                setStatus('API URL missing', 'error');
+                return;
+            }
             genBtn.disabled = true;
             setStatus('Generating…', 'pending');
             fetch(url, {
                 method: 'POST',
                 credentials: 'same-origin',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({ prompt: prompt })
             })
-                .then(function (r) { return r.json(); })
+                .then(function (r) {
+                    return r.json().then(function (data) {
+                        if (!r.ok) throw new Error(data.error || ('HTTP ' + r.status));
+                        return data;
+                    });
+                })
                 .then(function (res) {
                     if (!res.ok || !res.data || !res.data.template) throw new Error(res.error || 'Failed');
                     fillNewTemplate(res.data.template, prompt);
                     setStatus(res.demo ? 'Demo template applied' : 'Generated', res.demo ? 'info' : 'success');
+                    var editor = document.getElementById('block-builder-new');
+                    if (editor) editor.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 })
                 .catch(function (err) {
                     setStatus(err.message || 'Failed', 'error');
@@ -116,25 +124,23 @@
         });
     }
 
-    form.addEventListener('submit', function () {
-        form.querySelectorAll('.adm-code-mirror').forEach(function (ta) {
-            if (ta.nextSibling && ta.nextSibling.CodeMirror) {
-                ta.value = ta.nextSibling.CodeMirror.getValue();
+    function boot() {
+        if (window.shAdminInitCodeMirror) {
+            window.shAdminInitCodeMirror(form);
+        }
+        form.querySelectorAll('.sh-tpl-body-input').forEach(function (ta) {
+            if (ta.cmEditor) {
+                ta.cmEditor.on('change', updatePreview);
+            } else {
+                ta.addEventListener('input', updatePreview);
             }
         });
-    });
-
-    if (window.shAdminInitCodeMirror) {
-        window.shAdminInitCodeMirror(form);
-        setTimeout(function () {
-            form.querySelectorAll('.sh-tpl-body-input').forEach(function (ta) {
-                if (ta.nextSibling && ta.nextSibling.CodeMirror) {
-                    ta.nextSibling.CodeMirror.on('change', updatePreview);
-                }
-            });
-            updatePreview();
-        }, 120);
-    } else {
         updatePreview();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+    } else {
+        setTimeout(boot, 0);
     }
 })();

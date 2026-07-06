@@ -27,7 +27,7 @@ function sh_ensure_categories_json(): void
         return;
     }
     $existing = json_decode(file_get_contents($json) ?: '[]', true);
-    if (!is_array($existing) || count($existing) < count($defaults)) {
+    if (!is_array($existing) || $existing === []) {
         sh_save_categories($defaults);
     }
 }
@@ -165,11 +165,36 @@ function sh_category_upsert(array $record): bool
     return sh_save_categories($list);
 }
 
+function sh_category_unlink_products(string $slug): int
+{
+    require_once __DIR__ . '/storage.php';
+    $slug = trim($slug);
+    if ($slug === '') {
+        return 0;
+    }
+    $list = sh_load_products_raw();
+    $changed = 0;
+    foreach ($list as &$product) {
+        if (($product['category'] ?? '') === $slug) {
+            $product['category'] = '';
+            $changed++;
+        }
+    }
+    unset($product);
+    if ($changed > 0) {
+        sh_save_products($list);
+    }
+    return $changed;
+}
+
 function sh_category_delete(string $slug): bool
 {
-    if (sh_category_product_count($slug) > 0) {
+    $slug = trim($slug);
+    if ($slug === '' || sh_category_by_slug($slug, true) === null) {
         return false;
     }
+
+    sh_category_unlink_products($slug);
 
     $list = array_values(array_filter(
         sh_load_categories_raw(),
