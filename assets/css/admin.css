@@ -1234,7 +1234,8 @@ body.adm-modal-open { overflow: hidden; }
 .adm-seo-score-pill--good { background: #dbeafe; color: #1d4ed8; }
 .adm-seo-score-pill--fair { background: #fef3c7; color: #b45309; }
 .adm-seo-score-pill--poor { background: #fee2e2; color: #b91c1c; }
-.adm-seo-grade-label { display: block; margin-top: 2px; }
+.adm-seo-grade-label { display: block; margin-top: 2px; font-size: 10px; line-height: 1.2; }
+.adm-table .adm-seo-score-pill { white-space: nowrap; }
 .adm-seo-issues { font-size: 12px; line-height: 1.4; }
 .adm-seo-analysis-empty { margin-top: 12px; }
 .adm-seo-analysis-table .adm-btn + .adm-btn { margin-left: 4px; }

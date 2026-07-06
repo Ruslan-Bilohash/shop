@@ -35,7 +35,7 @@
 <script src="<?= htmlspecialchars(sh_asset('js/admin-code-editor.js')) ?>?v=5"></script>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'homepage'): ?>
-<script src="<?= htmlspecialchars(sh_asset('js/admin-homepage.js')) ?>?v=3"></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-homepage.js')) ?>?v=4"></script>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'block_builder'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-block-builder-delete.js')) ?>?v=1" defer></script>

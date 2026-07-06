@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once dirname(__DIR__) . '/includes/storage.php';
+require_once dirname(__DIR__) . '/includes/seo-checklist.php';
 sh_admin_require();
+
+$seoLabels = $ta['products_page']['seo_checklist'] ?? [];
 
 $admin_page = 'products';
 $tp = $ta['products_page'] ?? [];
@@ -60,6 +63,7 @@ require __DIR__ . '/includes/layout.php';
                     <th><?= htmlspecialchars($tp['price'] ?? 'Price') ?></th>
                     <th><?= htmlspecialchars($tp['stock'] ?? 'Stock') ?></th>
                     <th><?= htmlspecialchars($tp['status'] ?? 'Status') ?></th>
+                    <th><?= htmlspecialchars($tp['col_seo'] ?? 'SEO') ?></th>
                     <th><?= htmlspecialchars($tp['actions'] ?? 'Actions') ?></th>
                 </tr>
             </thead>
@@ -67,6 +71,7 @@ require __DIR__ . '/includes/layout.php';
                 <?php foreach ($products as $product):
                     $id = $product['id'] ?? '';
                     $active = ($product['active'] ?? true) !== false;
+                    $seoReport = sh_product_seo_checklist($product, $seoLabels);
                 ?>
                 <tr>
                     <td data-label="<?= htmlspecialchars($tp['product'] ?? 'Product') ?>">
@@ -91,6 +96,9 @@ require __DIR__ . '/includes/layout.php';
                         <span class="adm-badge <?= $active ? 'adm-badge--green' : 'adm-badge--muted' ?>">
                             <?= htmlspecialchars($active ? ($tp['active'] ?? 'Active') : ($tp['inactive'] ?? 'Inactive')) ?>
                         </span>
+                    </td>
+                    <td data-label="<?= htmlspecialchars($tp['col_seo'] ?? 'SEO') ?>">
+                        <?php sh_admin_render_seo_score_pill((int) $seoReport['score'], $seoReport['grade']); ?>
                     </td>
                     <td data-label="<?= htmlspecialchars($tp['actions'] ?? 'Actions') ?>">
                         <div class="adm-actions-row">

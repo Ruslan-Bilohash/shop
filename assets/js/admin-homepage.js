@@ -1,13 +1,22 @@
 (function () {
     var list = document.getElementById('shHomeBlocksList');
+    var form = document.getElementById('shHomepageForm');
     if (!list) return;
 
     var dragging = null;
 
-    function reindexSort() {
+    function reindexRows() {
         list.querySelectorAll('.adm-home-block-row').forEach(function (row, idx) {
+            row.setAttribute('data-idx', String(idx));
             var sortInput = row.querySelector('.sh-home-block-sort');
-            if (sortInput) sortInput.value = String(idx + 1);
+            if (sortInput) {
+                sortInput.value = String(idx + 1);
+            }
+            row.querySelectorAll('[name]').forEach(function (el) {
+                var name = el.getAttribute('name');
+                if (!name) return;
+                el.setAttribute('name', name.replace(/_(\d+)$/, '_' + idx));
+            });
         });
     }
 
@@ -17,7 +26,7 @@
         btn.addEventListener('click', function () {
             if (!window.confirm(btn.getAttribute('title') || 'Remove?')) return;
             row.remove();
-            reindexSort();
+            reindexRows();
         });
     }
 
@@ -31,7 +40,7 @@
         row.addEventListener('dragend', function () {
             row.classList.remove('is-dragging');
             dragging = null;
-            reindexSort();
+            reindexRows();
         });
         row.addEventListener('dragover', function (e) {
             e.preventDefault();
@@ -42,4 +51,24 @@
         });
         bindRemove(row);
     });
+
+    if (form) {
+        form.addEventListener('submit', function () {
+            reindexRows();
+            form.querySelectorAll('.adm-code-mirror').forEach(function (ta) {
+                if (ta.cmEditor) {
+                    ta.value = ta.cmEditor.getValue();
+                }
+                if (!ta.name || ta.name.indexOf('home_block_body_') === -1) {
+                    return;
+                }
+                var val = ta.value || '';
+                if (val !== '' && val.indexOf('b64:') !== 0) {
+                    try {
+                        ta.value = 'b64:' + btoa(unescape(encodeURIComponent(val)));
+                    } catch (e) { /* keep plain */ }
+                }
+            });
+        });
+    }
 })();

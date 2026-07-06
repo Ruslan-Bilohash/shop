@@ -679,3 +679,84 @@ function sh_seo_score_grade_key(int $score): string
     }
     return 'poor';
 }
+
+/** @param array{key:string,label:string} $grade */
+function sh_admin_render_seo_score_pill(int $score, array $grade = []): void
+{
+    $gradeKey = $grade['key'] ?? sh_seo_score_grade_key($score);
+    ?>
+    <span class="adm-seo-score-pill adm-seo-score-pill--<?= htmlspecialchars($gradeKey) ?>">
+        <?= (int) $score ?>/100
+    </span>
+    <?php if (!empty($grade['label'])): ?>
+    <small class="adm-muted adm-seo-grade-label"><?= htmlspecialchars($grade['label']) ?></small>
+    <?php endif;
+}
+
+/**
+ * @param array<string, mixed>|null $article
+ * @return array{score:int,grade:array{key:string,label:string},items:list<array<string,mixed>>}
+ */
+function sh_news_seo_checklist(?array $article, array $labels): array
+{
+    $article = is_array($article) ? $article : [];
+    $seo = is_array($article['seo'] ?? null) ? $article['seo'] : [];
+    $schema = is_array($seo['schema'] ?? null) ? $seo['schema'] : [];
+    $defaultLang = sh_site_default_lang();
+    $items = [];
+
+    foreach (sh_langs() as $code => $_info) {
+        $title = trim((string) ($seo['meta_title'][$code] ?? ''));
+        $desc = trim((string) ($seo['meta_description'][$code] ?? ''));
+        $kw = trim((string) ($seo['meta_keywords'][$code] ?? ''));
+        $w = $code === $defaultLang ? 3 : 2;
+
+        $items[] = [
+            'key' => 'meta_title_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($title), 30, 60, 12),
+            'label' => ($labels['meta_title'] ?? 'Meta title') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_title_hint'] ?? '',
+            'weight' => $w,
+        ];
+        $items[] = [
+            'key' => 'meta_desc_' . $code,
+            'status' => sh_checklist_rate_length(mb_strlen($desc), 120, 160, 40),
+            'label' => ($labels['meta_desc'] ?? 'Meta description') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_desc_hint'] ?? '',
+            'weight' => $w,
+        ];
+        $items[] = [
+            'key' => 'meta_kw_' . $code,
+            'status' => $kw !== '' ? 'good' : 'warn',
+            'label' => ($labels['meta_keywords'] ?? 'Keywords') . ' (' . strtoupper($code) . ')',
+            'hint' => $labels['meta_keywords_hint'] ?? '',
+            'weight' => 1,
+        ];
+    }
+
+    $og = trim((string) ($seo['og_image'] ?? ''));
+    $cover = trim((string) ($article['image'] ?? ''));
+    $items[] = [
+        'key' => 'og_image',
+        'status' => $og !== '' ? 'good' : ($cover !== '' ? 'warn' : 'bad'),
+        'label' => $labels['og_image'] ?? 'OG image',
+        'hint' => $labels['og_image_hint'] ?? '',
+        'weight' => 2,
+    ];
+
+    $schemaOk = !empty($schema['news_article']);
+    $items[] = [
+        'key' => 'schema',
+        'status' => $schemaOk ? 'good' : 'warn',
+        'label' => $labels['schema'] ?? 'NewsArticle schema',
+        'hint' => $labels['schema_hint'] ?? '',
+        'weight' => 2,
+    ];
+
+    $score = sh_checklist_score($items);
+    return [
+        'score' => $score,
+        'grade' => sh_checklist_grade($score, $labels),
+        'items' => $items,
+    ];
+}

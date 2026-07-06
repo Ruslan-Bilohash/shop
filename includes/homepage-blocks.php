@@ -1,5 +1,88 @@
 <?php
 
+function sh_home_block_body_decode(string $value): string
+{
+    if (str_starts_with($value, 'b64:')) {
+        $decoded = base64_decode(substr($value, 4), true);
+        return $decoded !== false ? $decoded : $value;
+    }
+    return $value;
+}
+
+function sh_home_block_fingerprint(array $block): string
+{
+    $tplId = trim((string) ($block['template_id'] ?? ''));
+    if ($tplId !== '') {
+        return 'tpl:' . $tplId;
+    }
+    $type = (string) ($block['type'] ?? '');
+    if ($type !== '' && $type !== 'custom') {
+        return 'type:' . $type;
+    }
+    $parts = [];
+    foreach (['uk', 'en', 'no'] as $code) {
+        $title = trim((string) (($block['title'][$code] ?? '') ?: ''));
+        $body = trim((string) (($block['body'][$code] ?? '') ?: ''));
+        if ($title !== '' || $body !== '') {
+            $parts[] = $title . '|' . mb_substr($body, 0, 400, 'UTF-8');
+        }
+    }
+    if ($parts === []) {
+        return 'custom:' . (string) ($block['id'] ?? 'empty');
+    }
+    return 'custom:' . md5(implode('||', $parts));
+}
+
+/** @param list<array<string,mixed>> $blocks @return list<array<string,mixed>> */
+function sh_home_blocks_dedupe(array $blocks): array
+{
+    $seen = [];
+    $out = [];
+    foreach ($blocks as $block) {
+        if (!is_array($block)) {
+            continue;
+        }
+        $fp = sh_home_block_fingerprint($block);
+        if (isset($seen[$fp])) {
+            continue;
+        }
+        $seen[$fp] = true;
+        $out[] = $block;
+    }
+    return $out;
+}
+
+/** Detach homepage templates removed from the blocks list. */
+function sh_home_blocks_reconcile_templates(array $settings, array $blocks): array
+{
+    if (!function_exists('sh_block_templates_from_settings')) {
+        require_once __DIR__ . '/block-templates.php';
+    }
+    $activeTplIds = [];
+    foreach ($blocks as $block) {
+        $tplId = trim((string) ($block['template_id'] ?? ''));
+        if ($tplId !== '') {
+            $activeTplIds[$tplId] = true;
+        }
+    }
+    $templates = sh_block_templates_from_settings($settings);
+    $changed = false;
+    foreach ($templates as $idx => $tpl) {
+        $id = (string) ($tpl['id'] ?? '');
+        if ($id === '') {
+            continue;
+        }
+        if (($tpl['placement'] ?? '') === 'homepage' && !isset($activeTplIds[$id])) {
+            $templates[$idx]['placement'] = 'none';
+            $changed = true;
+        }
+    }
+    if ($changed) {
+        $settings['block_templates'] = $templates;
+    }
+    return $settings;
+}
+
 /** @return array<string, array{label:string,icon:string,has_limit:bool}> */
 function sh_home_block_types(): array
 {
@@ -78,7 +161,7 @@ function sh_home_blocks_from_settings(?array $settings = null): array
         return sh_home_blocks_defaults();
     }
     usort($blocks, fn($a, $b) => ($a['sort'] ?? 99) <=> ($b['sort'] ?? 99));
-    return $blocks;
+    return sh_home_blocks_dedupe($blocks);
 }
 
 function sh_home_blocks_sorted_active(?array $settings = null): array
@@ -122,10 +205,11 @@ function sh_home_blocks_apply_post(array $post, array $settings): array
         foreach (sh_langs() as $code => $_info) {
             $block['title'][$code] = trim((string) ($post['home_block_title_' . $code . '_' . $i] ?? ''));
             $block['subtitle'][$code] = trim((string) ($post['home_block_subtitle_' . $code . '_' . $i] ?? ''));
-            $block['body'][$code] = trim((string) ($post['home_block_body_' . $code . '_' . $i] ?? ''));
+            $block['body'][$code] = trim(sh_home_block_body_decode(trim((string) ($post['home_block_body_' . $code . '_' . $i] ?? ''))));
         }
         $blocks[] = $block;
     }
+    $blocks = sh_home_blocks_dedupe($blocks);
     usort($blocks, fn($a, $b) => ($a['sort'] ?? 99) <=> ($b['sort'] ?? 99));
     $sort = 1;
     foreach ($blocks as &$b) {
@@ -133,7 +217,7 @@ function sh_home_blocks_apply_post(array $post, array $settings): array
     }
     unset($b);
     $settings['home_blocks'] = $blocks;
-    return $settings;
+    return sh_home_blocks_reconcile_templates($settings, $blocks);
 }
 
 function sh_home_block_label(array $block, string $field, string $lang, string $fallback = ''): string

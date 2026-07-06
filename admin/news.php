@@ -1,7 +1,16 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once dirname(__DIR__) . '/includes/news-storage.php';
+require_once dirname(__DIR__) . '/includes/seo-checklist.php';
 sh_admin_require();
+
+$seoLabels = array_merge(
+    $ta['products_page']['seo_checklist'] ?? [],
+    [
+        'schema' => $ta['news_page']['seo_schema_label'] ?? 'NewsArticle schema',
+        'schema_hint' => $ta['news_page']['seo_schema_hint'] ?? '',
+    ]
+);
 
 $admin_page = 'news';
 $tp = $ta['news_page'] ?? [];
@@ -62,6 +71,7 @@ if ($newsIntro !== ''): ?>
                 <tr>
                     <th><?= htmlspecialchars($tp['article'] ?? 'Article') ?></th>
                     <th><?= htmlspecialchars($tp['published'] ?? 'Published') ?></th>
+                    <th><?= htmlspecialchars($tp['col_seo'] ?? 'SEO') ?></th>
                     <th><?= htmlspecialchars($tp['status'] ?? 'Status') ?></th>
                     <th><?= htmlspecialchars($tp['actions'] ?? 'Actions') ?></th>
                 </tr>
@@ -70,6 +80,7 @@ if ($newsIntro !== ''): ?>
                 <?php foreach ($articles as $article):
                     $slug = (string) ($article['slug'] ?? $article['id'] ?? '');
                     $active = ($article['active'] ?? true) !== false;
+                    $seoReport = sh_news_seo_checklist($article, $seoLabels);
                 ?>
                 <tr>
                     <td data-label="<?= htmlspecialchars($tp['article'] ?? 'Article') ?>">
@@ -89,6 +100,9 @@ if ($newsIntro !== ''): ?>
                     </td>
                     <td data-label="<?= htmlspecialchars($tp['published'] ?? 'Published') ?>">
                         <?= htmlspecialchars(sh_news_published_label($article, $lang)) ?>
+                    </td>
+                    <td data-label="<?= htmlspecialchars($tp['col_seo'] ?? 'SEO') ?>">
+                        <?php sh_admin_render_seo_score_pill((int) $seoReport['score'], $seoReport['grade']); ?>
                     </td>
                     <td data-label="<?= htmlspecialchars($tp['status'] ?? 'Status') ?>">
                         <span class="adm-badge <?= $active ? 'adm-badge--green' : 'adm-badge--muted' ?>">

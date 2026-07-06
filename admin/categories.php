@@ -1,7 +1,10 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once dirname(__DIR__) . '/includes/category-storage.php';
+require_once dirname(__DIR__) . '/includes/seo-checklist.php';
 sh_admin_require();
+
+$seoLabels = $ta['seo_analysis_page']['page_labels'] ?? ($ta['products_page']['seo_checklist'] ?? []);
 
 $admin_page = 'categories';
 $page_title = $ta['categories'] ?? 'Categories';
@@ -89,6 +92,7 @@ require __DIR__ . '/includes/layout.php';
                     <th class="adm-cat-col-icon"><?= htmlspecialchars($tp['icon'] ?? 'Icon') ?></th>
                     <th><?= htmlspecialchars($tp['name'] ?? 'Name') ?></th>
                     <th><?= htmlspecialchars($tp['products'] ?? 'Products') ?></th>
+                    <th><?= htmlspecialchars($tp['col_seo'] ?? 'SEO') ?></th>
                     <th><?= htmlspecialchars($tp['status'] ?? 'Status') ?></th>
                     <th><?= htmlspecialchars($tp['actions'] ?? 'Actions') ?></th>
                 </tr>
@@ -104,6 +108,7 @@ require __DIR__ . '/includes/layout.php';
                     $active = ($cat['active'] ?? true) !== false;
                     $catUrl = sh_url('search.php?category=' . urlencode($slug));
                     $catName = sh_localized($cat, 'name', $lang);
+                    $seoReport = sh_category_seo_checklist($cat, $seoLabels);
                 ?>
                 <tr data-slug="<?= htmlspecialchars($slug) ?>">
                     <td class="adm-cat-col-drag" data-label="">
@@ -126,6 +131,9 @@ require __DIR__ . '/includes/layout.php';
                         </small>
                     </td>
                     <td data-label="<?= htmlspecialchars($tp['products'] ?? 'Products') ?>"><?= (int)$count ?></td>
+                    <td data-label="<?= htmlspecialchars($tp['col_seo'] ?? 'SEO') ?>">
+                        <?php sh_admin_render_seo_score_pill((int) $seoReport['score'], $seoReport['grade']); ?>
+                    </td>
                     <td data-label="<?= htmlspecialchars($tp['status'] ?? 'Status') ?>">
                         <span class="adm-badge <?= $active ? 'adm-badge--green' : 'adm-badge--muted' ?>">
                             <?= htmlspecialchars($active ? ($tp['active'] ?? 'Active') : ($tp['inactive'] ?? 'Inactive')) ?>

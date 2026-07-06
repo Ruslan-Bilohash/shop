@@ -208,7 +208,7 @@ function sh_block_templates_sync_placements(array $settings): array
         $blocks[$idx]['body'] = $tpl['body'];
         $linkedHome[$tplId] = true;
     }
-    $blocks = array_values($blocks);
+    $blocks = sh_home_blocks_dedupe(array_values($blocks));
 
     $sort = max(1, count($blocks));
     foreach ($templates as $tpl) {
@@ -216,6 +216,17 @@ function sh_block_templates_sync_placements(array $settings): array
             continue;
         }
         if (!empty($linkedHome[$tpl['id']])) {
+            continue;
+        }
+        $tplId = (string) ($tpl['id'] ?? '');
+        $already = false;
+        foreach ($blocks as $existing) {
+            if ((string) ($existing['template_id'] ?? '') === $tplId) {
+                $already = true;
+                break;
+            }
+        }
+        if ($already) {
             continue;
         }
         $blocks[] = [
