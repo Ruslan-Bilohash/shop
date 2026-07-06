@@ -67,7 +67,7 @@ return [
             ['q' => 'How do I order an online shop {in_country}?', 'a' => 'Open the order page or contact form with your niche, languages and payment providers. We reply with quote, timeline and optional MySQL / shipping scope.'],
             ['q' => 'Is Shop CMS only for Norway?', 'a' => 'The script is built in Norway with NOK demo, Vipps and Posten tracking — but we deploy for Ukraine, Scandinavia and wider Europe with local currency and SEO.'],
             ['q' => 'Can I start from the live demo?', 'a' => 'Yes. The demo at /shop/ shows catalog, cart, admin and checkout. We adapt that codebase — not a SaaS lock-in.'],
-            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.3.6 — same version in admin, product site and demo package.'],
+            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.5.0 — same version in admin, product site and demo packages.'],
         ],
     ],
     'features_showcase' => [
@@ -251,7 +251,7 @@ return [
     ],
     'cta' => [
         'title' => 'Ready to order your online shop?',
-        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.3.6 and launch on your domain.',
+        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.5.0 and launch on your domain.',
         'btn'   => 'Order development',
     ],
     'crosslinks' => [
@@ -297,17 +297,51 @@ return [
         'title' => 'Product version',
         'current' => 'Current version',
         'released' => 'Released %s',
-        'script_note' => 'Same version in admin and product site. This production script demo runs on JSON (no database). Client stores deploy on MySQL/PostgreSQL when requested.',
+        'script_note' => 'Same version in admin and product site. Live demo: JSON edition (not_mysql) or MySQL after install.php. Client stores deploy on MySQL.',
         'changelog_title' => 'Changelog',
         'older_versions' => 'Older versions (%d)',
     ],
     'changelog_items' => [
+        '1.5.0' => [
+            'Full MySQL storage — products, categories, news, leads, settings in database',
+            'Commercial install/ package — install.php wizard, schema.sql, demo seed',
+            'not_mysql JSON edition — standalone demo without MySQL (upload and run)',
+            'Admin UI updated for database storage; API paths fixed for standalone deploy',
+            'Version v1.5.0 synced: admin badge, /shop/site/ and GitHub releases',
+        ],
+        '1.4.1' => [
+            'Products import / export (CSV), quick leads admin page',
+            'WordPress-style admin sidebar with grouped settings tabs',
+            'Category drag-sort, product image gallery in editor',
+            'Minimal product site header and footer polish',
+        ],
+        '1.4.0' => [
+            'Customer sign-in profiles stored in MySQL',
+            'AI block builder with colour presets (newsletter, trust, sale)',
+            'reCAPTCHA and customer auth settings tabs',
+            'Code editor for custom head HTML and footer JS',
+        ],
+        '1.3.9' => [
+            'SEO analysis — product score filters and pages checklist',
+            'Live SEO checklist in product editor sidebar',
+            'Meta description normalisation 120–160 characters',
+        ],
+        '1.3.8' => [
+            'Homepage blocks editor — hero, features, CTA sections',
+            'Vertical landing pages and solutions hub',
+            'Sitemap for verticals and expanded Schema.org',
+        ],
+        '1.3.7' => [
+            'Payment settings — Stripe, PayPal, Vipps, Google Pay, Apple Pay, COD',
+            'Checkout demo with enabled payment methods',
+            'Posten Norway tracking integration tab',
+        ],
         '1.3.6' => [
             'News — admin editor, public news.php + article pages, NewsArticle schema, sitemap',
             'AI models per context — product, chat, news, SEO with setup instructions in Settings → AI',
             'AI news generator in article editor (title, excerpt, body, SEO per language)',
             'Product page — image gallery, long_desc in meta and Product JSON-LD (all images, mainEntityOfPage)',
-            'Footer cross-links to /shop/news.php; version v1.3.6 from includes/version.php',
+            'Footer cross-links to /shop/news.php; version from includes/version.php',
         ],
         '1.3.5' => [
             'Nova Poshta integration — admin tab, API settings, parcel tracking page and translations',
