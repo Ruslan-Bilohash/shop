@@ -1,0 +1,25 @@
+# Runtime / local data
+data/settings.json
+data/leads.json
+uploads/*
+!uploads/.htaccess
+!uploads/index.php
+!uploads/products/index.php
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*~
+
+# Logs & temp
+*.log
+*.tmp
+prompt/
+
+# Secrets (never commit)
+**/mail-config.php
+.env
+.env.*

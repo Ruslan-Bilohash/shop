@@ -1,0 +1,43 @@
+# Shop CMS — LLM / AI agent context
+# https://bilohash.com/shop/
+
+> Shop CMS v1.1.1 — PHP e-commerce platform. Light-themed product catalog, session cart, demo checkout (Stripe, PayPal, Vipps, cash on delivery), categories admin and multilingual SEO.
+
+## Product
+- Name: Shop CMS
+- Version: 1.1.1 (2026-07-06)
+- Type: PHP e-commerce script (no framework)
+- Languages demo: Norwegian (default), English, Swedish, Ukrainian, Russian
+- Languages product site: NO, EN, UK, RU, SV, LT
+- Contact: https://bilohash.com/shop/contact.php
+
+## URLs
+- Live demo: https://bilohash.com/shop/
+- Product site: https://bilohash.com/shop/site/
+- Order development: https://bilohash.com/shop/site/order.php
+- Checkout (demo): https://bilohash.com/shop/checkout.php
+- Admin: https://bilohash.com/shop/admin/ (demo / demo2026)
+- Sitemap index: https://bilohash.com/shop/sitemap.xml (pages, products, categories, verticals + hreflang)
+
+## SEO & structured data
+- Schema.org: SoftwareApplication, Product, WebPage, Organization, ProfessionalService
+- Open Graph, Twitter Cards, canonical, hreflang (6 langs on product site)
+- llms.txt, dynamic sitemap with products and verticals
+
+## Payments (admin → Payments)
+- Stripe, PayPal, Vipps — API keys in data/settings.json
+- COD (cash on delivery / postoppkrav / накладений платіж) — no API, instructions at checkout
+
+## Tech
+- PHP 8+, JSON products/categories, session cart, modular i18n
+- Admin: categories CRUD, appearance, payments, reCAPTCHA, AI chat
+- Handoff docs: /shop/prompt/
+
+## Related Bilohash products
+- Booking CMS: https://bilohash.com/booking/
+- Auction CMS: https://bilohash.com/auction/
+- Freelance CMS: https://bilohash.com/freelance/
+- AI Platform: https://bilohash.com/ai/
+
+## Root
+- https://bilohash.com/llms.txt
