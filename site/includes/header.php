@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/seo.php';
-require_once dirname(__DIR__, 3) . '/includes/cms-contact.php';
+$shs_cms_contact = dirname(__DIR__, 2) . '/includes/cms-contact.php';
+if (!is_file($shs_cms_contact)) {
+    $shs_cms_contact = dirname(__DIR__, 3) . '/includes/cms-contact.php';
+}
+require_once $shs_cms_contact;
 $cms_nav_discuss = cms_contact_texts('shop', $lang)['nav_discuss'];
 $page_title = $page_title ?? $t['meta']['title'];
 $page_desc  = $page_desc ?? $t['meta']['description'];

@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/includes/vertical-lib.php';
-require_once dirname(__DIR__) . '/includes/cms-contact.php';
+require_once __DIR__ . '/includes/ecosystem-load.php';
+sh_require_ecosystem('cms-contact.php');
 require_once __DIR__ . '/includes/render-homepage.php';
 $current_page = 'home';
 $search_params = sh_search_params();

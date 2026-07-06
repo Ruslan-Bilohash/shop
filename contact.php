@@ -3,7 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once __DIR__ . '/init.php';
-require_once dirname(__DIR__) . '/includes/cms-contact.php';
+require_once __DIR__ . '/includes/ecosystem-load.php';
+sh_require_ecosystem('cms-contact.php');
 require_once __DIR__ . '/includes/site-integrations.php';
 sh_boot_public_integrations();
 
@@ -40,5 +41,5 @@ $body_class = 'sh-page-contact';
 $cms_action = sh_url('contact.php') . ($lang !== 'no' ? '?lang=' . urlencode($lang) : '');
 
 require __DIR__ . '/includes/header.php';
-require dirname(__DIR__) . '/includes/cms-contact-form.php';
+sh_require_ecosystem('cms-contact-form.php');
 require __DIR__ . '/includes/footer.php';

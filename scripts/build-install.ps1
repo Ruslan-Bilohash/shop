@@ -60,7 +60,11 @@ foreach ($dir in $fixDirs) {
 # Ecosystem deps (standalone, no parent bilohash/)
 $ecoSrc = 'C:\bilohash\includes'
 $ecoDst = Join-Path $dest 'includes'
-foreach ($f in @('bh-cms-site-settings.php','cms-contact.php','ecosystem-i18n.php','ecosystem-defs.php','bh-cms-links.php')) {
+foreach ($f in @(
+    'bh-cms-site-settings.php', 'cms-contact.php', 'cms-contact-form.php',
+    'bh-mail.php', 'mail-config.example.php',
+    'ecosystem-i18n.php', 'ecosystem-defs.php', 'bh-cms-links.php'
+)) {
     $p = Join-Path $ecoSrc $f
     if (Test-Path $p) { Copy-Item $p $ecoDst -Force }
 }
