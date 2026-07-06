@@ -4,6 +4,11 @@ require_once dirname(__DIR__, 2) . '/includes/seo-checklist.php';
 require_once dirname(__DIR__, 2) . '/includes/category-storage.php';
 require_once __DIR__ . '/admin-field-help.php';
 
+global $lang;
+if (!is_string($lang ?? null) || $lang === '') {
+    $lang = function_exists('sh_site_default_lang') ? sh_site_default_lang() : 'en';
+}
+
 $tab = 'seo_analysis';
 $sections = sh_admin_settings_sections($tab, $ta);
 $ap = $ta['seo_analysis_page'] ?? [];

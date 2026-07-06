@@ -154,11 +154,19 @@ $presetColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#0d9488', '#dc2626
         </div>
         <div class="adm-card-body padded">
             <p class="adm-help adm-help-compact"><?= htmlspecialchars(sh_settings_admin_label('block_builder_saved_help', $ta)) ?></p>
+            <div id="shTplDeleteIds" hidden aria-hidden="true"></div>
             <?php foreach ($templates as $i => $tpl): ?>
-            <details class="adm-spoiler adm-block-builder-saved-row">
+            <details class="adm-spoiler adm-block-builder-saved-row" data-tpl-id="<?= htmlspecialchars($tpl['id']) ?>">
                 <summary>
                     <strong><?= htmlspecialchars($tpl['name'] ?? $tpl['id']) ?></strong>
                     <span class="adm-muted">— <?= htmlspecialchars(sh_settings_admin_label('block_builder_placement_' . ($tpl['placement'] ?? 'none'), $ta)) ?></span>
+                    <button type="button"
+                            class="adm-btn adm-btn-danger adm-btn-sm sh-tpl-delete-btn"
+                            data-tpl-id="<?= htmlspecialchars($tpl['id']) ?>"
+                            data-confirm="<?= htmlspecialchars(sh_settings_admin_label('block_builder_delete_confirm', $ta)) ?>"
+                            title="<?= htmlspecialchars(sh_settings_admin_label('block_builder_delete', $ta)) ?>">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </summary>
                 <div class="adm-spoiler-body">
                     <input type="hidden" name="tpl_id[]" value="<?= (int) $i ?>">

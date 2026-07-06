@@ -30,7 +30,7 @@ function sh_ai_defaults(): array
         'ai_model_news'           => '',
         'ai_model_seo'            => '',
         'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars. meta_description MUST be 120-160 characters (inclusive) in EVERY language — compelling Google snippet with keyword, benefit and call-to-action. Count characters carefully. Professional, SEO-friendly, demo-safe tone.',
-        'ai_prompt_news'          => 'You are a technical editor for Shop CMS — a PHP e-commerce demo from Norway. Topic: {topic}. Source language: {source_lang}. Return ONLY valid JSON (no markdown) with keys: name, excerpt, body, seo — each an object with every active language key (no, en, uk, ru, sv, lt). excerpt: 1–2 sentences (max 220 chars). body: HTML with <p>, <h2>, <ul>/<li>, <strong>, <a> only. seo has meta_title, meta_description, meta_keywords per language. meta_title max 60 chars. meta_description MUST be 120–160 characters in EVERY language. Professional release-note tone.',
+        'ai_prompt_news'          => 'You are a senior technical editor for Shop CMS — a PHP e-commerce demo from Norway. Topic: {topic}. Source language: {source_lang}. Return ONLY valid JSON (no markdown) with keys: name, excerpt, body, seo — each an object with every active language key (no, en, uk, ru, sv, lt). excerpt: 2–3 sentences (max 280 chars). body: rich HTML with <p>, <h2>, <h3>, <ul>/<li>, <strong>, <a> only — MINIMUM 5 paragraphs and 3 section headings per language; write a full release article (not a short note), ~500–900 words equivalent with concrete features, admin paths and storefront impact. seo has meta_title, meta_description, meta_keywords per language. meta_title max 60 chars. meta_description MUST be 120–160 characters in EVERY language. Professional release-note tone.',
         'ai_prompt_seo'           => 'You are an SEO specialist for Norway/EU e-commerce. Task: {task_type}. Target name: "{target_name}". Slug: {slug}. Country ISO: {country_code}. Source language: {source_lang}. Return ONLY valid JSON (no markdown). For site task use keys: seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, seo_default_country_code (2 letters), seo_twitter_site (optional @handle). For category task use key "seo" with meta_title, meta_description, meta_keywords, intro — each an object with every active language key. meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences. Professional, Schema.org-friendly tone.',
         'ai_source_lang'          => 'en',
     ];
@@ -211,7 +211,7 @@ function sh_ai_generate_news(array $settings, string $title, string $slug = '', 
     }
     $prompt .= $briefBlock . ' Languages required in JSON: ' . $langList . '.';
 
-    $result = sh_ai_call_chat($ai, $prompt, 3500, 'news');
+    $result = sh_ai_call_chat($ai, $prompt, 7000, 'news');
     if (!$result['ok']) {
         return [
             'ok'    => true,
@@ -488,12 +488,12 @@ function sh_ai_news_fallback(string $title, string $slug, string $sourceLang, st
     $templates = [
         'en' => [
             'excerpt' => '{title} — latest Shop CMS demo update for Norway & EU merchants.',
-            'body'    => '<p><strong>{title}</strong> is now documented on the Bilohash Shop CMS demo.{brief}</p><h2>Highlights</h2><ul><li>Multilingual storefront and admin</li><li>Schema.org SEO and session cart</li><li>JSON storage — easy to customize</li></ul><p>Explore the <a href="https://bilohash.com/shop/news.php">news section</a> and admin panel for more.</p>',
+            'body'    => '<p><strong>{title}</strong> is now documented on the Bilohash Shop CMS demo.{brief}</p><h2>What is new</h2><p>This release extends the PHP e-commerce demo with admin tools and storefront SEO improvements aimed at merchants in Norway and the EU.</p><h2>Admin workflow</h2><ul><li>Multilingual storefront and admin with AI-assisted copy</li><li>Schema.org SEO, sitemap and session cart</li><li>JSON storage in demo — easy to customize before MySQL deploy</li></ul><h2>Try it live</h2><p>Explore the <a href="https://bilohash.com/shop/news.php">news section</a>, open the <a href="https://bilohash.com/shop/admin/">admin panel</a> (demo / demo2026) and compare languages on the storefront.</p>',
             'meta_desc' => 'Read about {title} on Shop CMS — PHP e-commerce demo with multilingual SEO for Norway and Europe.',
         ],
         'uk' => [
             'excerpt' => '{title} — оновлення демо Shop CMS для мерчантів у Норвегії та ЄС.',
-            'body'    => '<p><strong>{title}</strong> уже в демо Bilohash Shop CMS.{brief}</p><h2>Основне</h2><ul><li>Багатомовна вітрина та адмінка</li><li>Schema.org SEO та кошик на сесії</li><li>JSON-сховище — легко кастомізувати</li></ul><p>Перегляньте <a href="https://bilohash.com/shop/news.php">розділ новин</a> та адмін-панель.</p>',
+            'body'    => '<p><strong>{title}</strong> уже в демо Bilohash Shop CMS.{brief}</p><h2>Що нового</h2><p>Реліз розширює PHP-демо інтернет-магазину інструментами адмінки та SEO для мерчантів у Норвегії та ЄС.</p><h2>Адмінка</h2><ul><li>Багатомовна вітрина та адмінка з AI-текстами</li><li>Schema.org SEO, sitemap і кошик на сесії</li><li>JSON-сховище в демо — легко кастомізувати перед MySQL</li></ul><h2>Спробуйте live</h2><p>Перегляньте <a href="https://bilohash.com/shop/news.php">розділ новин</a>, відкрийте <a href="https://bilohash.com/shop/admin/">адмінку</a> (demo / demo2026) і порівняйте мови на вітрині.</p>',
             'meta_desc' => 'Новина про {title} у Shop CMS — PHP демо інтернет-магазину з багатомовним SEO для Норвегії та Європи.',
         ],
         'no' => [

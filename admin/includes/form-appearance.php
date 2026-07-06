@@ -40,6 +40,39 @@ $hexOr = static function (string $key, string $fallback) use ($settings): string
             </div>
     <?php sh_admin_section_close(); ?>
 
+    <?php sh_admin_section_open($tab, 'appearance-buttons', $sections['appearance-buttons'] ?? sh_settings_admin_label('appearance_buttons_section', $ta), 'hand-pointer', $ta); ?>
+            <p class="adm-help adm-help-compact"><?= htmlspecialchars(sh_settings_admin_label('appearance_buttons_help', $ta)) ?></p>
+            <div class="adm-form-grid adm-color-grid">
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('color_btn_search', $ta)) ?></label>
+                    <input type="color" name="color_btn_search" value="<?= htmlspecialchars($hexOr('color_btn_search', bh_cms_hex_color($settings['color_button'] ?? ($settings['color_primary'] ?? '#2563eb')))) ?>">
+                    <?php sh_admin_render_field_hint($tab, 'color_btn_search', $ta); ?>
+                </div>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('color_btn_search_hover', $ta)) ?></label>
+                    <input type="color" name="color_btn_search_hover" value="<?= htmlspecialchars($hexOr('color_btn_search_hover', bh_cms_hex_color($settings['color_button_hover'] ?? '#1d4ed8'))) ?>">
+                </div>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('color_btn_cart', $ta)) ?></label>
+                    <input type="color" name="color_btn_cart" value="<?= htmlspecialchars($hexOr('color_btn_cart', bh_cms_hex_color($settings['color_primary'] ?? '#2563eb'))) ?>">
+                    <?php sh_admin_render_field_hint($tab, 'color_btn_cart', $ta); ?>
+                </div>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('color_btn_cart_hover', $ta)) ?></label>
+                    <input type="color" name="color_btn_cart_hover" value="<?= htmlspecialchars($hexOr('color_btn_cart_hover', bh_cms_hex_color($settings['color_button_hover'] ?? '#1d4ed8'))) ?>">
+                </div>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('color_btn_outline', $ta)) ?></label>
+                    <input type="color" name="color_btn_outline" value="<?= htmlspecialchars($hexOr('color_btn_outline', bh_cms_hex_color($settings['color_primary'] ?? '#2563eb'))) ?>">
+                    <?php sh_admin_render_field_hint($tab, 'color_btn_outline', $ta); ?>
+                </div>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('color_btn_outline_hover', $ta)) ?></label>
+                    <input type="color" name="color_btn_outline_hover" value="<?= htmlspecialchars($hexOr('color_btn_outline_hover', bh_cms_hex_color($settings['color_button_hover'] ?? '#1d4ed8'))) ?>">
+                </div>
+            </div>
+    <?php sh_admin_section_close(); ?>
+
     <?php sh_admin_section_open($tab, 'appearance-typography', $sections['appearance-typography'] ?? sh_settings_admin_label('appearance_typography_section', $ta), 'font', $ta); ?>
             <div class="adm-form-grid">
                 <div class="adm-field adm-field--wide">

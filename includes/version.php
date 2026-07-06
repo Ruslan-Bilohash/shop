@@ -52,7 +52,7 @@ function sh_version_releases_public(): array
 
 function sh_public_style_version(): string
 {
-    return '24';
+    return '25';
 }
 
 function sh_public_script_version(): string

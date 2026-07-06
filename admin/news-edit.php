@@ -236,13 +236,15 @@ require __DIR__ . '/includes/layout.php';
                         <input type="text" id="shAiNewsBrief" placeholder="<?= htmlspecialchars($tp['ai_brief_ph'] ?? 'e.g. Nova Poshta, SEO analysis, product editor') ?>">
                     </div>
                 </div>
-                <div class="adm-ai-toolbar">
-                    <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="shAiNewsGenerate"
+                <div class="adm-ai-toolbar adm-ai-toolbar--news">
+                    <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate" id="shAiNewsGenerate"
                             data-need-title="<?= htmlspecialchars($tp['ai_need_title'] ?? 'Enter article title first.') ?>"
-                            data-loading="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating article…') ?>"
+                            data-loading="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating full article…') ?>"
                             data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Article generated for all languages.') ?>"
                             data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied.') ?>">
-                        <i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars($tp['ai_generate'] ?? 'Generate with AI') ?>
+                        <span class="adm-btn-ai-icon"><i class="fas fa-wand-magic-sparkles"></i></span>
+                        <span class="adm-btn-ai-label"><?= htmlspecialchars($tp['ai_generate'] ?? 'Generate with AI') ?></span>
+                        <span class="adm-btn-ai-spinner" hidden aria-hidden="true"></span>
                     </button>
                     <span id="shAiNewsStatus" class="adm-ai-status" hidden></span>
                 </div>

@@ -104,6 +104,13 @@ function sh_store_settings_defaults(): array
         'design_border_radius'    => 10,
         'design_font_family'      => '',
 
+        'color_btn_search'        => '',
+        'color_btn_search_hover'  => '',
+        'color_btn_cart'          => '',
+        'color_btn_cart_hover'    => '',
+        'color_btn_outline'       => '',
+        'color_btn_outline_hover' => '',
+
         'posten_enabled'          => false,
         'posten_api_key'          => '',
         'posten_client_id'        => '',
@@ -228,6 +235,11 @@ function sh_appearance_settings_apply_post(array $post, array $settings): array
     $radius = (int) ($post['design_border_radius'] ?? 10);
     $settings['design_border_radius'] = max(0, min(24, $radius));
     $settings['design_font_family'] = trim($post['design_font_family'] ?? '');
+
+    foreach (['color_btn_search', 'color_btn_search_hover', 'color_btn_cart', 'color_btn_cart_hover', 'color_btn_outline', 'color_btn_outline_hover'] as $key) {
+        $val = trim($post[$key] ?? '');
+        $settings[$key] = $val !== '' ? bh_cms_hex_color($val, '') : '';
+    }
 
     $settings['card_show_category'] = !empty($post['card_show_category']);
     $settings['card_show_stock'] = !empty($post['card_show_stock']);
@@ -426,6 +438,22 @@ function sh_render_shop_theme_styles(?array $settings = null): void
         'design_border_color' => '--sh-border',
         'design_sale_color'   => '--sh-sale',
     ];
+    $btnMap = [
+        'color_button'            => '--sh-btn',
+        'color_button_hover'      => '--sh-btn-hover',
+        'color_btn_search'        => '--sh-search-btn',
+        'color_btn_search_hover'  => '--sh-search-btn-hover',
+        'color_btn_cart'          => '--sh-cart-btn',
+        'color_btn_cart_hover'    => '--sh-cart-btn-hover',
+        'color_btn_outline'       => '--sh-outline-btn',
+        'color_btn_outline_hover' => '--sh-outline-btn-hover',
+    ];
+    foreach ($btnMap as $key => $cssVar) {
+        $val = trim((string) ($s[$key] ?? ''));
+        if ($val !== '') {
+            $vars[] = $cssVar . ':' . bh_cms_hex_color($val, $val) . ';';
+        }
+    }
     foreach ($map as $key => $cssVar) {
         $val = trim((string) ($s[$key] ?? ''));
         if ($val !== '') {

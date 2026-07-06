@@ -392,6 +392,10 @@ function sh_render_settings_form(string $section, array $settings, array $ta = [
     ];
     foreach ($candidates as $path) {
         if (is_file($path)) {
+            global $lang;
+            if (!is_string($lang ?? null) || $lang === '') {
+                $lang = function_exists('sh_site_default_lang') ? sh_site_default_lang() : 'en';
+            }
             include $path;
             return;
         }

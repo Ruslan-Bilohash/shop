@@ -329,6 +329,7 @@ $en = [
         ],
         'sections' => [
             'appearance-colors' => 'Colors & background',
+            'appearance-buttons' => 'Button colors',
             'appearance-typography' => 'Typography & radius',
             'appearance-surfaces' => 'Text & surfaces',
             'appearance-product-card' => 'Product cards',
@@ -336,6 +337,9 @@ $en = [
         ],
         'hints' => [
             'color_primary' => 'Main brand color — WCAG contrast 4.5:1 with white text is recommended.',
+            'color_btn_search' => 'Search form submit button on homepage and catalog.',
+            'color_btn_cart' => 'Cart link hover/active color in the header.',
+            'color_btn_outline' => 'Sign-in, admin and other outline buttons in the header.',
             'bg_image' => 'Optional full-page background image URL (HTTPS).',
             'design_font_family' => 'CSS font-family stack, e.g. \'Inter\', system-ui, sans-serif.',
             'design_border_radius' => 'Corner radius in pixels for cards, buttons and inputs (0–24).',
@@ -760,6 +764,7 @@ $uk = [
         ],
         'sections' => [
             'appearance-colors' => 'Кольори та фон',
+            'appearance-buttons' => 'Кольори кнопок',
             'appearance-typography' => 'Типографіка та радіус',
             'appearance-surfaces' => 'Текст та поверхні',
             'appearance-product-card' => 'Картка товару',
@@ -767,6 +772,9 @@ $uk = [
         ],
         'hints' => [
             'color_primary' => 'Основний колір бренду — рекомендований контраст WCAG 4.5:1.',
+            'color_btn_search' => 'Кнопка «Шукати» на головній та в каталозі.',
+            'color_btn_cart' => 'Колір кошика при наведенні/активному стані в шапці.',
+            'color_btn_outline' => 'Outline-кнопки: вхід, адмін та інші в шапці.',
             'bg_image' => 'Необовʼязкове фонове зображення (HTTPS URL).',
             'design_font_family' => 'CSS font-family, напр. \'Inter\', system-ui, sans-serif.',
             'design_border_radius' => 'Радіус кутів у пікселях (0–24).',

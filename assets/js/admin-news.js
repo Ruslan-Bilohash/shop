@@ -83,6 +83,9 @@
                 return;
             }
             aiBtn.disabled = true;
+            aiBtn.classList.add('is-loading');
+            var spinner = aiBtn.querySelector('.adm-btn-ai-spinner');
+            if (spinner) spinner.hidden = false;
             setStatus(aiStatus, aiBtn.getAttribute('data-loading') || 'Generating…', 'loading');
             fetch(apiUrl, {
                 method: 'POST',
@@ -101,7 +104,12 @@
                 .catch(function (err) {
                     setStatus(aiStatus, err.message || 'Request failed', 'error');
                 })
-                .finally(function () { aiBtn.disabled = false; });
+                .finally(function () {
+                    aiBtn.disabled = false;
+                    aiBtn.classList.remove('is-loading');
+                    var sp = aiBtn.querySelector('.adm-btn-ai-spinner');
+                    if (sp) sp.hidden = true;
+                });
         });
     }
 })();

@@ -80,6 +80,15 @@ function sh_block_template_decode_field(string $value): string
 function sh_block_templates_apply_post(array $post, array $settings): array
 {
     require_once __DIR__ . '/homepage-blocks.php';
+    $deleteIds = $post['delete_tpl_ids'] ?? [];
+    if (!is_array($deleteIds)) {
+        $deleteIds = $deleteIds !== '' && $deleteIds !== null ? [(string) $deleteIds] : [];
+    }
+    $deleteIds = array_values(array_filter(array_map(
+        static fn($id): string => preg_replace('/[^a-z0-9_-]/', '', strtolower(trim((string) $id))),
+        $deleteIds
+    )));
+
     $ids = $post['tpl_id'] ?? [];
     if (!is_array($ids)) {
         $ids = ($ids !== '' && $ids !== null) ? [(string) $ids] : [];
@@ -89,7 +98,7 @@ function sh_block_templates_apply_post(array $post, array $settings): array
         $i = (int) $i;
         $id = trim((string) ($post['tpl_id_val_' . $i] ?? ''));
         $id = preg_replace('/[^a-z0-9_-]/', '', strtolower($id));
-        if ($id === '') {
+        if ($id === '' || in_array($id, $deleteIds, true)) {
             continue;
         }
         $placement = (string) ($post['tpl_placement_' . $i] ?? 'none');
