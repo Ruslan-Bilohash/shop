@@ -230,7 +230,7 @@ function sh_settings_tabs(): array
         'languages'  => ['file' => 'settings-languages.php',  'icon' => 'language', 'group' => 'advanced'],
         'payments'   => ['file' => 'payments.php',            'icon' => 'credit-card', 'group' => 'integrations'],
         'homepage'      => ['file' => 'settings-homepage.php',      'icon' => 'house', 'group' => 'content'],
-        'block_builder' => ['file' => 'settings-block-builder.php', 'icon' => 'wand-magic-sparkles', 'group' => 'content'],
+        'block_builder' => ['file' => 'settings-block-builder.php', 'icon' => 'wand-magic-sparkles', 'group' => 'design'],
         'pages'      => ['file' => 'settings-pages.php',      'icon' => 'file-lines', 'group' => 'content'],
         'footer'     => ['file' => 'settings-footer.php',     'icon' => 'link', 'group' => 'content'],
         'header'     => ['file' => 'settings-header.php',     'icon' => 'bars', 'group' => 'content'],
@@ -259,12 +259,12 @@ function sh_settings_tab_groups(): array
         'content' => [
             'label_key' => 'settings_group_content',
             'icon'      => 'file-lines',
-            'tabs'      => ['homepage', 'block_builder', 'pages', 'footer', 'header'],
+            'tabs'      => ['homepage', 'pages', 'footer', 'header'],
         ],
         'design' => [
             'label_key' => 'settings_group_design',
             'icon'      => 'palette',
-            'tabs'      => ['appearance'],
+            'tabs'      => ['appearance', 'block_builder'],
         ],
         'marketing' => [
             'label_key' => 'settings_group_marketing',

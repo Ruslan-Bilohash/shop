@@ -160,7 +160,7 @@ $en = [
     'block_builder' => [
         'intro' => 'AI template constructor for small homepage or service-page blocks — forms, CTAs, icon grids.',
         'guide' => [
-            'title' => 'Block builder',
+            'title' => 'Design generator',
             'intro' => 'Describe a block in plain language, preview the HTML, edit and attach to the homepage or a service page.',
             'steps' => [
                 'Write a prompt (e.g. blue contact form with icons) and click Generate.',
@@ -543,7 +543,7 @@ $uk = [
     'block_builder' => [
         'intro' => 'AI-конструктор невеликих блоків для головної або сервісних сторінок — форми, CTA, сітки з іконками.',
         'guide' => [
-            'title' => 'Конструктор блоків',
+            'title' => 'Генератор дизайну',
             'intro' => 'Опишіть блок простою мовою, перегляньте HTML, відредагуйте та підключіть на головну або сторінку.',
             'steps' => [
                 'Напишіть запит (напр. синя форма зворотного звʼязку з іконками) і натисніть Згенерувати.',
