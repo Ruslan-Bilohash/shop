@@ -8,7 +8,7 @@
  */
 declare(strict_types=1);
 
-const SH_INSTALL_VERSION = '1.5.0';
+const SH_INSTALL_VERSION = '1.5.1';
 
 $appRoot = __DIR__;
 $dataDir = $appRoot . '/data';

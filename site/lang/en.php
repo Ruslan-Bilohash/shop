@@ -311,6 +311,13 @@ return [
         'back_to_product' => 'Back to product page',
     ],
     'changelog_items' => [
+        '1.5.1' => [
+            'not_mysql JSON edition — standalone demo without MySQL (demo / demo2026)',
+            'Admin AI API paths fixed when shop is not deployed at /shop',
+            'Admin API returns JSON 401 instead of HTML redirect on auth failure',
+            'Category sort API — missing admin-auth include fixed',
+            'Version v1.5.1 synced: admin badge, product site and GitHub release packages',
+        ],
         '1.5.0' => [
             'Full MySQL storage — products, categories, news, leads, settings in database',
             'Commercial install/ package — install.php wizard, schema.sql, demo seed',

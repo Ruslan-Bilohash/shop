@@ -191,21 +191,62 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Pakeitimų žurnalas',
     ],
     'changelog_items' => [
+        '1.5.1' => [
+            'not_mysql JSON leidimas — autonomiška demo be MySQL (demo / demo2026)',
+            'Pataisyti admin AI API keliai, kai parduotuvė ne /shop',
+            'Admin API grąžina JSON 401 vietoj HTML peradresavimo auth klaidai',
+            'Kategorijų rūšiavimo API — pataisytas trūkstamas admin-auth include',
+            'Versija v1.5.1 sinchronizuota: admin ženklelis, produkto svetainė ir GitHub paketai',
+        ],
+        '1.5.0' => [
+            'Pilna MySQL saugykla — produktai, kategorijos, naujienos, leadai, nustatymai DB',
+            'Komercinis install/ paketas — install.php vediklis, schema.sql, demo duomenys',
+            'not_mysql JSON leidimas — demo be MySQL (įkelti ir paleisti)',
+            'Admin UI atnaujintas DB; API keliai autonominiam diegimui',
+            'Versija v1.5.0 sinchronizuota: admin, /shop/site/ ir GitHub releases',
+        ],
+        '1.4.1' => [
+            'Produktų importas / eksportas (CSV), greitų leadų admin puslapis',
+            'WordPress stiliaus admin šoninis meniu su grupuotais nustatymų skirtukais',
+            'Kategorijų drag-sort, produktų vaizdų galerija redaktoriuje',
+            'Minimali produkto svetainės antraštė ir footer',
+        ],
+        '1.4.0' => [
+            'Pirkėjų prisijungimo profiliai MySQL',
+            'AI blokų konstruktorius su spalvų šablonais (naujienlaiškis, trust, išpardavimas)',
+            'reCAPTCHA ir pirkėjo prisijungimo nustatymų skirtukai',
+            'Kodo redaktorius head HTML ir footer JS',
+        ],
+        '1.3.9' => [
+            'SEO analizė — produktų įvertinimo filtrai ir puslapių kontrolinis sąrašas',
+            'Tiesioginis SEO kontrolinis sąrašas produkto redaktoriaus šoninėje juostoje',
+            'Meta description normalizavimas 120–160 simbolių',
+        ],
+        '1.3.8' => [
+            'Pagrindinio puslapio blokų redaktorius — hero, funkcijos, CTA sekcijos',
+            'Vertikalūs nukreipimo puslapiai ir sprendimų centras',
+            'Sitemap vertikalėms ir išplėstas Schema.org',
+        ],
+        '1.3.7' => [
+            'Mokėjimų nustatymai — Stripe, PayPal, Vipps, Google Pay, Apple Pay, COD',
+            'Checkout demo su įjungtais mokėjimo būdais',
+            'Posten Norway sekimo integracijos skirtukas',
+        ],
         '1.3.6' => [
-            'Naujienos — admin, news.php + straipsniai, NewsArticle schema, sitemap',
+            'Naujienos — admin redaktorius, news.php + straipsniai, NewsArticle schema, sitemap',
             'AI modeliai pagal kontekstą — produktas, pokalbis, naujienos, SEO su instrukcijomis Nustatymai → AI',
-            'AI naujienų generatorius straipsnio redaktoriuje',
-            'Produkto puslapis — galerija, long_desc meta ir Product JSON-LD',
-            'Footer → /shop/news.php; versija v1.5.0 iš includes/version.php',
+            'AI naujienų generatorius straipsnio redaktoriuje (pavadinimas, ištrauka, tekstas, SEO kalbai)',
+            'Produkto puslapis — galerija, long_desc meta ir Product JSON-LD (visi vaizdai, mainEntityOfPage)',
+            'Footer nuorodos į /shop/news.php; versija iš includes/version.php',
         ],
         '1.3.5' => [
-            'Nova Poshta integracija — admin skirtukas, API, sekimo puslapis ir vertimai',
-            'Produkto redaktorius — vienas slenkamas puslapis su SEO kontroliniu sąrašu',
-            'AI asistentas — vienas generavimo mygtukas, SEO patarimai, meta description 120–160 simb.',
-            'Produkto svetainė — pilnas i18n, meta 150–160, Schema.org, OG/Twitter, hreflang',
-            'Dizaino generatorius perkeltas į Dizainą (AI blokai su šablonais)',
-            'SEO analizė — produktų filtrai ir puslapių kontrolinis sąrašas Rinkodaroje',
-            'Versija 1.3.5 sinchronizuota admin, produkto svetainėje ir GitHub demo',
+            'Nova Poshta integracija — admin skirtukas, API nustatymai, sekimo puslapis ir vertimai',
+            'Produkto redaktorius — vienas slenkamas puslapis (bendra, pavadinimai, SEO) su SEO kontroliniu sąrašu',
+            'AI produkto asistentas — vienas generavimo mygtukas, SEO patarimai, meta description 120–160 simb.',
+            'Produkto svetainė (/shop/site/) — pilnas i18n, meta 150–160, Schema.org, OG/Twitter, hreflang, kryžminės nuorodos',
+            'Dizaino generatorius perkeltas į Dizainą (AI blokų konstruktorius su šablonais)',
+            'SEO analizė — produktų filtrai, problemų tipai, puslapių kontrolinis sąrašas Rinkodaroje',
+            'Versija 1.3.5 sinchronizuota admin ženklelyje, produkto svetainėje ir GitHub demo',
         ],
         '1.3.0' => [
             'Daugiakalbis AI — pridėti kalbas ir AI versti produktų tekstą admin',
@@ -221,6 +262,29 @@ return array_replace_recursive($en, [
             '21 produktų kategorijos su ikonėlėmis (Rozetka stilius) visomis kalbomis',
             'Pirkėjo prisijungimas: telefonas, Google ir Apple — konfigūruojama admin',
             'Antraštės meniu CRUD, AI blokų konstruktorius, kodo redaktorius su CodeMirror',
+        ],
+        '1.2.2' => [
+            'Ekosistemos footer blokas — 3 matomi CMS produktai + rodyti daugiau',
+            'Adaptyvūs footer stulpeliai, naujienų kryžminės nuorodos, dublikatų valymas',
+        ],
+        '1.2.1' => [
+            'Paslaugų puslapių admin skirtukai, produkto redaktoriaus bootstrap taisymas',
+            'Footer nuorodų redaktorius, breadcrumbs stilius (mėlynos nuorodos / pilka dabartinė)',
+        ],
+        '1.2.0' => [
+            'SEO vertikalūs nukreipimo puslapiai, sprendimų centras, kategorijų sitemap',
+            'AI produkto asistento nustatymai, išplėsti admin gidai',
+        ],
+        '1.1.1' => [
+            'Demo antraštės/mobilio kalbos vėliava, critical CSS, SV demo kalba',
+            'Checkout i18n, sitemap 6 kalbomis, admin versijos ženklelis',
+        ],
+        '1.1.0' => [
+            'Pilnas produkto svetainės SEO, užsakymo puslapis, 6 kalbos, COD mokėjimas',
+            'Checkout demo, minimali antraštė/footer, handoff dokumentacija',
+        ],
+        '1.0.0' => [
+            'Pirmasis leidimas: demo vitrina, sesijos krepšelis, kategorijų admin, mokėjimų nustatymų skirtukai',
         ],
     ],
     'cookies_banner' => [

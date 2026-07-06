@@ -191,21 +191,62 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Endringslogg',
     ],
     'changelog_items' => [
+        '1.5.1' => [
+            'not_mysql JSON-utgave — frittstående demo uten MySQL (demo / demo2026)',
+            'Admin AI API-stier rettet når butikken ikke ligger på /shop',
+            'Admin API returnerer JSON 401 i stedet for HTML-redirect ved auth-feil',
+            'Kategori-sortering API — manglende admin-auth include rettet',
+            'Versjon v1.5.1 synkronisert: admin-merke, produktside og GitHub-pakker',
+        ],
+        '1.5.0' => [
+            'Full MySQL-lagring — produkter, kategorier, nyheter, leads, innstillinger i database',
+            'Kommersielt install/-pakke — install.php veiviser, schema.sql, demo-seed',
+            'not_mysql JSON-utgave — frittstående demo uten MySQL (last opp og kjør)',
+            'Admin UI oppdatert for databaselagring; API-stier for frittstående deploy',
+            'Versjon v1.5.0 synkronisert: admin-merke, /shop/site/ og GitHub-releases',
+        ],
+        '1.4.1' => [
+            'Produktimport / -eksport (CSV), hurtig leads-admin-side',
+            'WordPress-lignende admin-sidemeny med gruppert innstillingsfaner',
+            'Kategori drag-sort, produktbildegalleri i editor',
+            'Minimal produktside header og footer-polish',
+        ],
+        '1.4.0' => [
+            'Kundeinnloggingsprofiler lagret i MySQL',
+            'AI-blokkbygger med fargepresets (nyhetsbrev, trust, salg)',
+            'reCAPTCHA og kundeinnloggingsinnstillingsfaner',
+            'Kodeeditor for tilpasset head HTML og footer JS',
+        ],
+        '1.3.9' => [
+            'SEO-analyse — produktscorefiltre og sidesjekkliste',
+            'Live SEO-sjekkliste i produkteditor-sidepanel',
+            'Meta description-normalisering 120–160 tegn',
+        ],
+        '1.3.8' => [
+            'Forsideblokker-editor — hero, funksjoner, CTA-seksjoner',
+            'Vertikale landingssider og løsningshub',
+            'Sitemap for vertikaler og utvidet Schema.org',
+        ],
+        '1.3.7' => [
+            'Betalingsinnstillinger — Stripe, PayPal, Vipps, Google Pay, Apple Pay, COD',
+            'Checkout-demo med aktiverte betalingsmetoder',
+            'Posten Norway sporingsintegrasjon-fane',
+        ],
         '1.3.6' => [
-            'Nyheter — admin, news.php + artikler, NewsArticle schema, sitemap',
+            'Nyheter — admin-editor, news.php + artikler, NewsArticle schema, sitemap',
             'AI-modeller per kontekst — produkt, chat, nyheter, SEO med instruksjoner i Innstillinger → AI',
-            'AI-nyhetsgenerator i artikkeleditor',
-            'Produktside — bildegalleri, long_desc i meta og Product JSON-LD',
-            'Footer-lenker til /shop/news.php; versjon v1.5.0 fra includes/version.php',
+            'AI-nyhetsgenerator i artikkeleditor (tittel, utdrag, brødtekst, SEO per språk)',
+            'Produktside — bildegalleri, long_desc i meta og Product JSON-LD (alle bilder, mainEntityOfPage)',
+            'Footer-krysslenker til /shop/news.php; versjon fra includes/version.php',
         ],
         '1.3.5' => [
-            'Nova Poshta-integrasjon — admin-fane, API, sporingside og oversettelser',
-            'Produkteditor — én rullbar side med SEO-sjekkliste',
-            'AI-assistent — én generer-knapp, SEO-tips, meta description 120–160 tegn',
-            'Produktside — full i18n, meta 150–160, Schema.org, OG/Twitter, hreflang',
-            'Designgenerator flyttet til Design (AI-blokker med maler)',
-            'SEO-analyse — produktfiltre og sidesjekkliste i Markedsføring',
-            'Versjon 1.3.5 synkronisert i admin, produktside og GitHub-demo',
+            'Nova Poshta-integrasjon — admin-fane, API-innstillinger, sporingside og oversettelser',
+            'Produkteditor — én rullbar side (generelt, navn, SEO) med live SEO-sjekkliste',
+            'AI-produktassistent — én generer-knapp, SEO-tips, meta description 120–160 tegn',
+            'Produktside (/shop/site/) — full i18n, meta 150–160, Schema.org, OG/Twitter, hreflang, krysslenker',
+            'Designgenerator flyttet til Design-fane (AI-blokkbygger med maler)',
+            'SEO-analyse — produktfiltre, problemtyper, sidesjekkliste i Markedsføring',
+            'Versjon 1.3.5 synkronisert i admin-merke, produktside og GitHub-demo',
         ],
         '1.3.0' => [
             'Flerspråklig AI — legg til språk og AI-oversett produkttekst i admin',
@@ -221,6 +262,29 @@ return array_replace_recursive($en, [
             '21 produktkategorier med ikoner (Rozetka-stil) på alle språk',
             'Kundeinnlogging: telefon, Google og Apple — konfigurerbart i admin',
             'Header-meny CRUD, AI-blokkbygger, kodeeditor med CodeMirror',
+        ],
+        '1.2.2' => [
+            'Økosystem-footerblokk med 3 synlige CMS-produkter + vis mer',
+            'Responsive footer-kolonner, nyhetskrysslenker, opprydding av duplikatlenker',
+        ],
+        '1.2.1' => [
+            'Tjenestesider admin-faner, produkteditor bootstrap-fiks',
+            'Footer-lenkeditor, brødsmulestil (blå lenker / grå aktiv)',
+        ],
+        '1.2.0' => [
+            'SEO vertikale landingssider, løsningshub, kategori-sitemap',
+            'AI-produktassistent-innstillinger, utvidede admin-guider',
+        ],
+        '1.1.1' => [
+            'Demo header/mobil språkflagg, critical CSS, SV demo-språk',
+            'Checkout i18n, sitemap 6 språk, admin versjonsmerke',
+        ],
+        '1.1.0' => [
+            'Full produktside SEO, bestillingsside, 6 språk, COD-betaling',
+            'Checkout-demo, minimal header/footer, handoff-dokumentasjon',
+        ],
+        '1.0.0' => [
+            'Første utgivelse: demo-butikkfront, sesjonskurv, kategori-admin, betalingsinnstillingsfaner',
         ],
     ],
     'cookies_banner' => [
