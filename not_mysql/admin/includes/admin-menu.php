@@ -21,17 +21,20 @@ function sh_admin_sidebar_menu(): array
         ],
     ];
 
+    $catalogItems = [
+        ['label_key' => 'products', 'icon' => 'box', 'url' => 'products.php', 'page' => 'products'],
+        ['label_key' => 'products_io', 'icon' => 'file-import', 'url' => 'products-io.php', 'page' => 'products-io'],
+        ['label_key' => 'categories', 'icon' => 'layer-group', 'url' => 'categories.php', 'page' => 'categories'],
+        ['label_key' => 'quick_leads', 'icon' => 'bolt', 'url' => 'quick-leads.php', 'page' => 'quick-leads', 'badge' => 'leads'],
+        ['label_key' => 'subscribers', 'icon' => 'paper-plane', 'url' => 'subscribers.php', 'page' => 'subscribers'],
+    ];
+
     $menu[] = [
         'id'        => 'catalog',
         'type'      => 'group',
         'label_key' => 'nav_group_catalog',
         'icon'      => 'boxes-stacked',
-        'items'     => [
-            ['label_key' => 'products', 'icon' => 'box', 'url' => 'products.php', 'page' => 'products'],
-            ['label_key' => 'products_io', 'icon' => 'file-import', 'url' => 'products-io.php', 'page' => 'products-io'],
-            ['label_key' => 'categories', 'icon' => 'layer-group', 'url' => 'categories.php', 'page' => 'categories'],
-            ['label_key' => 'quick_leads', 'icon' => 'bolt', 'url' => 'quick-leads.php', 'page' => 'quick-leads', 'badge' => 'leads'],
-        ],
+        'items'     => $catalogItems,
     ];
 
     $menu[] = [
@@ -93,6 +96,21 @@ function sh_admin_sidebar_menu(): array
         'url'  => 'code-editor.php',
         'page' => 'code-editor',
     ];
+
+    $mysqlConsole = dirname(__DIR__, 2) . '/includes/mysql-console.php';
+    if (is_file($mysqlConsole)) {
+        require_once $mysqlConsole;
+        if (function_exists('sh_mysql_storage_available') && sh_mysql_storage_available()) {
+            $menu[] = [
+                'id'   => 'mysql-console',
+                'type' => 'link',
+                'label_key' => 'mysql_console',
+                'icon' => 'database',
+                'url'  => 'mysql-console.php',
+                'page' => 'mysql-console',
+            ];
+        }
+    }
 
     return $menu;
 }

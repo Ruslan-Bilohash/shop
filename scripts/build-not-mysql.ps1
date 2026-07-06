@@ -58,7 +58,7 @@ foreach ($jf in $jsonIncludes) {
 }
 
 # JSON init (no MySQL redirect)
-@'
+$initPhp = @'
 <?php
 require_once __DIR__ . '/config.php';
 if (session_status() === PHP_SESSION_NONE) {
@@ -85,7 +85,10 @@ sh_bootstrap_data();
 if (function_exists('sh_shop_maybe_maintenance')) {
     sh_shop_maybe_maintenance();
 }
-'@ | Out-File (Join-Path $dest 'init.php') -Encoding utf8NoBOM
+'@
+$initPath = Join-Path $dest 'init.php'
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($initPath, $initPhp, $utf8NoBom)
 
 # Standalone path fixes
 $fixDirs = @(

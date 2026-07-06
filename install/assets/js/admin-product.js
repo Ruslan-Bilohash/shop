@@ -169,7 +169,10 @@
         var msg = res.demo
             ? (btn.getAttribute('data-demo-ok') || 'Demo templates applied.')
             : (btn.getAttribute('data-ok') || 'Generated.');
-        setStatus(statusEl, msg, res.demo ? 'info' : 'success');
+        if (res.demo && res.error) {
+            msg += ' — ' + res.error;
+        }
+        setStatus(statusEl, msg, res.demo ? (res.error ? 'error' : 'info') : 'success');
     }
 
     function parseApiResponse(r) {

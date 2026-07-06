@@ -73,6 +73,7 @@ function sh_settings_secret_keys(): array
         'posten_api_key',
         'customer_google_client_secret',
         'customer_apple_private_key',
+        'smtp_password',
     ];
 }
 

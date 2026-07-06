@@ -645,6 +645,10 @@ body.adm-modal-open { overflow: hidden; }
 .adm-secret-toggle { flex-shrink: 0; }
 
 .adm-leads-page { display: flex; flex-direction: column; gap: 16px; }
+.adm-mysql-tables { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 16px; }
+.adm-mysql-form { margin-top: 12px; }
+.adm-mysql-table-wrap { margin-top: 16px; max-height: 480px; overflow: auto; }
+.adm-code-textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
 .adm-leads-hero {
     display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px;
     padding: 18px 20px; border-radius: 12px;

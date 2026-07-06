@@ -638,8 +638,23 @@ function sh_ai_parse_product_json(string $raw): ?array
         $out['seo']['meta_keywords'][$code] = trim((string) ($seo['meta_keywords'][$code] ?? ''));
     }
 
-    if ($out['names']['en'] === '' && $out['names']['no'] === '') {
+    $firstName = '';
+    foreach ($langs as $code) {
+        if ($out['names'][$code] !== '') {
+            $firstName = $out['names'][$code];
+            break;
+        }
+    }
+    if ($firstName === '') {
         return null;
+    }
+    foreach ($langs as $code) {
+        if ($out['names'][$code] === '') {
+            $out['names'][$code] = $firstName;
+        }
+        if ($out['desc'][$code] === '' && !empty($out['desc']['en'])) {
+            $out['desc'][$code] = $out['desc']['en'];
+        }
     }
 
     if (!empty($data['seo']['brand'])) {

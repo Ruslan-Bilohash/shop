@@ -20,6 +20,13 @@ $sh_discuss = function_exists('cms_contact_texts')
     : 'Contact';
 $sh_copyright = sprintf($ft['copyright'] ?? '© %s Shop CMS Demo.', date('Y'));
 $sh_footer_cols = sh_footer_links(sh_site_settings());
+$sh_site_settings = sh_site_settings();
+$sh_newsletter_on = true;
+if (function_exists('sh_smtp_merge_settings')) {
+    require_once __DIR__ . '/smtp-settings.php';
+    $sh_newsletter_on = !empty(sh_smtp_merge_settings($sh_site_settings)['newsletter_enabled']);
+}
+$sh_subscribe = $t['subscribe'] ?? [];
 
 if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
     require __DIR__ . '/ecosystem-strip.php';
@@ -79,6 +86,26 @@ if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
                 </ul>
             </div>
         </div>
+
+        <?php if ($sh_newsletter_on): ?>
+        <div class="sh-footer-newsletter">
+            <form class="sh-newsletter-form" data-sh-subscribe action="<?= sh_url('api/subscribe.php') ?>" method="post" novalidate
+                  data-success="<?= htmlspecialchars($sh_subscribe['success'] ?? 'Subscribed! Thank you.') ?>"
+                  data-already="<?= htmlspecialchars($sh_subscribe['already'] ?? 'Already subscribed.') ?>"
+                  data-invalid="<?= htmlspecialchars($sh_subscribe['invalid'] ?? 'Invalid email.') ?>"
+                  data-failed="<?= htmlspecialchars($sh_subscribe['failed'] ?? 'Could not subscribe.') ?>">
+                <label class="sh-newsletter-label" for="shFooterEmail"><?= htmlspecialchars($sh_subscribe['title'] ?? 'Newsletter') ?></label>
+                <p class="sh-newsletter-sub"><?= htmlspecialchars($sh_subscribe['subtitle'] ?? '') ?></p>
+                <div class="sh-newsletter-row">
+                    <input type="email" id="shFooterEmail" name="email" required
+                           placeholder="<?= htmlspecialchars($sh_subscribe['placeholder'] ?? 'your@email.com') ?>"
+                           autocomplete="email">
+                    <button type="submit" class="sh-btn sh-btn-primary"><?= htmlspecialchars($sh_subscribe['submit'] ?? 'Subscribe') ?></button>
+                </div>
+                <p class="sh-newsletter-msg" hidden role="status"></p>
+            </form>
+        </div>
+        <?php endif; ?>
 
         <div class="sh-footer-bottom">
             <span><?= htmlspecialchars($sh_copyright) ?></span>

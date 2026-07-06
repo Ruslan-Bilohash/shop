@@ -266,6 +266,18 @@ function sh_db_save_leads(array $list): bool
     return sh_db_save_collection('leads', array_values($list), 'id');
 }
 
+/** @return list<array<string, mixed>> */
+function sh_db_load_subscribers(): array
+{
+    return sh_db_load_collection('subscribers');
+}
+
+/** @param list<array<string, mixed>> $list */
+function sh_db_save_subscribers(array $list): bool
+{
+    return sh_db_save_collection('subscribers', array_values($list), 'id');
+}
+
 /** @return array<string, array<string, mixed>> */
 function sh_db_load_customer_profiles(): array
 {

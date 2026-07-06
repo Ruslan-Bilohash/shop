@@ -850,6 +850,14 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
 .sh-cart-total-row--grand { font-size: 1.25rem; font-weight: 700; margin-bottom: 0; padding-top: 8px; border-top: 1px solid var(--sh-border); }
 .sh-tax-price-note { display: block; font-size: 12px; font-weight: 500; color: var(--sh-text-muted); margin-top: 4px; }
 .sh-tax-business-id { font-size: 12px; color: var(--sh-text-muted); margin: 8px 0 0; }
+.sh-footer-newsletter { margin: 24px 0 8px; padding: 20px; border-radius: var(--sh-radius); background: var(--sh-bg-soft, #f8fafc); border: 1px solid var(--sh-border); }
+.sh-newsletter-label { display: block; font-weight: 700; margin-bottom: 4px; }
+.sh-newsletter-sub { margin: 0 0 12px; font-size: 14px; color: var(--sh-text-muted); }
+.sh-newsletter-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.sh-newsletter-row input[type="email"] { flex: 1; min-width: 200px; padding: 10px 12px; border: 1px solid var(--sh-border); border-radius: 8px; }
+.sh-newsletter-msg { margin: 8px 0 0; font-size: 13px; }
+.sh-newsletter-msg.is-success { color: #166534; }
+.sh-newsletter-msg.is-error { color: #b91c1c; }
 .adm-tax-preview { margin-top: 16px; padding: 14px 16px; border-radius: 10px; background: var(--adm-bg-soft, #f8fafc); border: 1px solid var(--adm-border, #e2e8f0); }
 .adm-tax-preview-lines { margin: 6px 0 0; }
 .sh-checkout-note { font-size: 12px; color: var(--sh-text-muted); margin-top: 10px; }

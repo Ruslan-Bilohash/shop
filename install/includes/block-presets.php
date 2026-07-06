@@ -100,10 +100,11 @@ function sh_block_preset_newsletter(string $color): array
 {
     $titles = ['en' => 'Newsletter', 'uk' => 'Розсилка', 'no' => 'Nyhetsbrev', 'ru' => 'Рассылка', 'sv' => 'Nyhetsbrev', 'lt' => 'Naujienlaiškis'];
     $subs = ['en' => 'Get deals and new arrivals — no spam.', 'uk' => 'Акції та новинки — без спаму.', 'no' => 'Tilbud og nyheter — ingen spam.', 'ru' => 'Акции и новинки — без спама.', 'sv' => 'Erbjudanden och nyheter — ingen spam.', 'lt' => 'Pasiūlymai ir naujienos — be spamo.'];
-    $body = '<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px;border-radius:12px;background:' . $color . '14;border:1px solid ' . $color . '44;">'
+    $body = '<form class="sh-newsletter-form" data-sh-subscribe style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:20px;border-radius:12px;background:' . $color . '14;border:1px solid ' . $color . '44;">'
         . '<i class="fas fa-paper-plane" style="font-size:1.4rem;color:' . $color . ';"></i>'
-        . '<input type="email" placeholder="your@email.com" style="flex:1;min-width:180px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;">'
-        . '<button type="button" style="padding:10px 18px;border:none;border-radius:8px;background:' . $color . ';color:#fff;font-weight:700;cursor:pointer;">Subscribe</button></div>';
+        . '<input type="email" name="email" required placeholder="your@email.com" style="flex:1;min-width:180px;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;">'
+        . '<button type="submit" style="padding:10px 18px;border:none;border-radius:8px;background:' . $color . ';color:#fff;font-weight:700;cursor:pointer;">Subscribe</button>'
+        . '<p class="sh-newsletter-msg" hidden style="width:100%;margin:0;font-size:13px;"></p></form>';
     return sh_block_preset_row($titles, $subs, $body);
 }
 

@@ -1,6 +1,4 @@
 <?php
-require_once __DIR__ . '/includes/database.php';
-sh_install_redirect_if_needed();
 require_once __DIR__ . '/config.php';
 if (session_status() === PHP_SESSION_NONE) {
     session_start();

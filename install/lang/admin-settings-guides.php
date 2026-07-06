@@ -29,6 +29,31 @@ $en = [
             'card_excerpt_len' => 'Short description length on category and search pages.',
         ],
     ],
+    'smtp' => [
+        'intro' => 'Outgoing mail (Hostinger SMTP) and newsletter subscribe form on the storefront.',
+        'guide' => [
+            'title' => 'SMTP & newsletter setup',
+            'intro' => 'Configure SMTP so subscribe confirmations and admin notifications are delivered.',
+            'steps' => [
+                'Enable SMTP and enter host, port, username and password from your hosting panel.',
+                'Set From email and name — usually the same mailbox as SMTP username.',
+                'Enable newsletter and set admin notify email for new subscribers.',
+                'Optional: welcome subject and body sent to new subscribers.',
+                'View subscribers under Catalog → Subscribers.',
+            ],
+            'links' => [],
+            'note' => 'If SMTP is off, subscribe still saves emails — welcome mail is skipped.',
+        ],
+        'sections' => [
+            'smtp-connection' => 'SMTP server',
+            'newsletter' => 'Newsletter',
+        ],
+        'hints' => [
+            'smtp_host' => 'e.g. smtp.hostinger.com — from your hosting email settings.',
+            'smtp_password' => 'Leave blank to keep the current password.',
+            'newsletter_notify_email' => 'You receive an email when someone clicks Subscribe in the footer.',
+        ],
+    ],
     'taxes' => [
         'intro' => 'VAT and sales tax for Norway, Lithuania, Ukraine, Sweden, Poland and UK.',
         'guide' => [
@@ -497,6 +522,31 @@ $uk = [
             'site_currency' => 'Код ISO 4217 для Schema.org та checkout (NOK, UAH, EUR).',
             'currency_symbol' => 'Символ після суми: kr, ₴, €.',
             'card_excerpt_len' => 'Довжина короткого опису в каталозі.',
+        ],
+    ],
+    'smtp' => [
+        'intro' => 'Вихідна пошта (SMTP Hostinger) та форма «Підписатись» на вітрині.',
+        'guide' => [
+            'title' => 'SMTP та розсилка',
+            'intro' => 'Налаштуйте SMTP для підтверджень підписки та сповіщень адміну.',
+            'steps' => [
+                'Увімкніть SMTP і вкажіть host, port, логін і пароль з панелі хостингу.',
+                'From email та імʼя — зазвичай той самий поштовий скринька.',
+                'Увімкніть розсилку та email для сповіщень про нових підписників.',
+                'За бажанням: тема та текст вітального листа.',
+                'Підписники — Каталог → Підписники.',
+            ],
+            'links' => [],
+            'note' => 'Без SMTP підписка все одно зберігається — вітальний лист не надсилається.',
+        ],
+        'sections' => [
+            'smtp-connection' => 'SMTP-сервер',
+            'newsletter' => 'Розсилка',
+        ],
+        'hints' => [
+            'smtp_host' => 'напр. smtp.hostinger.com — з налаштувань пошти хостингу.',
+            'smtp_password' => 'Порожньо — залишити поточний пароль.',
+            'newsletter_notify_email' => 'Лист при натисканні «Підписатись» у футері.',
         ],
     ],
     'taxes' => [

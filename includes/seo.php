@@ -242,6 +242,7 @@ function sh_render_public_stylesheets(): void
     <link rel="stylesheet" href="<?= htmlspecialchars($href) ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin>
     <script src="<?= htmlspecialchars(sh_asset('js/main.js')) ?>?v=<?= sh_public_script_version() ?>" defer></script>
+    <script src="<?= htmlspecialchars(sh_asset('js/subscribe.js')) ?>?v=1" defer></script>
     <?php
 }
 

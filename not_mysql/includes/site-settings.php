@@ -55,6 +55,7 @@ function sh_merge_site_settings(array $settings): array
     require_once __DIR__ . '/store-settings.php';
     require_once __DIR__ . '/menu-settings.php';
     require_once __DIR__ . '/tax-settings.php';
+    require_once __DIR__ . '/smtp-settings.php';
     $merged = array_merge(
         sh_default_payment_settings(),
         bh_cms_site_settings_defaults(bh_cms_product_accent('shop')),
@@ -63,6 +64,7 @@ function sh_merge_site_settings(array $settings): array
         sh_service_pages_defaults(),
         sh_store_settings_defaults(),
         sh_tax_settings_defaults(),
+        sh_smtp_settings_defaults(),
         sh_menu_settings_defaults(),
         $settings
     );
@@ -189,6 +191,11 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings = sh_tax_settings_apply_post($post, $settings);
     }
 
+    if ($section === 'smtp') {
+        require_once __DIR__ . '/smtp-settings.php';
+        $settings = sh_smtp_settings_apply_post($post, $settings);
+    }
+
     if ($section === 'analytics') {
         require_once __DIR__ . '/store-settings.php';
         $settings = sh_analytics_settings_apply_post($post, $settings);
@@ -267,6 +274,7 @@ function sh_settings_tabs(): array
         'header'     => ['file' => 'settings-header.php',     'icon' => 'bars', 'group' => 'content'],
         'posten'      => ['file' => 'settings-posten.php',      'icon' => 'truck', 'group' => 'integrations'],
         'nova_poshta' => ['file' => 'settings-nova-poshta.php', 'icon' => 'warehouse', 'group' => 'integrations'],
+        'smtp'        => ['file' => 'settings-smtp.php',        'icon' => 'envelope', 'group' => 'integrations'],
         'appearance' => ['file' => 'settings-appearance.php', 'icon' => 'palette', 'group' => 'design'],
         'seo'           => ['file' => 'settings-seo.php',           'icon' => 'chart-line', 'group' => 'marketing'],
         'seo_analysis'  => ['file' => 'settings-seo-analysis.php',  'icon' => 'magnifying-glass-chart', 'group' => 'marketing'],
@@ -306,7 +314,7 @@ function sh_settings_tab_groups(): array
         'integrations' => [
             'label_key' => 'settings_group_integrations',
             'icon'      => 'plug',
-            'tabs'      => ['chat', 'ai', 'recaptcha', 'customer_auth', 'payments', 'posten', 'nova_poshta'],
+            'tabs'      => ['chat', 'ai', 'recaptcha', 'customer_auth', 'payments', 'posten', 'nova_poshta', 'smtp'],
         ],
         'advanced' => [
             'label_key' => 'settings_group_advanced',
