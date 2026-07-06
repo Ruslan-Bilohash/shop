@@ -88,7 +88,17 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         return sh_appearance_settings_apply_post($post, $settings);
     }
 
-    if (in_array($section, ['recaptcha', 'chat'], true)) {
+    if ($section === 'chat') {
+        $settings = bh_cms_settings_apply_post($section, $post, $settings);
+        $chatModel = trim($post['chat_model'] ?? '');
+        if ($chatModel === '' && !empty($post['chat_model_select'])) {
+            $chatModel = trim($post['chat_model_select']);
+        }
+        $settings['chat_model'] = $chatModel;
+        return $settings;
+    }
+
+    if ($section === 'recaptcha') {
         return bh_cms_settings_apply_post($section, $post, $settings);
     }
 
@@ -116,6 +126,16 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
             $settings['ai_api_key'] = (string) ($existingAi['ai_api_key'] ?? '');
         }
         $settings['ai_prompt_product'] = trim($post['ai_prompt_product'] ?? '');
+        $settings['ai_prompt_news'] = trim($post['ai_prompt_news'] ?? '');
+        $settings['ai_prompt_seo'] = trim($post['ai_prompt_seo'] ?? '');
+        foreach (['product', 'chat', 'news', 'seo'] as $ctx) {
+            $key = 'ai_model_' . $ctx;
+            $model = trim($post[$key] ?? '');
+            if ($model === '' && !empty($post[$key . '_select'])) {
+                $model = trim($post[$key . '_select']);
+            }
+            $settings[$key] = $model;
+        }
         $src = trim($post['ai_source_lang'] ?? 'en');
         $settings['ai_source_lang'] = array_key_exists($src, sh_langs()) ? $src : 'en';
         return $settings;

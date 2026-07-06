@@ -14,7 +14,7 @@ if (!function_exists('bh_cms_news_url')) {
 }
 
 $ft = $t['footer'] ?? [];
-$sh_news_url = bh_cms_news_url('shop') ?? 'https://bilohash.com/news/shop-cms.html';
+$sh_news_url = sh_url('news.php');
 $sh_discuss = function_exists('cms_contact_texts')
     ? (cms_contact_texts('shop', $lang)['nav_discuss'] ?? 'Contact')
     : 'Contact';

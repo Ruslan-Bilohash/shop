@@ -208,11 +208,11 @@ function sh_related_products(array $product, int $limit = 4): array
 
 function sh_product_long_desc(array $product, string $lang): string
 {
-    $long = sh_localized($product, 'long_desc', $lang);
+    $long = trim(sh_localized($product, 'long_desc', $lang));
     if ($long !== '') {
         return $long;
     }
-    return sh_localized($product, 'desc', $lang);
+    return trim(sh_localized($product, 'desc', $lang));
 }
 
 function sh_product_highlights(array $product, string $lang): array

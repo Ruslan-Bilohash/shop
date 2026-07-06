@@ -1,7 +1,7 @@
 <?php
 /**
  * Reusable SEO & Schema spoiler for product/category edit forms.
- * Vars: $seo_ctx ('product'|'category'), $seo_record (array), $seo_tp (labels), $langs from sh_langs()
+ * Vars: $seo_ctx ('product'|'category'|'news'), $seo_record (array), $seo_tp (labels), $langs from sh_langs()
  */
 $seo = is_array($seo_record['seo'] ?? null) ? $seo_record['seo'] : [];
 $schema = is_array($seo['schema'] ?? null) ? $seo['schema'] : [];
@@ -83,18 +83,23 @@ $seo_panel_mode = !empty($seo_panel_mode);
 
         <?php
         require_once __DIR__ . '/toggle-field.php';
-        $schemaToggles = $seo_ctx === 'product'
-            ? [
+        $schemaToggles = match ($seo_ctx) {
+            'product' => [
                 ['name' => 'seo_schema_product', 'label' => $seo_tp['schema_product'] ?? 'Product schema', 'checked' => ($schema['product'] ?? true)],
                 ['name' => 'seo_schema_offer', 'label' => $seo_tp['schema_offer'] ?? 'Offer schema', 'checked' => ($schema['offer'] ?? true)],
                 ['name' => 'seo_schema_breadcrumb', 'label' => $seo_tp['schema_breadcrumb'] ?? 'BreadcrumbList', 'checked' => ($schema['breadcrumb'] ?? true)],
                 ['name' => 'seo_schema_aggregate_rating', 'label' => $seo_tp['schema_aggregate_rating'] ?? 'AggregateRating (optional)', 'checked' => !empty($schema['aggregate_rating'])],
-            ]
-            : [
+            ],
+            'news' => [
+                ['name' => 'seo_schema_news_article', 'label' => $seo_tp['schema_news_article'] ?? 'NewsArticle schema', 'checked' => ($schema['news_article'] ?? true)],
+                ['name' => 'seo_schema_breadcrumb', 'label' => $seo_tp['schema_breadcrumb'] ?? 'BreadcrumbList', 'checked' => ($schema['breadcrumb'] ?? true)],
+            ],
+            default => [
                 ['name' => 'seo_schema_collection', 'label' => $seo_tp['schema_collection'] ?? 'CollectionPage schema', 'checked' => ($schema['collection'] ?? true)],
                 ['name' => 'seo_schema_itemlist', 'label' => $seo_tp['schema_itemlist'] ?? 'ItemList schema', 'checked' => ($schema['itemlist'] ?? true)],
                 ['name' => 'seo_schema_breadcrumb', 'label' => $seo_tp['schema_breadcrumb'] ?? 'BreadcrumbList', 'checked' => ($schema['breadcrumb'] ?? true)],
-            ];
+            ],
+        };
         sh_admin_toggle_section($seo_tp['schema_toggles'] ?? 'Structured data toggles', $schemaToggles, 'code');
         ?>
 

@@ -51,7 +51,7 @@ return array_replace_recursive($en, [
             ['q' => 'Kaip užsakyti parduotuvę {in_country}?', 'a' => 'Atidarykite užsakymo puslapį arba kontaktų formą su niša, kalbomis ir mokėjimais. Atsakysime su pasiūlymu, terminais ir pasirenkamu MySQL / pristatymu.'],
             ['q' => 'Ar Shop CMS tik Norvegijai?', 'a' => 'Skriptas sukurtas Norvegijoje su NOK demo ir Vipps — bet diegiame Lietuvai, Ukrainai ir Europai su vietine valiuta ir SEO.'],
             ['q' => 'Ar galiu pradėti nuo live demo?', 'a' => 'Taip. Demo /shop/ rodo katalogą, krepšelį, admin ir checkout. Pritaikome šią kodo bazę — be SaaS užrakto.'],
-            ['q' => 'Kokia versija produkcijoje?', 'a' => 'Dabartinė v1.3.5 — ta pati admin, produkto svetainėje ir demo pakete.'],
+            ['q' => 'Kokia versija produkcijoje?', 'a' => 'Dabartinė v1.3.6 — ta pati admin, produkto svetainėje ir demo pakete.'],
         ],
     ],
     'features_showcase' => [
@@ -133,7 +133,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Pasiruošę užsakyti parduotuvę?',
-        'text' => 'Aprašykite nišą {in_country} — mada, elektronika, maistas, B2B ar rinka. Pritaikysime Shop CMS v1.3.5 ir paleisime jūsų domene.',
+        'text' => 'Aprašykite nišą {in_country} — mada, elektronika, maistas, B2B ar rinka. Pritaikysime Shop CMS v1.3.6 ir paleisime jūsų domene.',
         'btn' => 'Užsakyti kūrimą',
     ],
     'crosslinks' => [
@@ -184,6 +184,13 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Pakeitimų žurnalas',
     ],
     'changelog_items' => [
+        '1.3.6' => [
+            'Naujienos — admin, news.php + straipsniai, NewsArticle schema, sitemap',
+            'AI modeliai pagal kontekstą — produktas, pokalbis, naujienos, SEO su instrukcijomis Nustatymai → AI',
+            'AI naujienų generatorius straipsnio redaktoriuje',
+            'Produkto puslapis — galerija, long_desc meta ir Product JSON-LD',
+            'Footer → /shop/news.php; versija v1.3.6 iš includes/version.php',
+        ],
         '1.3.5' => [
             'Nova Poshta integracija — admin skirtukas, API, sekimo puslapis ir vertimai',
             'Produkto redaktorius — vienas slenkamas puslapis su SEO kontroliniu sąrašu',

@@ -1,5 +1,6 @@
 <?php
 /** @var array $settings @var array $ta */
+require_once dirname(__DIR__, 2) . '/includes/ai.php';
 require_once __DIR__ . '/admin-field-help.php';
 require_once __DIR__ . '/toggle-field.php';
 $tab = 'chat';
@@ -9,6 +10,9 @@ $chatIcon = trim((string) ($settings['chat_widget_icon'] ?? 'comments')) ?: 'com
 if ($chatColor === '') {
     $chatColor = bh_cms_hex_color($settings['color_primary'] ?? '#2563eb');
 }
+$providers = sh_ai_providers();
+$chatModel = sh_chat_resolve_model($settings);
+$chatProvider = (string) ($settings['chat_provider'] ?? 'grok');
 ?>
 <form method="post" class="adm-settings-form">
     <?php sh_admin_section_open($tab, 'chat-main', $sections['chat-main'] ?? sh_settings_admin_label('chat_section', $ta), 'comments', $ta); ?>
@@ -36,6 +40,14 @@ if ($chatColor === '') {
                     <label><?= htmlspecialchars(sh_settings_admin_label('chat_api_key', $ta)) ?></label>
                     <input type="password" name="chat_api_key" value="<?= htmlspecialchars($settings['chat_api_key'] ?? '') ?>" autocomplete="off" placeholder="xai-... or sk-...">
                     <?php sh_admin_render_field_hint($tab, 'chat_api_key', $ta); ?>
+                </div>
+                <div class="adm-field adm-field--wide">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('chat_model', $ta)) ?></label>
+                    <select name="chat_model_select" id="sh-chat-model-select"></select>
+                    <input type="text" name="chat_model" id="sh-chat-model-custom" class="adm-input-model"
+                           value="<?= htmlspecialchars(trim((string) ($settings['chat_model'] ?? ''))) ?>"
+                           placeholder="<?= htmlspecialchars($chatModel !== '' ? $chatModel : sh_settings_admin_label('chat_model_empty', $ta)) ?>">
+                    <small class="adm-field-hint"><?= htmlspecialchars(sh_settings_admin_label('chat_model_hint', $ta)) ?></small>
                 </div>
                 <div class="adm-field adm-field--wide">
                     <label><?= htmlspecialchars(sh_settings_admin_label('chat_instructions', $ta)) ?></label>
@@ -86,3 +98,10 @@ if ($chatColor === '') {
         <button type="submit" class="adm-btn adm-btn-primary"><i class="fas fa-save"></i> <?= htmlspecialchars(sh_settings_admin_label('save', $ta)) ?></button>
     </div>
 </form>
+<script>
+window.SH_CHAT_PROVIDERS = <?= json_encode([
+    'grok' => $providers['grok'] ?? ['models' => []],
+    'gpt'  => $providers['openai'] ?? ['models' => []],
+], JSON_UNESCAPED_UNICODE) ?>;
+window.SH_CHAT_PROVIDER = <?= json_encode($chatProvider, JSON_UNESCAPED_UNICODE) ?>;
+</script>

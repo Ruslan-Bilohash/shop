@@ -64,7 +64,7 @@ return [
             ['q' => 'How do I order an online shop {in_country}?', 'a' => 'Open the order page or contact form with your niche, languages and payment providers. We reply with quote, timeline and optional MySQL / shipping scope.'],
             ['q' => 'Is Shop CMS only for Norway?', 'a' => 'The script is built in Norway with NOK demo, Vipps and Posten tracking — but we deploy for Ukraine, Scandinavia and wider Europe with local currency and SEO.'],
             ['q' => 'Can I start from the live demo?', 'a' => 'Yes. The demo at /shop/ shows catalog, cart, admin and checkout. We adapt that codebase — not a SaaS lock-in.'],
-            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.3.5 — same version in admin, product site and demo package.'],
+            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.3.6 — same version in admin, product site and demo package.'],
         ],
     ],
     'features_showcase' => [
@@ -248,7 +248,7 @@ return [
     ],
     'cta' => [
         'title' => 'Ready to order your online shop?',
-        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.3.5 and launch on your domain.',
+        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.3.6 and launch on your domain.',
         'btn'   => 'Order development',
     ],
     'crosslinks' => [
@@ -299,6 +299,13 @@ return [
         'older_versions' => 'Older versions (%d)',
     ],
     'changelog_items' => [
+        '1.3.6' => [
+            'News — admin editor, public news.php + article pages, NewsArticle schema, sitemap',
+            'AI models per context — product, chat, news, SEO with setup instructions in Settings → AI',
+            'AI news generator in article editor (title, excerpt, body, SEO per language)',
+            'Product page — image gallery, long_desc in meta and Product JSON-LD (all images, mainEntityOfPage)',
+            'Footer cross-links to /shop/news.php; version v1.3.6 from includes/version.php',
+        ],
         '1.3.5' => [
             'Nova Poshta integration — admin tab, API settings, parcel tracking page and translations',
             'Product editor — single scrollable page (general, names, SEO) with live SEO checklist',

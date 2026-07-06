@@ -2,7 +2,7 @@
 if (!function_exists('bh_cms_news_url')) {
     require_once dirname(__DIR__, 3) . '/includes/bh-cms-links.php';
 }
-$sh_news_url = bh_cms_news_url('shop') ?? 'https://bilohash.com/news/shop-cms.html';
+$sh_news_url = shs_demo_url('news.php');
 ?>
 <footer class="shs-footer">
     <div class="shs-container shs-footer-inner">

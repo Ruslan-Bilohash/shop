@@ -27,7 +27,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add')
 
 $current_page = 'product';
 $name         = sh_localized($product, 'name', $lang);
-$desc         = sh_product_long_desc($product, $lang);
+$short_desc   = sh_localized($product, 'desc', $lang);
+$long_desc    = sh_product_long_desc($product, $lang);
+$product_images = sh_product_images($product);
 $cat          = $product['category'] ?? '';
 $price        = sh_product_price($product);
 $original     = sh_product_original_price($product);
@@ -79,8 +81,24 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
 
     <div class="sh-product-layout">
         <div class="sh-product-gallery">
-            <img src="<?= htmlspecialchars(sh_product_image($product)) ?>" alt="<?= htmlspecialchars($name) ?>" width="600" height="450" onerror="this.onerror=null;this.src='<?= htmlspecialchars(sh_placeholder_image()) ?>';">
-            <?php if ($on_sale): ?><span class="sh-sale-badge-lg"><?= htmlspecialchars($t['card']['sale']) ?></span><?php endif; ?>
+            <div class="sh-product-gallery-main">
+                <img id="shProductMainImg" src="<?= htmlspecialchars(sh_product_image($product)) ?>" alt="<?= htmlspecialchars($name) ?>" width="600" height="450" onerror="this.onerror=null;this.src='<?= htmlspecialchars(sh_placeholder_image()) ?>';">
+                <?php if ($on_sale): ?><span class="sh-sale-badge-lg"><?= htmlspecialchars($t['card']['sale']) ?></span><?php endif; ?>
+            </div>
+            <?php if (count($product_images) > 1): ?>
+            <div class="sh-product-gallery-thumbs" role="list" aria-label="<?= htmlspecialchars($name) ?>">
+                <?php foreach ($product_images as $idx => $img): ?>
+                <button type="button"
+                        class="sh-product-gallery-thumb<?= $idx === 0 ? ' active' : '' ?>"
+                        role="listitem"
+                        data-src="<?= htmlspecialchars($img) ?>"
+                        aria-label="<?= htmlspecialchars($name . ' — ' . ($idx + 1)) ?>"
+                        aria-pressed="<?= $idx === 0 ? 'true' : 'false' ?>">
+                    <img src="<?= htmlspecialchars($img) ?>" alt="" width="80" height="60" loading="lazy" onerror="this.onerror=null;this.src='<?= htmlspecialchars(sh_placeholder_image()) ?>';">
+                </button>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
         </div>
         <div class="sh-product-info">
             <a href="<?= sh_url('search.php?category=' . urlencode($cat)) ?>" class="sh-cat-tag sh-cat-tag-link"><?= htmlspecialchars(sh_category_label($cat, $lang)) ?></a>
@@ -94,7 +112,10 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
                 <?= htmlspecialchars($in_stock ? $t['card']['in_stock'] : $t['card']['out_stock']) ?>
                 · <?= htmlspecialchars($t['product']['stock']) ?>: <?= (int)($product['stock'] ?? 0) ?>
             </p>
-            <p class="sh-product-desc-lead"><?= htmlspecialchars(sh_localized($product, 'desc', $lang)) ?></p>
+            <p class="sh-product-desc-lead"><?= htmlspecialchars($short_desc) ?></p>
+            <?php if ($long_desc !== '' && $long_desc !== $short_desc): ?>
+            <p class="sr-only"><?= htmlspecialchars($long_desc) ?></p>
+            <?php endif; ?>
 
             <?php if ($in_stock): ?>
             <form method="post" class="sh-add-cart-form">
@@ -136,7 +157,7 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
             <button type="button" class="sh-tab" data-tab="details" role="tab"><?= htmlspecialchars($t['product']['tab_details']) ?></button>
         </div>
         <div id="tab-overview" class="sh-tab-panel active">
-            <p><?= nl2br(htmlspecialchars($desc)) ?></p>
+            <p><?= nl2br(htmlspecialchars($long_desc)) ?></p>
             <?php if (!empty($highlights)): ?>
             <h3><?= htmlspecialchars($t['product']['highlights']) ?></h3>
             <ul class="sh-highlights">

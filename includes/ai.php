@@ -25,13 +25,19 @@ function sh_ai_defaults(): array
         'ai_api_key'              => '',
         'ai_api_base'             => '',
         'ai_model'                => 'grok-3-mini',
+        'ai_model_product'        => '',
+        'ai_model_chat'           => '',
+        'ai_model_news'           => '',
+        'ai_model_seo'            => '',
         'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars. meta_description MUST be 120-160 characters (inclusive) in EVERY language — compelling Google snippet with keyword, benefit and call-to-action. Count characters carefully. Professional, SEO-friendly, demo-safe tone.',
+        'ai_prompt_news'          => 'You are a technical editor for Shop CMS — a PHP e-commerce demo from Norway. Topic: {topic}. Source language: {source_lang}. Return ONLY valid JSON (no markdown) with keys: name, excerpt, body, seo — each an object with every active language key (no, en, uk, ru, sv, lt). excerpt: 1–2 sentences (max 220 chars). body: HTML with <p>, <h2>, <ul>/<li>, <strong>, <a> only. seo has meta_title, meta_description, meta_keywords per language. meta_title max 60 chars. meta_description MUST be 120–160 characters in EVERY language. Professional release-note tone.',
+        'ai_prompt_seo'           => 'You are an SEO specialist for Norway/EU e-commerce. Task: {task_type}. Target name: "{target_name}". Slug: {slug}. Country ISO: {country_code}. Source language: {source_lang}. Return ONLY valid JSON (no markdown). For site task use keys: seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, seo_default_country_code (2 letters), seo_twitter_site (optional @handle). For category task use key "seo" with meta_title, meta_description, meta_keywords, intro — each an object with every active language key. meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences. Professional, Schema.org-friendly tone.',
         'ai_source_lang'          => 'en',
     ];
 }
 
 /** @param array<string, mixed> $ai */
-function sh_ai_resolve_config(array $ai): array
+function sh_ai_resolve_config(array $ai, string $context = 'default'): array
 {
     $providers = sh_ai_providers();
     $provider = (string) ($ai['ai_provider'] ?? $ai['provider'] ?? 'grok');
@@ -43,11 +49,29 @@ function sh_ai_resolve_config(array $ai): array
     if ($apiBase === '') {
         $apiBase = rtrim($preset['api_base'], '/');
     }
-    $model = trim((string) ($ai['ai_model'] ?? $ai['model'] ?? ''));
+
+    $context = strtolower(trim($context));
+    $contextKey = in_array($context, ['product', 'chat', 'news', 'seo'], true) ? 'ai_model_' . $context : '';
+    $model = '';
+    if ($contextKey !== '') {
+        $model = trim((string) ($ai[$contextKey] ?? ''));
+    }
+    if ($model === '') {
+        $model = trim((string) ($ai['ai_model'] ?? $ai['model'] ?? ''));
+    }
     if ($model === '') {
         $model = $preset['models'][0] ?? 'grok-3-mini';
     }
-    return ['provider' => $provider, 'api_base' => $apiBase, 'model' => $model];
+    return ['provider' => $provider, 'api_base' => $apiBase, 'model' => $model, 'context' => $context];
+}
+
+function sh_chat_resolve_model(array $settings): string
+{
+    $chatModel = trim((string) ($settings['chat_model'] ?? ''));
+    if ($chatModel !== '') {
+        return $chatModel;
+    }
+    return sh_ai_resolve_config(sh_ai_settings($settings), 'chat')['model'];
 }
 
 /** @return array<string, string> */
@@ -122,7 +146,7 @@ function sh_ai_generate_product(array $settings, string $productName, string $ca
     );
     $prompt .= $briefBlock . ' Languages required in JSON: ' . $langList . '.';
 
-    $result = sh_ai_call_chat($ai, $prompt, 1800);
+    $result = sh_ai_call_chat($ai, $prompt, 1800, 'product');
     if (!$result['ok']) {
         return [
             'ok'    => true,
@@ -144,6 +168,67 @@ function sh_ai_generate_product(array $settings, string $productName, string $ca
 
     if (!empty($parsed['seo']['brand'])) {
         $parsed['brand'] = trim((string) $parsed['seo']['brand']);
+    }
+
+    return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
+}
+
+/**
+ * @return array{ok:bool,demo:bool,data:array,error:string}
+ */
+function sh_ai_generate_news(array $settings, string $title, string $slug = '', string $sourceLang = 'en', string $brief = ''): array
+{
+    $title = trim($title);
+    if ($title === '') {
+        return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Article title required'];
+    }
+
+    $slug = trim($slug);
+    $brief = trim($brief);
+    $ai = sh_ai_settings($settings);
+
+    if (!sh_ai_enabled($settings)) {
+        return [
+            'ok'    => true,
+            'demo'  => true,
+            'data'  => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
+            'error' => '',
+        ];
+    }
+
+    $langList = implode(', ', array_keys(sh_langs()));
+    $briefBlock = $brief !== ''
+        ? ' Additional context: "' . mb_substr($brief, 0, 800) . '".'
+        : '';
+
+    $prompt = str_replace(
+        ['{topic}', '{source_lang}'],
+        [$title, sh_ai_lang_names()[$sourceLang] ?? $sourceLang],
+        (string) ($ai['ai_prompt_news'] ?? sh_ai_defaults()['ai_prompt_news'])
+    );
+    if ($slug !== '') {
+        $prompt .= ' Slug: ' . $slug . '.';
+    }
+    $prompt .= $briefBlock . ' Languages required in JSON: ' . $langList . '.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 3500, 'news');
+    if (!$result['ok']) {
+        return [
+            'ok'    => true,
+            'demo'  => true,
+            'data'  => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
+            'error' => $result['error'],
+        ];
+    }
+
+    $parsed = sh_ai_parse_news_json($result['text']);
+    if ($parsed === null) {
+        return [
+            'ok'    => true,
+            'demo'  => true,
+            'data'  => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
+            'error' => 'Invalid JSON from AI',
+        ];
     }
 
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
@@ -187,14 +272,23 @@ function sh_ai_generate_site_seo(array $settings, string $brandName, string $cou
         ];
     }
 
-    $prompt = 'You are an SEO specialist for an e-commerce store in Europe. Brand/shop name: "' . $brandName . '". '
-        . 'Target country ISO code: ' . $countryCode . '. Return ONLY valid JSON with keys: '
-        . 'seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, '
-        . 'seo_default_country_code (2 letters), seo_twitter_site (optional @handle). '
-        . 'Professional, concise, suitable for Schema.org Organization and Open Graph.';
-
     $ai = sh_ai_settings($settings);
-    $result = sh_ai_call_chat($ai, $prompt, 800);
+    $seoPrompt = trim((string) ($ai['ai_prompt_seo'] ?? ''));
+    if ($seoPrompt !== '') {
+        $prompt = str_replace(
+            ['{task_type}', '{target_name}', '{slug}', '{country_code}', '{source_lang}', '{brand_name}'],
+            ['site', $brandName, '', $countryCode, 'en', $brandName],
+            $seoPrompt
+        );
+    } else {
+        $prompt = 'You are an SEO specialist for an e-commerce store in Europe. Brand/shop name: "' . $brandName . '". '
+            . 'Target country ISO code: ' . $countryCode . '. Return ONLY valid JSON with keys: '
+            . 'seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, '
+            . 'seo_default_country_code (2 letters), seo_twitter_site (optional @handle). '
+            . 'Professional, concise, suitable for Schema.org Organization and Open Graph.';
+    }
+
+    $result = sh_ai_call_chat($ai, $prompt, 800, 'seo');
     if (!$result['ok']) {
         return sh_ai_generate_site_seo(array_merge($settings, ['ai_enabled' => false]), $brandName, $countryCode);
     }
@@ -224,9 +318,9 @@ function sh_ai_generate_site_seo(array $settings, string $brandName, string $cou
 }
 
 /** @return array{ok:bool,text:string,error:string} */
-function sh_ai_call_chat(array $ai, string $prompt, int $maxTokens = 1200): array
+function sh_ai_call_chat(array $ai, string $prompt, int $maxTokens = 1200, string $context = 'default'): array
 {
-    $resolved = sh_ai_resolve_config($ai);
+    $resolved = sh_ai_resolve_config($ai, $context);
     $apiKey = trim((string) ($ai['ai_api_key'] ?? ''));
     if ($apiKey === '') {
         return ['ok' => false, 'text' => '', 'error' => 'No API key'];
@@ -340,6 +434,102 @@ function sh_ai_fit_meta_description(string $text, string $lang = 'en', int $min 
         $text = rtrim($text, ".,;:!?—-–");
     }
     return $text;
+}
+
+/** @return ?array */
+function sh_ai_parse_news_json(string $raw): ?array
+{
+    $raw = trim($raw);
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        return null;
+    }
+
+    $langs = array_keys(sh_langs());
+    $out = [
+        'name'    => [],
+        'excerpt' => [],
+        'body'    => [],
+        'seo'     => [
+            'meta_title'       => [],
+            'meta_description' => [],
+            'meta_keywords'    => [],
+        ],
+    ];
+    $has = false;
+
+    foreach ($langs as $code) {
+        $out['name'][$code] = trim((string) ($data['name'][$code] ?? $data['titles'][$code] ?? ''));
+        $out['excerpt'][$code] = trim((string) ($data['excerpt'][$code] ?? $data['excerpts'][$code] ?? ''));
+        $out['body'][$code] = trim((string) ($data['body'][$code] ?? ''));
+        $seo = is_array($data['seo'] ?? null) ? $data['seo'] : [];
+        $out['seo']['meta_title'][$code] = trim((string) ($seo['meta_title'][$code] ?? ''));
+        $rawDesc = trim((string) ($seo['meta_description'][$code] ?? ''));
+        $out['seo']['meta_description'][$code] = $rawDesc !== '' ? sh_ai_fit_meta_description($rawDesc, $code) : '';
+        $out['seo']['meta_keywords'][$code] = trim((string) ($seo['meta_keywords'][$code] ?? ''));
+        if ($out['name'][$code] !== '' || $out['excerpt'][$code] !== '') {
+            $has = true;
+        }
+    }
+
+    return $has ? $out : null;
+}
+
+/** @return array */
+function sh_ai_news_fallback(string $title, string $slug, string $sourceLang, string $brief = ''): array
+{
+    $langs = array_keys(sh_langs());
+    $slugKw = $slug !== '' ? str_replace('-', ', ', $slug) : 'shop cms, release';
+    $briefText = $brief !== '' ? ' ' . $brief : '';
+
+    $templates = [
+        'en' => [
+            'excerpt' => '{title} — latest Shop CMS demo update for Norway & EU merchants.',
+            'body'    => '<p><strong>{title}</strong> is now documented on the Bilohash Shop CMS demo.{brief}</p><h2>Highlights</h2><ul><li>Multilingual storefront and admin</li><li>Schema.org SEO and session cart</li><li>JSON storage — easy to customize</li></ul><p>Explore the <a href="https://bilohash.com/shop/news.php">news section</a> and admin panel for more.</p>',
+            'meta_desc' => 'Read about {title} on Shop CMS — PHP e-commerce demo with multilingual SEO for Norway and Europe.',
+        ],
+        'uk' => [
+            'excerpt' => '{title} — оновлення демо Shop CMS для мерчантів у Норвегії та ЄС.',
+            'body'    => '<p><strong>{title}</strong> уже в демо Bilohash Shop CMS.{brief}</p><h2>Основне</h2><ul><li>Багатомовна вітрина та адмінка</li><li>Schema.org SEO та кошик на сесії</li><li>JSON-сховище — легко кастомізувати</li></ul><p>Перегляньте <a href="https://bilohash.com/shop/news.php">розділ новин</a> та адмін-панель.</p>',
+            'meta_desc' => 'Новина про {title} у Shop CMS — PHP демо інтернет-магазину з багатомовним SEO для Норвегії та Європи.',
+        ],
+        'no' => [
+            'excerpt' => '{title} — siste oppdatering i Shop CMS-demoen.',
+            'body'    => '<p><strong>{title}</strong> er dokumentert i Bilohash Shop CMS-demo.{brief}</p><h2>Høydepunkter</h2><ul><li>Flerspråklig butikk og admin</li><li>Schema.org SEO og handlekurv</li><li>JSON-lagring — enkel tilpasning</li></ul>',
+            'meta_desc' => 'Les om {title} på Shop CMS — PHP e-handel demo for Norge og Europa.',
+        ],
+        'ru' => [
+            'excerpt' => '{title} — обновление демо Shop CMS.',
+            'body'    => '<p><strong>{title}</strong> в демо Bilohash Shop CMS.{brief}</p><h2>Основное</h2><ul><li>Многоязычная витрина и админка</li><li>Schema.org SEO и корзина</li><li>JSON-хранилище</li></ul>',
+            'meta_desc' => 'Новость о {title} в Shop CMS — PHP демо для Норвегии и Европы.',
+        ],
+        'sv' => [
+            'excerpt' => '{title} — senaste uppdateringen i Shop CMS-demo.',
+            'body'    => '<p><strong>{title}</strong> i Bilohash Shop CMS-demo.{brief}</p><h2>Höjdpunkter</h2><ul><li>Flerspråkig butik och admin</li><li>Schema.org SEO</li></ul>',
+            'meta_desc' => 'Läs om {title} på Shop CMS — PHP e-handel demo.',
+        ],
+        'lt' => [
+            'excerpt' => '{title} — naujausias Shop CMS demo atnaujinimas.',
+            'body'    => '<p><strong>{title}</strong> Bilohash Shop CMS demo.{brief}</p><h2>Svarbiausia</h2><ul><li>Daugiakalbė parduotuvė</li><li>Schema.org SEO</li></ul>',
+            'meta_desc' => 'Naujiena apie {title} Shop CMS — PHP e. prekybos demo.',
+        ],
+    ];
+
+    $out = ['name' => [], 'excerpt' => [], 'body' => [], 'seo' => ['meta_title' => [], 'meta_description' => [], 'meta_keywords' => []]];
+    foreach ($langs as $code) {
+        $tpl = $templates[$code] ?? $templates['en'];
+        $out['name'][$code] = $title;
+        $out['excerpt'][$code] = str_replace('{title}', $title, $tpl['excerpt']);
+        $out['body'][$code] = str_replace(['{title}', '{brief}'], [$title, htmlspecialchars($briefText)], $tpl['body']);
+        $out['seo']['meta_title'][$code] = bh_str_sub($title, 0, 58) . ' — Shop CMS';
+        $out['seo']['meta_description'][$code] = sh_ai_fit_meta_description(str_replace('{title}', $title, $tpl['meta_desc']), $code);
+        $out['seo']['meta_keywords'][$code] = strtolower($title) . ', ' . $slugKw;
+    }
+
+    return $out;
 }
 
 /** @return ?array */
@@ -470,15 +660,25 @@ function sh_ai_generate_category(array $settings, string $categoryName, string $
         ];
     }
 
-    $prompt = 'You are an e-commerce SEO specialist for Norway/EU online shops. '
-        . 'Category: "' . $categoryName . '"' . ($slug !== '' ? ' (slug: ' . $slug . ')' : '') . '. '
-        . 'Source language: ' . (sh_ai_lang_names()[$sourceLang] ?? $sourceLang) . '. '
-        . 'Return ONLY valid JSON (no markdown) with key "seo" containing: '
-        . 'meta_title, meta_description, meta_keywords, intro — each an object with keys: ' . $langList . '. '
-        . 'meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences for category landing page. '
-        . 'Keywords comma-separated. Professional, SEO-friendly tone.';
+    $seoPrompt = trim((string) ($ai['ai_prompt_seo'] ?? ''));
+    if ($seoPrompt !== '') {
+        $prompt = str_replace(
+            ['{task_type}', '{target_name}', '{slug}', '{country_code}', '{source_lang}', '{brand_name}'],
+            ['category', $categoryName, $slug, 'NO', sh_ai_lang_names()[$sourceLang] ?? $sourceLang, $categoryName],
+            $seoPrompt
+        );
+        $prompt .= ' Languages required in JSON: ' . $langList . '.';
+    } else {
+        $prompt = 'You are an e-commerce SEO specialist for Norway/EU online shops. '
+            . 'Category: "' . $categoryName . '"' . ($slug !== '' ? ' (slug: ' . $slug . ')' : '') . '. '
+            . 'Source language: ' . (sh_ai_lang_names()[$sourceLang] ?? $sourceLang) . '. '
+            . 'Return ONLY valid JSON (no markdown) with key "seo" containing: '
+            . 'meta_title, meta_description, meta_keywords, intro — each an object with keys: ' . $langList . '. '
+            . 'meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences for category landing page. '
+            . 'Keywords comma-separated. Professional, SEO-friendly tone.';
+    }
 
-    $result = sh_ai_call_chat($ai, $prompt, 2000);
+    $result = sh_ai_call_chat($ai, $prompt, 2000, 'seo');
     if (!$result['ok']) {
         return [
             'ok'    => true,

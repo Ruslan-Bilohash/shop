@@ -125,9 +125,33 @@ function sh_sitemap_page_entries(array $settings): array
     $entries = array_merge($entries, [
         ['loc' => sh_sitemap_lang_url(sh_url('solutions.php'), 'no'), 'priority' => '0.92', 'changefreq' => 'weekly', 'hreflang_path' => sh_url('solutions.php')],
         ['loc' => sh_sitemap_lang_url(sh_url('search.php'), 'no'), 'priority' => '0.87', 'changefreq' => 'daily', 'hreflang_path' => sh_url('search.php')],
+        ['loc' => sh_sitemap_lang_url(sh_url('news.php'), 'no'), 'priority' => '0.82', 'changefreq' => 'weekly', 'hreflang_path' => sh_url('news.php')],
         ['loc' => sh_sitemap_lang_url(sh_url('cart.php'), 'no'), 'priority' => '0.5', 'changefreq' => 'monthly', 'hreflang_path' => sh_url('cart.php')],
         ['loc' => sh_absolute_url(sh_url('llms.txt')), 'priority' => '0.4', 'changefreq' => 'monthly', 'hreflang_path' => null],
     ]);
+    return array_merge($entries, sh_sitemap_news_entries());
+}
+
+/** @return list<array{loc:string,priority:string,changefreq:string,hreflang_path:?string,lastmod:?string}> */
+function sh_sitemap_news_entries(): array
+{
+    require_once __DIR__ . '/news-storage.php';
+    $entries = [];
+    foreach (sh_news_active_list() as $article) {
+        $slug = (string) ($article['slug'] ?? $article['id'] ?? '');
+        if ($slug === '') {
+            continue;
+        }
+        $path = sh_url('news-article.php?slug=' . rawurlencode($slug));
+        $lastmod = trim((string) ($article['published_at'] ?? ''));
+        $entries[] = [
+            'loc' => sh_sitemap_lang_url($path, 'no'),
+            'priority' => '0.78',
+            'changefreq' => 'monthly',
+            'hreflang_path' => $path,
+            'lastmod' => $lastmod !== '' ? substr($lastmod, 0, 10) : null,
+        ];
+    }
     return $entries;
 }
 
@@ -216,7 +240,7 @@ function sh_sitemap_render_entries(array $entries, ?string $lastmod = null): voi
             $entry['priority'] ?? '0.5',
             $entry['changefreq'] ?? 'monthly',
             $entry['hreflang_path'] ?? null,
-            $lastmod
+            $entry['lastmod'] ?? $lastmod
         );
     }
 }

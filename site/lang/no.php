@@ -53,7 +53,7 @@ return array_replace_recursive($en, [
             ['q' => 'Hvordan bestiller jeg nettbutikk {in_country}?', 'a' => 'Åpne bestillingssiden eller kontaktskjema med nisje, språk og betalingsløsninger. Vi svarer med tilbud, tidsplan og valgfritt MySQL / fraktomfang.'],
             ['q' => 'Er Shop CMS bare for Norge?', 'a' => 'Skriptet er bygget i Norge med NOK-demo, Vipps og Posten-sporing — men vi deployer også for Ukraina og Europa med lokal valuta og SEO.'],
             ['q' => 'Kan jeg starte fra live demo?', 'a' => 'Ja. Demoen på /shop/ viser katalog, handlekurv, admin og checkout. Vi tilpasser denne kodebasen — ikke SaaS-lås.'],
-            ['q' => 'Hvilken versjon er i produksjon?', 'a' => 'Gjeldende produksjonsversjon er v1.3.5 — samme versjon i admin, produktside og demo-pakke.'],
+            ['q' => 'Hvilken versjon er i produksjon?', 'a' => 'Gjeldende produksjonsversjon er v1.3.6 — samme versjon i admin, produktside og demo-pakke.'],
         ],
     ],
     'features_showcase' => [
@@ -135,7 +135,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Klar for å bestille nettbutikk?',
-        'text' => 'Fortell oss om nisjen din {in_country} — mote, elektronikk, mat, B2B eller markedsplass. Vi tilpasser Shop CMS v1.3.5 og lanserer på ditt domene.',
+        'text' => 'Fortell oss om nisjen din {in_country} — mote, elektronikk, mat, B2B eller markedsplass. Vi tilpasser Shop CMS v1.3.6 og lanserer på ditt domene.',
         'btn' => 'Bestill utvikling',
     ],
     'crosslinks' => [
@@ -184,6 +184,13 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Endringslogg',
     ],
     'changelog_items' => [
+        '1.3.6' => [
+            'Nyheter — admin, news.php + artikler, NewsArticle schema, sitemap',
+            'AI-modeller per kontekst — produkt, chat, nyheter, SEO med instruksjoner i Innstillinger → AI',
+            'AI-nyhetsgenerator i artikkeleditor',
+            'Produktside — bildegalleri, long_desc i meta og Product JSON-LD',
+            'Footer-lenker til /shop/news.php; versjon v1.3.6 fra includes/version.php',
+        ],
         '1.3.5' => [
             'Nova Poshta-integrasjon — admin-fane, API, sporingside og oversettelser',
             'Produkteditor — én rullbar side med SEO-sjekkliste',

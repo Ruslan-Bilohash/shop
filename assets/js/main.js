@@ -96,6 +96,23 @@
         if (count <= 0) badge.hidden = true;
     }
 
+    // Product gallery thumbnails
+    var mainImg = document.getElementById('shProductMainImg');
+    if (mainImg) {
+        document.querySelectorAll('.sh-product-gallery-thumb[data-src]').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var src = btn.getAttribute('data-src');
+                if (!src) return;
+                mainImg.src = src;
+                document.querySelectorAll('.sh-product-gallery-thumb').forEach(function (b) {
+                    var on = b === btn;
+                    b.classList.toggle('active', on);
+                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                });
+            });
+        });
+    }
+
     // Product detail tabs
     document.querySelectorAll('.sh-tabs').forEach(function (tablist) {
         var tabs = tablist.querySelectorAll('.sh-tab[data-tab]');

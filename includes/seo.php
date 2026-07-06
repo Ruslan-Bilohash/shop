@@ -72,7 +72,10 @@ function sh_product_meta_description(array $product, string $lang): string
     if ($custom !== '') {
         return $custom;
     }
-    return bh_str_sub(sh_localized($product, 'desc', $lang), 0, 160);
+    $long = sh_product_long_desc($product, $lang);
+    $short = sh_localized($product, 'desc', $lang);
+    $source = strlen($long) >= strlen($short) ? $long : $short;
+    return bh_str_sub($source, 0, 160);
 }
 
 function sh_product_meta_keywords(array $product, string $lang): string
@@ -302,10 +305,23 @@ function sh_seo_breadcrumbs(array $items): array
 function sh_seo_product(array $product, string $lang, string $canonical): array
 {
     $name = sh_localized($product, 'name', $lang);
-    $desc = sh_localized($product, 'desc', $lang);
+    $metaCustom = sh_seo_localized_field($product, 'meta_description', $lang);
+    $desc = $metaCustom !== ''
+        ? sh_product_meta_description($product, $lang)
+        : sh_product_long_desc($product, $lang);
     $price = sh_product_price($product);
     $seo = is_array($product['seo'] ?? null) ? $product['seo'] : [];
     $brandName = trim($seo['brand'] ?? '') ?: sh_seo_org_name();
+
+    $images = sh_product_images($product);
+    $imageUrls = array_values(array_filter(array_map(
+        fn(string $img) => sh_absolute_url($img),
+        $images
+    )));
+    if ($imageUrls === []) {
+        $imageUrls = [sh_product_og_image($product)];
+    }
+    $schemaImage = count($imageUrls) === 1 ? $imageUrls[0] : $imageUrls;
 
     $graph = [
         '@type' => 'Product',
@@ -313,7 +329,8 @@ function sh_seo_product(array $product, string $lang, string $canonical): array
         'name'  => $name,
         'description' => $desc,
         'url'   => $canonical,
-        'image' => sh_product_og_image($product),
+        'image' => $schemaImage,
+        'mainEntityOfPage' => ['@id' => $canonical . '#webpage'],
         'category' => $product['category'] ?? 'Product',
         'sku' => $product['sku'] ?? ($product['id'] ?? ''),
         'brand' => [
@@ -355,6 +372,102 @@ function sh_seo_product(array $product, string $lang, string $canonical): array
             'bestRating'  => '5',
             'worstRating' => '1',
         ];
+    }
+
+    return $graph;
+}
+
+function sh_news_meta_title(array $article, string $lang): string
+{
+    $name = sh_localized($article, 'name', $lang);
+    $custom = sh_seo_localized_field($article, 'meta_title', $lang);
+    if ($custom !== '') {
+        return $custom;
+    }
+    return $name . ' — ' . sh_seo_site_name();
+}
+
+function sh_news_meta_description(array $article, string $lang): string
+{
+    $custom = sh_seo_localized_field($article, 'meta_description', $lang);
+    if ($custom !== '') {
+        return $custom;
+    }
+    $excerpt = sh_localized($article, 'excerpt', $lang);
+    if ($excerpt !== '') {
+        return bh_str_sub($excerpt, 0, 160);
+    }
+    return bh_str_sub(sh_localized($article, 'name', $lang), 0, 160);
+}
+
+function sh_news_meta_keywords(array $article, string $lang): string
+{
+    return sh_seo_localized_field($article, 'meta_keywords', $lang);
+}
+
+function sh_news_canonical(array $article, string $lang): string
+{
+    $seo = is_array($article['seo'] ?? null) ? $article['seo'] : [];
+    $override = trim($seo['canonical_override'] ?? '');
+    if ($override !== '') {
+        return $override;
+    }
+    $slug = urlencode($article['slug'] ?? $article['id'] ?? '');
+    return sh_absolute_url(sh_url('news-article.php?slug=' . $slug . ($lang !== 'no' ? '&lang=' . $lang : '')));
+}
+
+function sh_news_og_image(array $article): string
+{
+    $seo = is_array($article['seo'] ?? null) ? $article['seo'] : [];
+    $custom = trim($seo['og_image'] ?? '');
+    if ($custom !== '') {
+        return sh_absolute_url($custom);
+    }
+    $image = trim((string) ($article['image'] ?? ''));
+    if ($image !== '') {
+        return sh_absolute_url($image);
+    }
+    return sh_seo_og_image();
+}
+
+function sh_news_schema_enabled(array $article, string $key, bool $default = true): bool
+{
+    $seo = is_array($article['seo'] ?? null) ? $article['seo'] : [];
+    $schema = is_array($seo['schema'] ?? null) ? $seo['schema'] : [];
+    if (!array_key_exists($key, $schema)) {
+        return $default;
+    }
+    return (bool) $schema[$key];
+}
+
+function sh_seo_news_article(array $article, string $lang, string $canonical): array
+{
+    $headline = sh_localized($article, 'name', $lang);
+    $description = sh_localized($article, 'excerpt', $lang);
+    $body = sh_localized($article, 'body', $lang);
+    $published = trim((string) ($article['published_at'] ?? ''));
+    if ($published !== '' && !str_ends_with($published, 'Z') && !preg_match('/[+-]\d{2}:\d{2}$/', $published)) {
+        $published .= 'Z';
+    }
+
+    $graph = [
+        '@type'            => 'NewsArticle',
+        '@id'              => $canonical . '#article',
+        'headline'         => $headline,
+        'description'      => $description,
+        'url'              => $canonical,
+        'image'            => [sh_news_og_image($article)],
+        'datePublished'    => $published !== '' ? $published : gmdate('Y-m-d\TH:i:s\Z'),
+        'dateModified'     => $published !== '' ? $published : gmdate('Y-m-d\TH:i:s\Z'),
+        'author'           => sh_seo_author(),
+        'publisher'        => sh_seo_organization(),
+        'mainEntityOfPage' => ['@id' => $canonical . '#webpage'],
+        'inLanguage'       => sh_langs()[$lang]['locale'] ?? 'en-GB',
+        'isAccessibleForFree' => true,
+    ];
+
+    if ($body !== '') {
+        $graph['articleBody'] = trim(strip_tags($body));
     }
 
     return $graph;

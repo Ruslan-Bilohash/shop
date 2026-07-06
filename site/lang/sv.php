@@ -50,7 +50,7 @@ return array_replace_recursive($en, [
             ['q' => 'Hur beställer jag webbutik {in_country}?', 'a' => 'Öppna beställningssidan eller kontaktformuläret med nisch, språk och betalningslösningar. Vi svarar med offert, tidsplan och valfritt MySQL / fraktomfång.'],
             ['q' => 'Är Shop CMS bara för Norge?', 'a' => 'Skriptet byggdes i Norge med NOK-demo och Vipps — men vi deployer för Sverige, Ukraina och Europa med lokal valuta och SEO.'],
             ['q' => 'Kan jag börja från live demo?', 'a' => 'Ja. Demon på /shop/ visar katalog, varukorg, admin och checkout. Vi anpassar denna kodbas — inte SaaS-lås.'],
-            ['q' => 'Vilken version är i produktion?', 'a' => 'Aktuell produktionsversion är v1.3.5 — samma version i admin, produktsida och demo-paket.'],
+            ['q' => 'Vilken version är i produktion?', 'a' => 'Aktuell produktionsversion är v1.3.6 — samma version i admin, produktsida och demo-paket.'],
         ],
     ],
     'features_showcase' => [
@@ -132,7 +132,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Redo att beställa webbutik?',
-        'text' => 'Berätta om din nisch {in_country} — mode, elektronik, mat, B2B eller marknadsplats. Vi anpassar Shop CMS v1.3.5 och lanserar på din domän.',
+        'text' => 'Berätta om din nisch {in_country} — mode, elektronik, mat, B2B eller marknadsplats. Vi anpassar Shop CMS v1.3.6 och lanserar på din domän.',
         'btn' => 'Beställ utveckling',
     ],
     'crosslinks' => [
@@ -183,6 +183,13 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Ändringslogg',
     ],
     'changelog_items' => [
+        '1.3.6' => [
+            'Nyheter — admin, news.php + artiklar, NewsArticle schema, sitemap',
+            'AI-modeller per kontext — produkt, chatt, nyheter, SEO med instruktioner i Inställningar → AI',
+            'AI-nyhetsgenerator i artikelredigeraren',
+            'Produktsida — bildgalleri, long_desc i meta och Product JSON-LD',
+            'Footer-länkar till /shop/news.php; version v1.3.6 från includes/version.php',
+        ],
         '1.3.5' => [
             'Nova Poshta-integration — admin-flik, API, spårningssida och översättningar',
             'Produktredigerare — en rullbar sida med SEO-checklista',

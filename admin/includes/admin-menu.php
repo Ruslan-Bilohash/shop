@@ -29,6 +29,7 @@ function sh_admin_sidebar_menu(): array
         'items'     => [
             ['label_key' => 'products', 'icon' => 'box', 'url' => 'products.php', 'page' => 'products'],
             ['label_key' => 'categories', 'icon' => 'layer-group', 'url' => 'categories.php', 'page' => 'categories'],
+            ['label_key' => 'news', 'icon' => 'newspaper', 'url' => 'news.php', 'page' => 'news'],
             ['label_key' => 'quick_leads', 'icon' => 'bolt', 'url' => 'quick-leads.php', 'page' => 'quick-leads', 'badge' => 'leads'],
         ],
     ];

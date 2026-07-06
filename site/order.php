@@ -57,7 +57,7 @@ require __DIR__ . '/includes/header.php';
                 <a href="<?= shs_url('index.php#features') ?>" class="shs-demo-card shs-demo-card--link"><i class="fas fa-list" aria-hidden="true"></i><span><?= htmlspecialchars($o['cta_product'] ?? '') ?></span></a>
                 <a href="<?= shs_solutions_url() ?>" class="shs-demo-card shs-demo-card--link" rel="related"><i class="fas fa-th-large" aria-hidden="true"></i><span><?= htmlspecialchars($t['footer']['solutions'] ?? 'Solutions') ?></span></a>
                 <a href="<?= shs_url('order.php') ?>" class="shs-demo-card shs-demo-card--link"><i class="fas fa-laptop-code" aria-hidden="true"></i><span><?= htmlspecialchars($t['footer']['order_page'] ?? $t['nav']['order'] ?? '') ?></span></a>
-                <a href="https://bilohash.com/news/shop-cms.html" rel="related" class="shs-demo-card shs-demo-card--link"><i class="fas fa-newspaper" aria-hidden="true"></i><span><?= htmlspecialchars($t['footer']['news'] ?? 'News') ?></span></a>
+                <a href="<?= htmlspecialchars(shs_demo_url('news.php')) ?>" rel="related" class="shs-demo-card shs-demo-card--link"><i class="fas fa-newspaper" aria-hidden="true"></i><span><?= htmlspecialchars($t['footer']['news'] ?? 'News') ?></span></a>
             </div>
         </div>
     </div>

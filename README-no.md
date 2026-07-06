@@ -2,10 +2,10 @@
 
 Universelt **PHP e-handelsskript** for enhver nettbutikk — mote, elektronikk, mat, B2B-kataloger, markedsplasser og mer. Flerspråklig butikkfront, handlekurv på sesjon, Schema.org SEO, AI-automatisering innebygd, og fullt adminpanel. Porteføljeprosjekt av [Ruslan Bilohash](https://bilohash.com/).
 
-**Versjon (dette repo):** 1.3.5 · **Readme-språk:** [English](README.md) · [Norsk](README-no.md) · [Svenska](README-sv.md) · [Lietuvių](README-lt.md) · [Українська](README-uk.md)
+**Versjon (dette repo):** 1.3.6 · **Readme-språk:** [English](README.md) · [Norsk](README-no.md) · [Svenska](README-sv.md) · [Lietuvių](README-lt.md) · [Українська](README-uk.md)
 
 ![PHP](https://img.shields.io/badge/PHP-8%2B-777BB4?logo=php&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.3.5-blue)
+![Version](https://img.shields.io/badge/version-1.3.6-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![i18n](https://img.shields.io/badge/languages-NO%20%7C%20EN%20%7C%20UA%20%7C%20RU%20%7C%20SV%20%7C%20LT-green)
 ![AI](https://img.shields.io/badge/AI-innebygd-purple)

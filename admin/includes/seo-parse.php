@@ -37,6 +37,11 @@ function sh_admin_parse_seo_post(array $post, string $ctx): array
             'breadcrumb'        => !empty($post['seo_schema_breadcrumb']),
             'aggregate_rating'  => !empty($post['seo_schema_aggregate_rating']),
         ];
+    } elseif ($ctx === 'news') {
+        $seo['schema'] = [
+            'news_article' => !empty($post['seo_schema_news_article']),
+            'breadcrumb'   => !empty($post['seo_schema_breadcrumb']),
+        ];
     } else {
         $seo['intro'] = $intro;
         $seo['schema'] = [

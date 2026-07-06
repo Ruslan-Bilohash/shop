@@ -225,34 +225,66 @@ $en = [
         'hints' => [
             'chat_api_key' => 'xai-… for Grok or sk-… for OpenAI. Leave blank to keep current key.',
             'chat_instructions' => 'System prompt: languages, delivery countries, payment methods, support email.',
+            'chat_model' => 'Override chat model here, or leave empty to use Settings → AI → Chat model, then default.',
             'chat_widget_color' => 'Accent colour for the floating button. Empty uses the primary theme colour.',
             'chat_widget_icon' => 'Font Awesome icon name without fa- prefix: comments, headset, robot, message.',
         ],
     ],
     'ai' => [
-        'intro' => 'AI assistant for shop owners: generate product descriptions and translate UI strings to all site languages.',
+        'intro' => 'AI assistant for shop owners: per-context models and prompts for products, chat, news, SEO and UI translation.',
         'guide' => [
             'title' => 'Admin AI assistant',
             'steps' => [
-                'Enable AI and select provider.',
-                'Paste API key and pick a model.',
-                'Set source language for product names.',
-                'Products → Edit → «Generate with AI».',
-                'Languages → «Translate UI with AI».',
+                'Enable AI and select provider (OpenAI or xAI Grok).',
+                'Paste API key and set the default model.',
+                'Optionally assign models per context: product, chat, news, SEO.',
+                'Customize prompts for product, news and site/category SEO.',
+                'Products → Edit → «Generate with AI»; Languages → «Translate UI with AI».',
             ],
             'links' => [
                 ['label' => 'xAI Docs', 'url' => 'https://docs.x.ai/'],
             ],
-            'note' => 'Review AI text before publishing.',
+            'note' => 'Review AI text before publishing. Empty context model = default model fallback.',
         ],
         'sections' => [
             'ai-connection' => 'API connection',
-            'ai-usage' => 'Where it is used',
+            'ai-models' => 'Models by context',
+            'ai-prompts' => 'Prompts',
+            'ai-instructions' => 'Setup guide',
         ],
         'hints' => [
             'ai_api_key' => 'Stored server-side. Leave empty to keep the current key.',
             'ai_source_lang' => 'Language of the product name you type before clicking Generate.',
-            'ai_prompt_product' => 'Optional custom prompt. Placeholders: {name}, {category}, {lang}.',
+            'ai_prompt_product' => 'Optional custom prompt. Placeholders: {product_name}, {category}, {source_lang}.',
+            'ai_prompt_news' => 'News/article JSON prompt. Placeholders: {topic}, {source_lang}.',
+            'ai_prompt_seo' => 'Site or category SEO prompt. Placeholders: {task_type}, {target_name}, {slug}, {country_code}, {source_lang}.',
+        ],
+    ],
+    'news_page' => [
+        'intro' => 'Store news and release notes — multilingual articles with SEO, cover image and NewsArticle schema on the public storefront.',
+        'guide' => [
+            'title' => 'News articles guide',
+            'steps' => [
+                'Catalog → News → Add article — set slug, publish date and cover image URL.',
+                'Fill title, excerpt and HTML body for each enabled language (or use «Generate with AI»).',
+                'Enable Active and optionally Featured for the listing page.',
+                'Open SEO & Schema tab — meta title, description 120–160 chars, keywords, OG image.',
+                'Preview on /news.php and share news-article.php?slug=… links in footer or marketing.',
+            ],
+            'links' => [
+                ['label' => 'Public news listing', 'url' => 'https://bilohash.com/shop/news.php'],
+            ],
+            'note' => 'AI news uses the model from Settings → AI → News. Empty per-context model falls back to the default model.',
+        ],
+        'sections' => [
+            'news-content' => 'Article content',
+            'news-status' => 'Publication',
+            'news-seo' => 'SEO & Schema',
+        ],
+        'hints' => [
+            'slug' => 'Lowercase URL segment — e.g. shop-cms-v1-3-6-release.',
+            'published_at' => 'ISO date shown in schema datePublished and on the listing.',
+            'image' => '1200×630 recommended for Open Graph and NewsArticle image.',
         ],
     ],
     'footer' => [
@@ -630,32 +662,65 @@ $uk = [
         'hints' => [
             'chat_api_key' => 'xai-… для Grok або sk-… для OpenAI. Залиште порожнім, щоб зберегти ключ.',
             'chat_instructions' => 'Системний промпт: мови, країни доставки, способи оплати.',
+            'chat_model' => 'Модель чату тут або порожнє — з Налаштування → AI → Модель для чату, далі default.',
             'chat_widget_color' => 'Акцентний колір плаваючої кнопки. Порожнє — основний колір теми.',
             'chat_widget_icon' => 'Назва іконки Font Awesome без префікса fa-: comments, headset, robot, message.',
         ],
     ],
     'ai' => [
-        'intro' => 'AI-асистент для власника магазину: генерація описів товарів і переклад UI на всі мови.',
+        'intro' => 'AI-асистент для власника магазину: моделі за контекстом і промпти для товарів, чату, новин, SEO та перекладу UI.',
         'guide' => [
             'title' => 'AI-асистент адмінки',
             'steps' => [
-                'Увімкніть AI та оберіть провайдера.',
-                'Вставте API-ключ і модель.',
-                'Вкажіть мову-джерело для назв товарів.',
-                'Товари → Редагувати → «Згенерувати з AI».',
-                'Мультимовність → «Перекласти UI через AI».',
+                'Увімкніть AI та оберіть провайдера (OpenAI або xAI Grok).',
+                'Вставте API-ключ і задайте модель за замовчуванням.',
+                'За потреби оберіть окрему модель для контекстів: товар, чат, новини, SEO.',
+                'Налаштуйте промпти для товарів, новин і SEO сайту/категорій.',
+                'Товари → Редагувати → «Згенерувати з AI»; Мультимовність → «Перекласти UI через AI».',
             ],
             'links' => [
                 ['label' => 'xAI Docs', 'url' => 'https://docs.x.ai/'],
             ],
-            'note' => 'Перевіряйте текст AI перед публікацією.',
+            'note' => 'Перевіряйте текст AI перед публікацією. Порожня модель контексту = fallback на default.',
         ],
         'sections' => [
             'ai-connection' => 'Підключення API',
-            'ai-usage' => 'Де використовується',
+            'ai-models' => 'Моделі за контекстом',
+            'ai-prompts' => 'Промпти',
+            'ai-instructions' => 'Інструкція з налаштування',
         ],
         'hints' => [
             'ai_source_lang' => 'Мова, якою ви вводите назву товару перед генерацією.',
+            'ai_prompt_product' => 'Промпт товару. Плейсхолдери: {product_name}, {category}, {source_lang}.',
+            'ai_prompt_news' => 'Промпт новин. Плейсхолдери: {topic}, {source_lang}.',
+            'ai_prompt_seo' => 'Промпт SEO сайту/категорії. Плейсхолдери: {task_type}, {target_name}, {slug}, {country_code}, {source_lang}.',
+        ],
+    ],
+    'news_page' => [
+        'intro' => 'Новини та релізи магазину — багатомовні статті з SEO, обкладинкою та NewsArticle schema на вітрині.',
+        'guide' => [
+            'title' => 'Інструкція з новин',
+            'steps' => [
+                'Каталог → Новини → Додати статтю — slug, дата публікації та URL обкладинки.',
+                'Заповніть заголовок, уривок і HTML-тіло для кожної мови (або «Згенерувати з AI»).',
+                'Увімкніть Активна та за потреби Рекомендована для списку.',
+                'Вкладка SEO & Schema — meta title, description 120–160 символів, keywords, OG image.',
+                'Перегляньте на /news.php та діліться посиланнями news-article.php?slug=…',
+            ],
+            'links' => [
+                ['label' => 'Публічний список новин', 'url' => 'https://bilohash.com/shop/news.php'],
+            ],
+            'note' => 'AI для новин використовує модель з Налаштування → AI → Новини. Порожня модель контексту = default.',
+        ],
+        'sections' => [
+            'news-content' => 'Контент статті',
+            'news-status' => 'Публікація',
+            'news-seo' => 'SEO та Schema',
+        ],
+        'hints' => [
+            'slug' => 'Сегмент URL латиницею — напр. shop-cms-v1-3-6-release.',
+            'published_at' => 'Дата для schema datePublished та списку новин.',
+            'image' => 'Рекомендовано 1200×630 для Open Graph та NewsArticle image.',
         ],
     ],
     'footer' => [

@@ -2,6 +2,19 @@
 
 All notable changes to the Shop CMS demo repository are documented here.
 
+## [1.3.6] — 2026-07-06
+
+### Added
+- **News** — admin list/editor (`admin/news.php`), public `news.php` + `news-article.php`, JSON storage, sitemap URLs
+- **AI news generation** — `admin/api/ai-news.php`, per-context model `ai_model_news`, custom `ai_prompt_news`
+- **AI models by context** — separate models for product, chat, news and SEO in Settings → AI; setup instructions in admin
+- Product page **image gallery** thumbnails and improved Product schema (all images, `mainEntityOfPage`, long description in JSON-LD)
+
+### Changed
+- Product **meta description** falls back to `long_desc` when custom SEO field is empty
+- Footer and product site cross-links point to in-demo `/shop/news.php` instead of external release HTML
+- Version badge on `/shop/site/`, admin topbar and README — **v1.3.6** (single source: `includes/version.php`)
+
 ## [1.3.5] — 2026-07-06
 
 ### Added

@@ -96,6 +96,8 @@ function sh_bootstrap_data(): void
     sh_ensure_products_json();
     require_once __DIR__ . '/category-storage.php';
     sh_ensure_categories_json();
+    require_once __DIR__ . '/news-storage.php';
+    sh_ensure_news_json();
     if (!isset($_SESSION['sh_cart']) || !is_array($_SESSION['sh_cart'])) {
         $_SESSION['sh_cart'] = [];
     }
