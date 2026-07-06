@@ -31,16 +31,16 @@ $guide = $guides[$payment_tab] ?? [];
 $configured = sh_payment_is_configured($payment_tab, $settings);
 $demo_mode = defined('SH_DEMO_MODE') && SH_DEMO_MODE;
 
+if ($flash === 'success') {
+    $admin_flash = ['type' => 'success', 'msg' => $tp['saved'] ?? 'Settings saved.'];
+} elseif ($flash === 'error') {
+    $admin_flash = ['type' => 'error', 'msg' => $tp['save_error'] ?? 'Could not save settings.'];
+}
+
 require __DIR__ . '/includes/layout.php';
 sh_render_settings_tabs('sh_admin_url', $ta);
 require __DIR__ . '/includes/payment-tabs.php';
 ?>
-
-<?php if ($flash === 'success'): ?>
-<div class="adm-alert adm-alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($tp['saved'] ?? 'Settings saved.') ?></div>
-<?php elseif ($flash === 'error'): ?>
-<div class="adm-alert adm-alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($tp['save_error'] ?? 'Could not save settings.') ?></div>
-<?php endif; ?>
 
 <?php if ($demo_mode): ?>
 <div class="adm-alert adm-alert-info">

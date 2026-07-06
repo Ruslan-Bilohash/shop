@@ -18,14 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $settings = sh_merge_store_settings($settings);
 }
 
+$admin_flash = $flash !== '' ? $flash : null;
+
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash === 'success'): ?>
-<div class="adm-alert adm-alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars(sh_settings_admin_label('settings_saved', $ta)) ?></div>
-<?php elseif ($flash === 'error'): ?>
-<div class="adm-alert adm-alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars(sh_settings_admin_label('error', $ta)) ?></div>
-<?php endif; ?>
 
 <p class="adm-lead adm-lead-compact"><?= htmlspecialchars($ta['code_editor_lead'] ?? '') ?></p>
 

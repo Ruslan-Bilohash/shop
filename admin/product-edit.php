@@ -160,15 +160,12 @@ $admin_extra_js = [
     sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];
 
+if ($flash === 'error' && $errors !== []) {
+    $admin_flash = ['type' => 'error', 'msg' => implode(' ', $errors)];
+}
+
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash === 'error' && $errors !== []): ?>
-<div class="adm-alert adm-alert-error">
-    <i class="fas fa-exclamation-circle"></i>
-    <?= htmlspecialchars(implode(' ', $errors)) ?>
-</div>
-<?php endif; ?>
 
 <div class="adm-product-edit-layout">
 <div class="adm-product-edit-main">
@@ -269,45 +266,6 @@ require __DIR__ . '/includes/layout.php';
                 <h2><?= htmlspecialchars($tp['names_title'] ?? 'Names & descriptions') ?></h2>
             </div>
             <div class="adm-card-body padded">
-                <div class="adm-ai-source-box adm-ai-source-box--product">
-                    <div class="adm-ai-source-fields adm-form-grid">
-                        <div class="adm-field adm-field--wide">
-                            <label for="shAiProductName"><?= htmlspecialchars($tp['ai_product_name_label'] ?? 'Product name for AI') ?> *</label>
-                            <input type="text" id="shAiProductName" class="adm-input-lg"
-                                   value="<?= htmlspecialchars($record !== null ? ($record['name'][$aiSourceLang] ?? '') : '') ?>"
-                                   placeholder="<?= htmlspecialchars($tp['ai_product_name_ph'] ?? 'e.g. Wireless Headphones Pro') ?>">
-                        </div>
-                        <div class="adm-field adm-field--wide">
-                            <label for="shAiProductBrief"><?= htmlspecialchars($tp['ai_product_brief_label'] ?? 'Brief description for AI') ?></label>
-                            <textarea id="shAiProductBrief" rows="3" class="adm-textarea"
-                                      placeholder="<?= htmlspecialchars($tp['ai_product_brief_ph'] ?? 'e.g. Wireless ANC headphones, 40h battery, USB-C, for gym and travel') ?>"><?= htmlspecialchars($record !== null ? ($record['desc'][$aiSourceLang] ?? '') : '') ?></textarea>
-                        </div>
-                    </div>
-                    <p class="adm-help adm-help-compact adm-ai-source-hint"><?= htmlspecialchars($tp['ai_product_name_hint'] ?? 'Enter name and a short brief — AI fills names, descriptions, meta title, meta description (OG) and keywords for all languages.') ?></p>
-                    <div class="adm-ai-source-actions">
-                        <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate" id="shAiGenerateBtn"
-                                data-generating="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating…') ?>"
-                                data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Generated and translated for all languages.') ?>"
-                                data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied — add API key in Settings → AI.') ?>"
-                                data-failed="<?= htmlspecialchars($tp['ai_failed'] ?? 'AI generation failed.') ?>"
-                                data-need-name="<?= htmlspecialchars($tp['ai_need_name'] ?? 'Enter a product name first (source language).') ?>">
-                            <i class="fas fa-wand-magic-sparkles adm-ai-btn-icon" aria-hidden="true"></i>
-                            <span class="adm-ai-btn-label"><?= htmlspecialchars($tp['ai_generate'] ?? 'Generate all with AI') ?></span>
-                        </button>
-                        <p id="shAiStatus" class="adm-ai-status adm-ai-status--inline" hidden></p>
-                    </div>
-                    <?php if ($aiSeoTips !== []): ?>
-                    <aside class="adm-seo-tips-box adm-seo-tips-box--compact">
-                        <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> <?= htmlspecialchars($tp['ai_seo_tips_title'] ?? 'SEO tips') ?></h3>
-                        <ul>
-                            <?php foreach ($aiSeoTips as $tip): ?>
-                            <li><?= htmlspecialchars($tip) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                    </aside>
-                    <?php endif; ?>
-                </div>
-
                 <p class="adm-help"><?= htmlspecialchars($tp['ai_names_help'] ?? 'Edit per-language texts below after generation.') ?></p>
                 <?php foreach (sh_langs() as $code => $info): ?>
                 <details class="adm-spoiler adm-spoiler-nested" <?= $code === $aiSourceLang ? 'open' : '' ?>>
@@ -357,6 +315,45 @@ require __DIR__ . '/includes/layout.php';
         <i class="fas fa-chevron-right adm-checklist-aside-chevron" aria-hidden="true"></i>
     </button>
     <div class="adm-checklist-aside-body" id="shChecklistAsideBody">
+        <div class="adm-ai-source-box adm-ai-source-box--product adm-ai-source-box--aside">
+            <h3 class="adm-ai-aside-title"><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> <?= htmlspecialchars($tp['ai_aside_title'] ?? 'AI assistant') ?></h3>
+            <div class="adm-ai-source-fields adm-form-grid">
+                <div class="adm-field adm-field--wide">
+                    <label for="shAiProductName"><?= htmlspecialchars($tp['ai_product_name_label'] ?? 'Product name for AI') ?> *</label>
+                    <input type="text" id="shAiProductName" class="adm-input-lg"
+                           value="<?= htmlspecialchars($record !== null ? ($record['name'][$aiSourceLang] ?? '') : '') ?>"
+                           placeholder="<?= htmlspecialchars($tp['ai_product_name_ph'] ?? 'e.g. Wireless Headphones Pro') ?>">
+                </div>
+                <div class="adm-field adm-field--wide">
+                    <label for="shAiProductBrief"><?= htmlspecialchars($tp['ai_product_brief_label'] ?? 'Brief description for AI') ?></label>
+                    <textarea id="shAiProductBrief" rows="3" class="adm-textarea"
+                              placeholder="<?= htmlspecialchars($tp['ai_product_brief_ph'] ?? 'e.g. Wireless ANC headphones, 40h battery, USB-C, for gym and travel') ?>"><?= htmlspecialchars($record !== null ? ($record['desc'][$aiSourceLang] ?? '') : '') ?></textarea>
+                </div>
+            </div>
+            <p class="adm-help adm-help-compact adm-ai-source-hint"><?= htmlspecialchars($tp['ai_product_name_hint'] ?? 'Enter name and a short brief — AI fills names, descriptions, meta title, meta description (OG) and keywords for all languages.') ?></p>
+            <div class="adm-ai-source-actions adm-ai-source-actions--aside">
+                <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate" id="shAiGenerateBtn"
+                        data-generating="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating…') ?>"
+                        data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Generated and translated for all languages.') ?>"
+                        data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied — add API key in Settings → AI.') ?>"
+                        data-failed="<?= htmlspecialchars($tp['ai_failed'] ?? 'AI generation failed.') ?>"
+                        data-need-name="<?= htmlspecialchars($tp['ai_need_name'] ?? 'Enter a product name first (source language).') ?>">
+                    <i class="fas fa-wand-magic-sparkles adm-ai-btn-icon" aria-hidden="true"></i>
+                    <span class="adm-ai-btn-label"><?= htmlspecialchars($tp['ai_generate'] ?? 'Generate all with AI') ?></span>
+                </button>
+                <p id="shAiStatus" class="adm-ai-status adm-ai-status--block" hidden></p>
+            </div>
+            <?php if ($aiSeoTips !== []): ?>
+            <aside class="adm-seo-tips-box adm-seo-tips-box--compact">
+                <h3><i class="fas fa-lightbulb" aria-hidden="true"></i> <?= htmlspecialchars($tp['ai_seo_tips_title'] ?? 'SEO tips') ?></h3>
+                <ul>
+                    <?php foreach ($aiSeoTips as $tip): ?>
+                    <li><?= htmlspecialchars($tip) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </aside>
+            <?php endif; ?>
+        </div>
         <?php
         sh_admin_render_checklist_panel(
             $contentChecklist,

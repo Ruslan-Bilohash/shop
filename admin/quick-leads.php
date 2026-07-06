@@ -35,8 +35,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $leads = sh_leads_load();
-$flash = $_SESSION['sh_admin_flash'] ?? null;
-unset($_SESSION['sh_admin_flash']);
 
 $countNew = (int) sh_leads_count_by_status('new');
 $countContacted = (int) sh_leads_count_by_status('contacted');
@@ -45,13 +43,6 @@ $countAll = count($leads);
 
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash): ?>
-<div class="adm-alert adm-alert-<?= $flash['type'] === 'success' ? 'success' : 'error' ?>">
-    <i class="fas fa-<?= $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-    <?= htmlspecialchars($flash['msg']) ?>
-</div>
-<?php endif; ?>
 
 <div class="adm-leads-page">
     <div class="adm-leads-hero">

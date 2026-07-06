@@ -48,6 +48,7 @@
 <script src="<?= htmlspecialchars(sh_asset('js/admin-nova-poshta.js')) ?>?v=1" defer></script>
 <?php endif; ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-topbar.js')) ?>?v=1" defer></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-flash.js')) ?>?v=1" defer></script>
 <script>
 (function () {
     var btn = document.getElementById('admMenuBtn');

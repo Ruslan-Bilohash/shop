@@ -16,9 +16,6 @@ $admin_page = 'news';
 $tp = $ta['news_page'] ?? [];
 $page_title = $ta['news'] ?? 'News';
 
-$flash = $_SESSION['sh_admin_flash'] ?? null;
-unset($_SESSION['sh_admin_flash']);
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_slug'])) {
     $slug = trim($_POST['delete_slug'] ?? '');
     if ($slug !== '' && sh_news_delete($slug)) {
@@ -41,14 +38,6 @@ require __DIR__ . '/includes/layout.php';
 
 <?php
 require_once __DIR__ . '/includes/admin-field-help.php';
-if ($flash): ?>
-<div class="adm-alert adm-alert-<?= $flash['type'] === 'success' ? 'success' : 'error' ?>">
-    <i class="fas fa-<?= $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-    <?= htmlspecialchars($flash['msg'] ?? '') ?>
-</div>
-<?php endif; ?>
-
-<?php
 $newsIntro = sh_admin_settings_intro('news_page', $ta);
 if ($newsIntro !== ''): ?>
 <div class="adm-alert adm-alert-info">

@@ -22,18 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $subs = sh_subscribers_load();
-$flash = $_SESSION['sh_admin_flash'] ?? null;
-unset($_SESSION['sh_admin_flash']);
 
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash): ?>
-<div class="adm-alert adm-alert-<?= $flash['type'] === 'success' ? 'success' : 'error' ?>">
-    <i class="fas fa-<?= $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-    <?= htmlspecialchars($flash['msg']) ?>
-</div>
-<?php endif; ?>
 
 <div class="adm-card">
     <div class="adm-card-head">
