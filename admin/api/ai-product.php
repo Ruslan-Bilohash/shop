@@ -1,23 +1,23 @@
 <?php
-require_once dirname(__DIR__, 2) . '/init.php';
-require_once dirname(__DIR__, 2) . '/includes/ai.php';
-require_once dirname(__DIR__, 2) . '/includes/admin-auth.php';
-
-sh_admin_require();
+require_once __DIR__ . '/_bootstrap.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sh_json_response(['ok' => false, 'error' => 'POST required'], 405);
 }
 
-$raw = file_get_contents('php://input');
-$payload = json_decode($raw ?: '', true);
-if (!is_array($payload)) {
-    $payload = $_POST;
+$payload = $_POST;
+if ($payload === [] || !isset($payload['product_name'])) {
+    $raw = file_get_contents('php://input') ?: '';
+    $decoded = json_decode($raw, true);
+    if (is_array($decoded)) {
+        $payload = $decoded;
+    }
 }
 
 $productName = trim((string) ($payload['product_name'] ?? ''));
 $category = trim((string) ($payload['category'] ?? ''));
 $sourceLang = trim((string) ($payload['source_lang'] ?? ''));
+$brief = trim((string) ($payload['brief_description'] ?? ''));
 
 if ($sourceLang === '' || !array_key_exists($sourceLang, sh_langs())) {
     $settings = sh_load_settings();
@@ -26,7 +26,7 @@ if ($sourceLang === '' || !array_key_exists($sourceLang, sh_langs())) {
 
 require_once dirname(__DIR__, 2) . '/includes/payment-settings.php';
 $settings = sh_load_settings();
-$result = sh_ai_generate_product($settings, $productName, $category, $sourceLang);
+$result = sh_ai_generate_product($settings, $productName, $category, $sourceLang, $brief);
 
 sh_json_response([
     'ok'    => $result['ok'],

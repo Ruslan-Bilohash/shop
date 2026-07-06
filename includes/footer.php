@@ -80,11 +80,6 @@ if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
             </div>
         </div>
 
-        <?php
-        $eco_class_prefix = 'sh-footer-eco';
-        require dirname(__DIR__, 2) . '/includes/ecosystem-footer-block.php';
-        ?>
-
         <div class="sh-footer-bottom">
             <span><?= htmlspecialchars($sh_copyright) ?></span>
             <div class="sh-footer-bottom-links">

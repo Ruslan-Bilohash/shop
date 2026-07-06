@@ -12,6 +12,9 @@
 <?php if (($settings_tab ?? '') === 'footer'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-footer.js')) ?>?v=1" defer></script>
 <?php endif; ?>
+<?php if (($settings_tab ?? '') === 'header'): ?>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-header-nav.js')) ?>?v=1" defer></script>
+<?php endif; ?>
 <?php if (($settings_tab ?? '') === 'languages'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-languages.js')) ?>?v=3" defer></script>
 <?php endif; ?>
@@ -29,13 +32,13 @@
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($admin_page ?? '') === 'code-editor'): ?>
 <?php require __DIR__ . '/code-editor-scripts.php'; ?>
-<script src="<?= htmlspecialchars(sh_asset('js/admin-code-editor.js')) ?>?v=2"></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-code-editor.js')) ?>?v=5"></script>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'homepage'): ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-homepage.js')) ?>?v=3"></script>
 <?php endif; ?>
 <?php if (($settings_tab ?? '') === 'block_builder'): ?>
-<script src="<?= htmlspecialchars(sh_asset('js/admin-block-builder.js')) ?>?v=2"></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-block-builder.js')) ?>?v=6" defer></script>
 <?php endif; ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-topbar.js')) ?>?v=1" defer></script>
 <script>

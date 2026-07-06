@@ -66,18 +66,20 @@ $sh_menu_cfg  = sh_menu_settings(sh_site_settings());
                             <?php endforeach; ?>
                         </div>
                     </details>
-                    <?php if (!empty($sh_menu_cfg['menu_show_sale'])): ?>
-                    <a href="<?= sh_url('search.php?sale=1') ?>"><?= htmlspecialchars($t['nav']['sale']) ?></a>
-                    <?php endif; ?>
-                    <?php if (!empty($sh_menu_cfg['menu_show_contact'])): ?>
-                    <a href="<?= sh_url('contact.php') ?>" class="<?= ($current_page ?? '') === 'contact' ? 'active' : '' ?>"><?= htmlspecialchars($t['nav']['help'] ?? $t['nav']['contact'] ?? 'Contact') ?></a>
-                    <?php endif; ?>
-                    <?php if (!empty($sh_menu_cfg['menu_show_track'])): ?>
-                    <a href="<?= sh_url('track.php') ?>" class="<?= ($current_page ?? '') === 'track' ? 'active' : '' ?>"><?= htmlspecialchars($t['nav']['track'] ?? 'Track parcel') ?></a>
-                    <?php endif; ?>
-                    <?php if (!empty($sh_menu_cfg['menu_show_solutions'])): ?>
-                    <a href="<?= sh_url('solutions.php') ?>"><?= htmlspecialchars($t['footer']['solutions'] ?? 'Solutions') ?></a>
-                    <?php endif; ?>
+                    <?php foreach (($sh_menu_cfg['header_nav_links'] ?? []) as $navLink):
+                        if (empty($navLink['active'])) {
+                            continue;
+                        }
+                        $navHref = sh_header_nav_link_href($navLink);
+                        $navLabel = sh_header_nav_link_label($navLink, $lang);
+                        $navActive = sh_header_nav_link_active($navLink, $current_page ?? '') ? 'active' : '';
+                    ?>
+                    <a href="<?= htmlspecialchars($navHref) ?>"
+                       class="<?= $navActive ?>"
+                       <?= !empty($navLink['external']) ? 'rel="noopener noreferrer" target="_blank"' : '' ?>>
+                        <?= htmlspecialchars($navLabel) ?>
+                    </a>
+                    <?php endforeach; ?>
                 </nav>
                 <div class="sh-header-actions">
                     <?php if (function_exists('sh_customer_auth_enabled') && sh_customer_auth_enabled() && !empty($sh_menu_cfg['menu_show_signin'])): ?>

@@ -15,6 +15,8 @@ if ($flash === 'success'): ?>
 <div class="adm-alert adm-alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars(sh_settings_admin_label('settings_saved', $ta)) ?></div>
 <?php elseif ($flash === 'sitemap_ok'): ?>
 <div class="adm-alert adm-alert-success"><i class="fas fa-sitemap"></i> <?= htmlspecialchars(sh_settings_admin_label('sitemap_regenerated', $ta)) ?></div>
+<?php elseif ($flash === 'ai_key_ok'): ?>
+<div class="adm-alert adm-alert-success"><i class="fas fa-key"></i> <?= htmlspecialchars(sh_settings_admin_label('ai_key_saved', $ta)) ?></div>
 <?php elseif ($flash === 'error'): ?>
 <div class="adm-alert adm-alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars(sh_settings_admin_label('error', $ta)) ?></div>
 <?php endif;

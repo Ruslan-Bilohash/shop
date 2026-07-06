@@ -1,7 +1,9 @@
 <?php
 /** @var array $settings @var array $ta */
 require_once dirname(__DIR__, 2) . '/includes/block-templates.php';
+require_once dirname(__DIR__, 2) . '/includes/block-presets.php';
 require_once dirname(__DIR__, 2) . '/includes/service-pages.php';
+require_once dirname(__DIR__, 2) . '/includes/ai.php';
 require_once __DIR__ . '/admin-field-help.php';
 require_once __DIR__ . '/toggle-field.php';
 $tab = 'block_builder';
@@ -10,10 +12,23 @@ $templates = sh_block_templates_from_settings($settings);
 $pageSlugs = sh_service_page_slugs($settings);
 $pageDefs = sh_service_page_defs($settings);
 $adminLang = $GLOBALS['lang'] ?? 'en';
+$primaryLang = (string) (sh_ai_settings($settings)['ai_source_lang'] ?? $adminLang);
+if (!array_key_exists($primaryLang, sh_langs())) {
+    $primaryLang = array_key_first(sh_langs()) ?: 'en';
+}
+$blockPresets = sh_block_presets();
+$presetColors = ['#2563eb', '#059669', '#7c3aed', '#ea580c', '#0d9488', '#dc2626', '#db2777', '#0891b2'];
 ?>
 <form method="post" class="adm-settings-form" id="shBlockBuilderForm"
+      data-presets="<?= htmlspecialchars(json_encode($blockPresets, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP), ENT_QUOTES, 'UTF-8') ?>"
       data-ai-url="<?= htmlspecialchars(sh_admin_url('api/ai-block-template.php')) ?>"
-      data-preview-lang="<?= htmlspecialchars($adminLang) ?>">
+      data-preview-lang="<?= htmlspecialchars($primaryLang) ?>"
+      data-err-prompt="<?= htmlspecialchars(sh_settings_admin_label('block_builder_err_prompt', $ta)) ?>"
+      data-err-server="<?= htmlspecialchars(sh_settings_admin_label('block_builder_err_server', $ta)) ?>"
+      data-status-generating="<?= htmlspecialchars(sh_settings_admin_label('block_builder_generating', $ta)) ?>"
+      data-status-demo="<?= htmlspecialchars(sh_settings_admin_label('block_builder_demo_ok', $ta)) ?>"
+      data-status-ok="<?= htmlspecialchars(sh_settings_admin_label('block_builder_gen_ok', $ta)) ?>"
+      data-status-preset="<?= htmlspecialchars(sh_settings_admin_label('block_builder_status_preset', $ta)) ?>">
     <div class="adm-card adm-settings-section" id="block-builder-generate">
         <div class="adm-card-head">
             <h2><i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars($sections['block-builder-generate'] ?? sh_settings_admin_label('block_builder_generate_section', $ta)) ?></h2>
@@ -29,6 +44,26 @@ $adminLang = $GLOBALS['lang'] ?? 'en';
                     <i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars(sh_settings_admin_label('block_builder_generate_btn', $ta)) ?>
                 </button>
                 <span id="shTplGenerateStatus" class="adm-ai-status" hidden></span>
+            </div>
+
+            <div class="adm-block-presets" id="shBlockPresets">
+                <p class="adm-compact-kicker"><i class="fas fa-layer-group"></i> <?= htmlspecialchars(sh_settings_admin_label('block_builder_presets_title', $ta)) ?></p>
+                <p class="adm-help adm-help-compact"><?= htmlspecialchars(sh_settings_admin_label('block_builder_presets_help', $ta)) ?></p>
+                <div class="adm-block-preset-colors" role="group" aria-label="<?= htmlspecialchars(sh_settings_admin_label('block_builder_color_label', $ta)) ?>">
+                    <label class="adm-block-color-label" for="shBlockColorPicker"><?= htmlspecialchars(sh_settings_admin_label('block_builder_color_label', $ta)) ?></label>
+                    <input type="color" id="shBlockColorPicker" value="#2563eb" class="adm-block-color-input">
+                    <?php foreach ($presetColors as $hex): ?>
+                    <button type="button" class="adm-block-color-swatch" data-color="<?= htmlspecialchars($hex) ?>" style="--swatch:<?= htmlspecialchars($hex) ?>" title="<?= htmlspecialchars($hex) ?>" aria-label="<?= htmlspecialchars($hex) ?>"></button>
+                    <?php endforeach; ?>
+                </div>
+                <div class="adm-block-preset-grid">
+                    <?php foreach ($blockPresets as $preset): ?>
+                    <button type="button" class="adm-block-preset-card" data-preset-id="<?= htmlspecialchars($preset['id']) ?>" style="--preset-color:<?= htmlspecialchars($preset['color']) ?>">
+                        <i class="fas fa-<?= htmlspecialchars($preset['icon']) ?>" aria-hidden="true"></i>
+                        <span><?= htmlspecialchars(sh_settings_admin_label('block_builder_preset_' . $preset['id'], $ta) ?: ($preset['name'] ?? '')) ?></span>
+                    </button>
+                    <?php endforeach; ?>
+                </div>
             </div>
         </div>
     </div>
@@ -74,9 +109,9 @@ $adminLang = $GLOBALS['lang'] ?? 'en';
                         <span class="adm-toggle-label"><?= htmlspecialchars(sh_settings_admin_label('block_builder_enabled', $ta)) ?></span>
                     </label>
                     <input type="hidden" name="new_tpl_body_mirror" id="shNewTplBodyMirror" value="">
-                    <?php foreach (sh_langs() as $code => $info): ?>
-                    <div class="adm-block-builder-lang" data-lang="<?= htmlspecialchars($code) ?>">
-                        <p class="adm-compact-kicker"><i class="fas fa-language"></i> <?= htmlspecialchars($info['name']) ?></p>
+                    <?php foreach (sh_langs() as $code => $info):
+                        $isPrimary = $code === $primaryLang;
+                        $langFields = function () use ($code, $ta): void { ?>
                         <div class="adm-form-grid">
                             <div class="adm-field">
                                 <label><?= htmlspecialchars(sh_settings_admin_label('homepage_block_title', $ta)) ?></label>
@@ -93,7 +128,19 @@ $adminLang = $GLOBALS['lang'] ?? 'en';
                                 <textarea name="new_tpl_body_<?= htmlspecialchars($code) ?>" rows="8" class="adm-code-input adm-code-mirror sh-tpl-body-input" data-mode="htmlmixed" data-lang="<?= htmlspecialchars($code) ?>"></textarea>
                             </div>
                         </div>
+                        <?php };
+                    ?>
+                    <?php if ($isPrimary): ?>
+                    <div class="adm-block-builder-lang adm-block-builder-lang--primary" data-lang="<?= htmlspecialchars($code) ?>">
+                        <p class="adm-compact-kicker"><i class="fas fa-star"></i> <?= htmlspecialchars($info['name']) ?> <span class="adm-muted">(<?= htmlspecialchars(sh_settings_admin_label('block_builder_primary_lang', $ta)) ?>)</span></p>
+                        <?php $langFields(); ?>
                     </div>
+                    <?php else: ?>
+                    <details class="adm-spoiler adm-spoiler-nested adm-block-builder-lang-spoiler" data-lang="<?= htmlspecialchars($code) ?>">
+                        <summary><i class="fas fa-language"></i> <?= htmlspecialchars($info['name']) ?> (<?= htmlspecialchars(strtoupper($code)) ?>)</summary>
+                        <div class="adm-spoiler-body"><?php $langFields(); ?></div>
+                    </details>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -144,9 +191,12 @@ $adminLang = $GLOBALS['lang'] ?? 'en';
                         <span class="adm-toggle-label"><?= htmlspecialchars(sh_settings_admin_label('block_builder_enabled', $ta)) ?></span>
                     </label>
                     <input type="hidden" name="tpl_prompt_<?= (int) $i ?>" value="<?= htmlspecialchars($tpl['prompt'] ?? '') ?>">
-                    <?php foreach (sh_langs() as $code => $info): ?>
-                    <div class="adm-home-block-lang">
-                        <p class="adm-compact-kicker"><?= htmlspecialchars($info['name']) ?></p>
+                    <?php foreach (sh_langs() as $code => $info):
+                        $isPrimary = $code === $primaryLang;
+                    ?>
+                    <?php if ($isPrimary): ?>
+                    <div class="adm-home-block-lang adm-home-block-lang--primary">
+                        <p class="adm-compact-kicker"><i class="fas fa-star"></i> <?= htmlspecialchars($info['name']) ?></p>
                         <div class="adm-form-grid">
                             <div class="adm-field">
                                 <input type="text" name="tpl_title_<?= htmlspecialchars($code) ?>_<?= (int) $i ?>" value="<?= htmlspecialchars($tpl['title'][$code] ?? '') ?>" placeholder="<?= htmlspecialchars(sh_settings_admin_label('homepage_block_title', $ta)) ?>">
@@ -159,6 +209,24 @@ $adminLang = $GLOBALS['lang'] ?? 'en';
                             <textarea name="tpl_body_<?= htmlspecialchars($code) ?>_<?= (int) $i ?>" rows="5" class="adm-code-input adm-code-mirror" data-mode="htmlmixed"><?= htmlspecialchars($tpl['body'][$code] ?? '') ?></textarea>
                         </div>
                     </div>
+                    <?php else: ?>
+                    <details class="adm-spoiler adm-spoiler-nested adm-home-block-lang-spoiler">
+                        <summary><?= htmlspecialchars($info['name']) ?> (<?= htmlspecialchars(strtoupper($code)) ?>)</summary>
+                        <div class="adm-spoiler-body">
+                            <div class="adm-form-grid">
+                                <div class="adm-field">
+                                    <input type="text" name="tpl_title_<?= htmlspecialchars($code) ?>_<?= (int) $i ?>" value="<?= htmlspecialchars($tpl['title'][$code] ?? '') ?>" placeholder="<?= htmlspecialchars(sh_settings_admin_label('homepage_block_title', $ta)) ?>">
+                                </div>
+                                <div class="adm-field adm-field--wide">
+                                    <input type="text" name="tpl_subtitle_<?= htmlspecialchars($code) ?>_<?= (int) $i ?>" value="<?= htmlspecialchars($tpl['subtitle'][$code] ?? '') ?>" placeholder="<?= htmlspecialchars(sh_settings_admin_label('homepage_block_subtitle', $ta)) ?>">
+                                </div>
+                            </div>
+                            <div class="adm-field adm-field--wide">
+                                <textarea name="tpl_body_<?= htmlspecialchars($code) ?>_<?= (int) $i ?>" rows="5" class="adm-code-input adm-code-mirror" data-mode="htmlmixed"><?= htmlspecialchars($tpl['body'][$code] ?? '') ?></textarea>
+                            </div>
+                        </div>
+                    </details>
+                    <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             </details>

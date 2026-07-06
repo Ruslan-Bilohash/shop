@@ -5,7 +5,7 @@
 return [
     [
         'id' => 'wireless-headphones-pro',
-        'category' => 'electronics',
+        'category' => 'smartphones-tv-electronics',
         'featured' => true,
         'active' => true,
         'price' => 2490,
@@ -28,7 +28,7 @@ return [
     ],
     [
         'id' => 'smartwatch-fitness',
-        'category' => 'electronics',
+        'category' => 'smartphones-tv-electronics',
         'featured' => true,
         'active' => true,
         'price' => 1890,
@@ -51,7 +51,7 @@ return [
     ],
     [
         'id' => 'merino-wool-sweater',
-        'category' => 'fashion',
+        'category' => 'fashion-shoes-jewelry',
         'featured' => true,
         'active' => true,
         'price' => 1290,
@@ -74,7 +74,7 @@ return [
     ],
     [
         'id' => 'leather-crossbody-bag',
-        'category' => 'fashion',
+        'category' => 'fashion-shoes-jewelry',
         'featured' => false,
         'active' => true,
         'price' => 2190,
@@ -97,7 +97,7 @@ return [
     ],
     [
         'id' => 'scandinavian-table-lamp',
-        'category' => 'home',
+        'category' => 'home-goods',
         'featured' => true,
         'active' => true,
         'price' => 890,
@@ -120,7 +120,7 @@ return [
     ],
     [
         'id' => 'ceramic-dinner-set',
-        'category' => 'home',
+        'category' => 'home-goods',
         'featured' => false,
         'active' => true,
         'price' => 1590,
@@ -143,7 +143,7 @@ return [
     ],
     [
         'id' => 'trail-running-shoes',
-        'category' => 'sports',
+        'category' => 'sports-hobbies',
         'featured' => true,
         'active' => true,
         'price' => 1790,
@@ -166,7 +166,7 @@ return [
     ],
     [
         'id' => 'yoga-mat-premium',
-        'category' => 'sports',
+        'category' => 'sports-hobbies',
         'featured' => false,
         'active' => true,
         'price' => 690,
@@ -189,7 +189,7 @@ return [
     ],
     [
         'id' => 'organic-face-serum',
-        'category' => 'beauty',
+        'category' => 'beauty-health',
         'featured' => true,
         'active' => true,
         'price' => 590,
@@ -212,7 +212,7 @@ return [
     ],
     [
         'id' => 'nordic-spa-gift-set',
-        'category' => 'beauty',
+        'category' => 'beauty-health',
         'featured' => false,
         'active' => true,
         'price' => 1190,
@@ -235,7 +235,7 @@ return [
     ],
     [
         'id' => 'artisan-norwegian-cheese',
-        'category' => 'food',
+        'category' => 'alcohol-food',
         'featured' => true,
         'active' => true,
         'price' => 349,
@@ -258,7 +258,7 @@ return [
     ],
     [
         'id' => 'nordic-berry-jam',
-        'category' => 'food',
+        'category' => 'alcohol-food',
         'featured' => false,
         'active' => true,
         'price' => 129,

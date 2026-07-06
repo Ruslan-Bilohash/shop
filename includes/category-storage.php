@@ -15,6 +15,105 @@ function sh_default_categories_from_seed(): ?array
     return is_array($defaults) ? $defaults : null;
 }
 
+/** @return array<string, string> Old demo slugs → current Rozetka-style slugs */
+function sh_category_legacy_slug_map(): array
+{
+    return [
+        'electronics' => 'smartphones-tv-electronics',
+        'fashion'     => 'fashion-shoes-jewelry',
+        'home'        => 'home-goods',
+        'sports'      => 'sports-hobbies',
+        'beauty'      => 'beauty-health',
+        'food'        => 'alcohol-food',
+    ];
+}
+
+/** Fill missing language labels from the first available translation. */
+function sh_category_normalize_names(array $names): array
+{
+    if (!function_exists('sh_langs')) {
+        require_once __DIR__ . '/store-settings.php';
+    }
+    $fallback = '';
+    foreach (array_merge(['en', 'no', 'uk', 'ru', 'sv'], array_keys($names)) as $code) {
+        $val = trim((string) ($names[$code] ?? ''));
+        if ($val !== '') {
+            $fallback = $val;
+            break;
+        }
+    }
+    foreach (array_keys(sh_langs()) as $code) {
+        if (trim((string) ($names[$code] ?? '')) === '' && $fallback !== '') {
+            $names[$code] = $fallback;
+        }
+    }
+    return $names;
+}
+
+function sh_category_migrate_legacy_data(): void
+{
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $done = true;
+
+    $map = sh_category_legacy_slug_map();
+    $legacySlugs = array_keys($map);
+    $jsonFile = sh_categories_file();
+
+    require_once __DIR__ . '/storage.php';
+    $products = sh_load_products_raw();
+    $productsChanged = false;
+    foreach ($products as &$product) {
+        $cat = (string) ($product['category'] ?? '');
+        if (isset($map[$cat])) {
+            $product['category'] = $map[$cat];
+            $productsChanged = true;
+        }
+    }
+    unset($product);
+    if ($productsChanged) {
+        sh_save_products($products);
+    }
+
+    if (!is_readable($jsonFile)) {
+        return;
+    }
+    $existing = json_decode(file_get_contents($jsonFile) ?: '[]', true);
+    if (!is_array($existing) || $existing === []) {
+        return;
+    }
+
+    $hasLegacy = false;
+    foreach ($existing as $cat) {
+        if (in_array((string) ($cat['slug'] ?? ''), $legacySlugs, true)) {
+            $hasLegacy = true;
+            break;
+        }
+    }
+
+    $needsSave = $hasLegacy;
+    $newList = [];
+    foreach ($existing as $cat) {
+        $slug = (string) ($cat['slug'] ?? '');
+        if (in_array($slug, $legacySlugs, true)) {
+            continue;
+        }
+        $before = is_array($cat['name'] ?? null) ? $cat['name'] : [];
+        $after = sh_category_normalize_names($before);
+        if (json_encode($before) !== json_encode($after)) {
+            $needsSave = true;
+        }
+        $cat['name'] = $after;
+        $newList[] = $cat;
+    }
+
+    if ($needsSave) {
+        sh_save_categories($newList);
+    }
+}
+
 function sh_ensure_categories_json(): void
 {
     $json = sh_categories_file();
@@ -24,12 +123,14 @@ function sh_ensure_categories_json(): void
     }
     if (!is_file($json)) {
         sh_save_categories($defaults);
+        sh_category_migrate_legacy_data();
         return;
     }
     $existing = json_decode(file_get_contents($json) ?: '[]', true);
     if (!is_array($existing) || $existing === []) {
         sh_save_categories($defaults);
     }
+    sh_category_migrate_legacy_data();
 }
 
 function sh_load_categories_raw(): array
@@ -142,7 +243,7 @@ function sh_category_upsert(array $record): bool
         'icon'   => trim($record['icon'] ?? 'tag') ?: 'tag',
         'active' => ($record['active'] ?? true) !== false,
         'sort'   => max(1, (int)($record['sort'] ?? 99)),
-        'name'   => is_array($record['name'] ?? null) ? $record['name'] : [],
+        'name'   => sh_category_normalize_names(is_array($record['name'] ?? null) ? $record['name'] : []),
     ];
     if (!empty($record['seo']) && is_array($record['seo'])) {
         $payload['seo'] = $record['seo'];

@@ -1,0 +1,36 @@
+{
+  "ai_enabled": false,
+  "ai_api_key": "",
+  "ai_provider": "xai",
+  "ai_model": "grok-3-mini",
+  "ai_source_lang": "en",
+  "chat_api_key": "",
+  "recaptcha_site_key": "",
+  "recaptcha_secret_key": "",
+  "customer_google_client_id": "",
+  "customer_google_client_secret": "",
+  "posten_api_key": "",
+  "paypal": {
+    "enabled": false,
+    "mode": "sandbox",
+    "client_id": "",
+    "client_secret": "",
+    "currency": "NOK"
+  },
+  "stripe": {
+    "enabled": false,
+    "mode": "test",
+    "publishable_key": "",
+    "secret_key": "",
+    "webhook_secret": ""
+  },
+  "vipps": {
+    "enabled": false,
+    "environment": "test",
+    "client_id": "",
+    "client_secret": "",
+    "subscription_key": "",
+    "merchant_serial": "",
+    "callback_token": ""
+  }
+}

@@ -39,22 +39,17 @@ $sh_news_url = bh_cms_news_url('shop') ?? 'https://bilohash.com/news/shop-cms.ht
                 </ul>
             </div>
         </div>
-        <?php
-        $ft = $t['footer'] ?? [];
-        $eco_class_prefix = 'shs-footer-eco';
-        require dirname(__DIR__, 3) . '/includes/ecosystem-footer-block.php';
-        ?>
         <div class="shs-footer-bottom">
             <?= sprintf(htmlspecialchars($t['footer']['copyright']), date('Y'), sh_version_label()) ?>
         </div>
     </div>
 </footer>
 <?php
-require_once dirname(__DIR__) . '/includes/shop-mode.php';
+require_once dirname(__DIR__, 2) . '/includes/shop-mode.php';
 if (sh_cookie_consent_enabled()) {
     $sh_cookie_privacy_url = shs_demo_url('page.php?slug=privacy');
     $sh_cookie_cookies_url = shs_demo_url('page.php?slug=cookies');
-    require dirname(__DIR__) . '/includes/cookie-consent.php';
+    require dirname(__DIR__, 2) . '/includes/cookie-consent.php';
 }
 ?>
 </body>

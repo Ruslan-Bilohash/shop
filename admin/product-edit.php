@@ -3,6 +3,7 @@ require_once __DIR__ . '/init.php';
 require_once dirname(__DIR__) . '/includes/storage.php';
 require_once dirname(__DIR__) . '/includes/payment-settings.php';
 require_once dirname(__DIR__) . '/includes/ai.php';
+require_once dirname(__DIR__) . '/includes/seo-checklist.php';
 require_once __DIR__ . '/includes/seo-parse.php';
 require_once __DIR__ . '/includes/toggle-field.php';
 sh_admin_require();
@@ -146,9 +147,19 @@ $edit_tabs = [
 ];
 $edit_tab_base_url = sh_admin_url('product-edit.php' . ($is_new ? '' : '?id=' . urlencode($id)));
 
+$contentChecklistLabels = $tp['content_checklist'] ?? [];
+$seoChecklistLabels = $tp['seo_checklist'] ?? [];
+$contentChecklist = sh_product_content_checklist($record, $contentChecklistLabels);
+$seoChecklist = sh_product_seo_checklist($record, $seoChecklistLabels);
+$checklistLangs = [];
+foreach (sh_langs() as $code => $info) {
+    $checklistLangs[] = ['code' => $code, 'name' => $info['name'] ?? $code];
+}
+
 $admin_extra_js = [
-    sh_asset('js/admin-product.js') . '?v=3',
-    sh_asset('js/admin-product-images.js') . '?v=1',
+    sh_asset('js/admin-product.js') . '?v=4',
+    sh_asset('js/admin-product-images.js') . '?v=2',
+    sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];
 
 require __DIR__ . '/includes/layout.php';
@@ -163,6 +174,8 @@ require __DIR__ . '/includes/layout.php';
 
 <?php require __DIR__ . '/includes/edit-tabs.php'; ?>
 
+<div class="adm-product-edit-layout">
+<div class="adm-product-edit-main">
 <form method="post" class="adm-settings-form" id="shProductForm"
       data-ai-url="<?= htmlspecialchars(sh_admin_url('api/ai-product.php')) ?>"
       data-ai-source-lang="<?= htmlspecialchars($aiSourceLang) ?>">
@@ -274,12 +287,17 @@ require __DIR__ . '/includes/layout.php';
             </div>
             <div class="adm-card-body padded">
                 <div class="adm-ai-source-box adm-ai-source-box--product">
-                    <div class="adm-ai-source-fields">
+                    <div class="adm-ai-source-fields adm-form-grid">
                         <div class="adm-field adm-field--wide">
                             <label for="shAiProductName"><?= htmlspecialchars($tp['ai_product_name_label'] ?? 'Product name for AI') ?> *</label>
                             <input type="text" id="shAiProductName" class="adm-input-lg"
                                    value="<?= htmlspecialchars($record !== null ? ($record['name'][$aiSourceLang] ?? '') : '') ?>"
                                    placeholder="<?= htmlspecialchars($tp['ai_product_name_ph'] ?? 'e.g. Wireless Headphones Pro') ?>">
+                        </div>
+                        <div class="adm-field adm-field--wide">
+                            <label for="shAiProductBrief"><?= htmlspecialchars($tp['ai_product_brief_label'] ?? 'Brief description for AI') ?></label>
+                            <textarea id="shAiProductBrief" rows="3" class="adm-textarea"
+                                      placeholder="<?= htmlspecialchars($tp['ai_product_brief_ph'] ?? 'e.g. Wireless ANC headphones, 40h battery, USB-C, for gym and travel') ?>"><?= htmlspecialchars($record !== null ? ($record['desc'][$aiSourceLang] ?? '') : '') ?></textarea>
                             <small class="adm-field-hint"><?= htmlspecialchars($tp['ai_product_name_hint'] ?? 'AI fills names, descriptions, meta title, meta description (OG) and keywords for all languages.') ?></small>
                         </div>
                     </div>
@@ -332,5 +350,48 @@ require __DIR__ . '/includes/layout.php';
         <a href="<?= sh_admin_url('products.php') ?>" class="adm-btn adm-btn-outline"><?= htmlspecialchars($tp['cancel'] ?? 'Cancel') ?></a>
     </div>
 </form>
+</div>
+
+<aside class="adm-product-edit-aside" id="shProductChecklistAside" aria-label="<?= htmlspecialchars($tp['checklist_panel'] ?? 'Quality checklist') ?>">
+    <button type="button" class="adm-checklist-aside-toggle" id="shChecklistAsideToggle"
+            aria-expanded="true" aria-controls="shChecklistAsideBody"
+            title="<?= htmlspecialchars($tp['checklist_hide'] ?? 'Hide checklist') ?>"
+            data-show-label="<?= htmlspecialchars($tp['checklist_show'] ?? 'Show checklist') ?>">
+        <i class="fas fa-clipboard-check" aria-hidden="true"></i>
+        <span class="adm-checklist-aside-toggle-label"><?= htmlspecialchars($tp['checklist_content'] ?? 'Product information') ?></span>
+        <i class="fas fa-chevron-right adm-checklist-aside-chevron" aria-hidden="true"></i>
+    </button>
+    <div class="adm-checklist-aside-body" id="shChecklistAsideBody">
+        <?php
+        sh_admin_render_checklist_panel(
+            $contentChecklist,
+            $contentChecklistLabels,
+            'shContentChecklist',
+            $tp['checklist_content'] ?? 'Product information',
+            'box-open'
+        );
+        sh_admin_render_checklist_panel(
+            $seoChecklist,
+            $seoChecklistLabels,
+            'shSeoChecklist',
+            $tp['checklist_seo'] ?? 'SEO quality',
+            'chart-line'
+        );
+        ?>
+        <details class="adm-checklist-tip-spoiler">
+            <summary><i class="fas fa-lightbulb"></i> <?= htmlspecialchars($tp['checklist_tip_title'] ?? 'Tips') ?></summary>
+            <p class="adm-checklist-tip">
+                <?= htmlspecialchars($tp['checklist_tip'] ?? 'Scores update live as you edit. Green = great, yellow = improve, red = fix before publish.') ?>
+            </p>
+        </details>
+    </div>
+</aside>
+</div>
+
+<script>
+window.SH_CHECKLIST_LANGS = <?= json_encode($checklistLangs, JSON_UNESCAPED_UNICODE) ?>;
+window.SH_CONTENT_CHECKLIST_LABELS = <?= json_encode($contentChecklistLabels, JSON_UNESCAPED_UNICODE) ?>;
+window.SH_SEO_CHECKLIST_LABELS = <?= json_encode($seoChecklistLabels, JSON_UNESCAPED_UNICODE) ?>;
+</script>
 
 <?php require __DIR__ . '/includes/layout-end.php'; ?>

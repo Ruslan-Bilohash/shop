@@ -308,18 +308,19 @@ $en = [
         ],
     ],
     'header' => [
-        'intro' => 'Show or hide links in the storefront header navigation.',
+        'intro' => 'Manage storefront header menu items — add, edit, delete or hide links.',
         'guide' => [
-            'title' => 'Header links',
+            'title' => 'Menu items',
             'steps' => [
-                'Toggle Sale, Contact, Track parcel and other menu items.',
-                'Hide Customer sign-in if you do not use buyer login.',
+                'Add a row with URL and labels, or edit existing items.',
+                'Use the trash icon to remove a menu item.',
+                'Toggle Customer sign-in in the Header actions section.',
                 'Save and preview the storefront header.',
             ],
             'links' => [],
-            'note' => 'Categories dropdown is always visible when categories exist.',
+            'note' => 'Shop and Categories are fixed. Cart and language switcher stay in the header bar.',
         ],
-        'sections' => ['header-nav' => 'Navigation links'],
+        'sections' => ['header-nav' => 'Menu items', 'header-actions' => 'Header actions'],
         'hints' => [],
     ],
     'posten' => [
@@ -658,18 +659,19 @@ $uk = [
         ],
     ],
     'header' => [
-        'intro' => 'Посилання в шапці вітрини — що показувати відвідувачам.',
+        'intro' => 'Керуйте пунктами меню в шапці вітрини — додавайте, редагуйте, видаляйте або приховуйте.',
         'guide' => [
-            'title' => 'Посилання в шапці',
+            'title' => 'Пункти меню',
             'steps' => [
-                'Увімкніть або приховайте Розпродаж, Контакти, Відстеження тощо.',
-                'Приховайте Вхід покупця, якщо не використовуєте login.php.',
+                'Додайте рядок з URL і підписами або відредагуйте наявні пункти.',
+                'Кнопка з іконкою кошика видаляє пункт меню.',
+                'Вхід покупця — у блоці «Дії в шапці».',
                 'Збережіть і перевірте шапку на вітрині.',
             ],
             'links' => [],
-            'note' => 'Випадаюче меню категорій завжди доступне, якщо є категорії.',
+            'note' => '«Магазин» і «Категорії» завжди на місці. Кошик і мови — у панелі дій шапки.',
         ],
-        'sections' => ['header-nav' => 'Пункти меню'],
+        'sections' => ['header-nav' => 'Пункти меню', 'header-actions' => 'Дії в шапці'],
         'hints' => [],
     ],
     'posten' => [

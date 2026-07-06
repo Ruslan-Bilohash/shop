@@ -19,14 +19,6 @@ function sh_admin_sidebar_menu(): array
             'url'  => 'index.php',
             'page' => 'dashboard',
         ],
-        [
-            'id'   => 'code-editor',
-            'type' => 'link',
-            'label_key' => 'code_editor',
-            'icon' => 'code',
-            'url'  => 'code-editor.php',
-            'page' => 'code-editor',
-        ],
     ];
 
     $menu[] = [
@@ -81,6 +73,15 @@ function sh_admin_sidebar_menu(): array
             ['label_key' => 'view_catalog', 'icon' => 'store', 'href' => 'search.php', 'external' => true],
             ['label_key' => 'view_site', 'icon' => 'external-link-alt', 'href' => 'index.php', 'external' => true],
         ],
+    ];
+
+    $menu[] = [
+        'id'   => 'code-editor',
+        'type' => 'link',
+        'label_key' => 'code_editor',
+        'icon' => 'code',
+        'url'  => 'code-editor.php',
+        'page' => 'code-editor',
     ];
 
     return $menu;

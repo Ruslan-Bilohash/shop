@@ -78,3 +78,24 @@ function sh_leads_count_by_status(string $status = 'new'): int
     }
     return $n;
 }
+
+function sh_lead_delete(string $id): bool
+{
+    $id = trim($id);
+    if ($id === '') {
+        return false;
+    }
+    $leads = sh_leads_load();
+    $before = count($leads);
+    $leads = array_values(array_filter($leads, static fn(array $lead): bool => ($lead['id'] ?? '') !== $id));
+    if (count($leads) === $before) {
+        return false;
+    }
+    return sh_leads_save($leads);
+}
+
+function sh_lead_whatsapp_url(string $phone): string
+{
+    $digits = preg_replace('/\D+/', '', $phone) ?? '';
+    return $digits !== '' ? 'https://wa.me/' . $digits : '';
+}

@@ -195,7 +195,7 @@ function sh_product_upsert(array $record): bool
 
     $payload = [
         'id'         => $id,
-        'category'   => trim($record['category'] ?? '') ?: 'electronics',
+        'category'   => trim($record['category'] ?? ''),
         'featured'   => !empty($record['featured']),
         'active'     => ($record['active'] ?? true) !== false,
         'price'      => max(0, (int)($record['price'] ?? 0)),

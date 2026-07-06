@@ -94,6 +94,7 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
 
     if ($section === 'ai') {
         require_once __DIR__ . '/ai.php';
+        $existingAi = sh_ai_settings($settings);
         $providers = sh_ai_providers();
         $provider = trim($post['ai_provider'] ?? 'grok');
         if (!isset($providers[$provider])) {
@@ -107,12 +108,17 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings['ai_provider'] = $provider;
         $settings['ai_api_base'] = rtrim(trim($post['ai_api_base'] ?? ''), '/');
         $settings['ai_model'] = $model !== '' ? $model : ($providers[$provider]['models'][0] ?? 'grok-3-mini');
-        if (trim($post['ai_api_key'] ?? '') !== '') {
-            $settings['ai_api_key'] = trim($post['ai_api_key']);
+        $incomingKey = trim($post['ai_api_key'] ?? '');
+        if ($incomingKey !== '') {
+            $settings['ai_api_key'] = $incomingKey;
+            $settings['ai_enabled'] = true;
+        } else {
+            $settings['ai_api_key'] = (string) ($existingAi['ai_api_key'] ?? '');
         }
         $settings['ai_prompt_product'] = trim($post['ai_prompt_product'] ?? '');
         $src = trim($post['ai_source_lang'] ?? 'en');
         $settings['ai_source_lang'] = array_key_exists($src, sh_langs()) ? $src : 'en';
+        return $settings;
     }
 
     if ($section === 'seo') {
@@ -352,10 +358,16 @@ function sh_render_settings_tabs(callable $adminUrlFn, array $ta = []): void
 
 function sh_render_settings_form(string $section, array $settings, array $ta = []): void
 {
-    $path = __DIR__ . '/../admin/includes/form-' . $section . '.php';
-    if (is_file($path)) {
-        include $path;
-        return;
+    $base = __DIR__ . '/../admin/includes/form-';
+    $candidates = [
+        $base . $section . '.php',
+        $base . str_replace('_', '-', $section) . '.php',
+    ];
+    foreach ($candidates as $path) {
+        if (is_file($path)) {
+            include $path;
+            return;
+        }
     }
     bh_cms_render_settings_form($section, $settings, $ta);
 }

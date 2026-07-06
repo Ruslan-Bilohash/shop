@@ -72,10 +72,36 @@ function sh_load_settings(): array
     return sh_merge_site_settings($data);
 }
 
+function sh_settings_secret_keys(): array
+{
+    return [
+        'ai_api_key',
+        'customer_google_client_secret',
+        'customer_apple_private_key',
+    ];
+}
+
 function sh_save_settings(array $settings): bool
 {
     require_once __DIR__ . '/site-settings.php';
     $merged = sh_merge_site_settings($settings);
+
+    $existingRaw = [];
+    $file = sh_settings_file();
+    if (is_readable($file)) {
+        $decoded = json_decode(file_get_contents($file) ?: '{}', true);
+        if (is_array($decoded)) {
+            $existingRaw = $decoded;
+        }
+    }
+    foreach (sh_settings_secret_keys() as $secretKey) {
+        $incoming = trim((string) ($merged[$secretKey] ?? ''));
+        $stored = trim((string) ($existingRaw[$secretKey] ?? ''));
+        if ($incoming === '' && $stored !== '') {
+            $merged[$secretKey] = $existingRaw[$secretKey];
+        }
+    }
+
     $out = [];
 
     foreach (sh_default_payment_settings() as $provider => $fields) {
@@ -123,6 +149,9 @@ function sh_save_settings(array $settings): bool
             $out[$key] = $merged[$key];
         }
     }
+    if (array_key_exists('header_nav_links', $merged) && is_array($merged['header_nav_links'])) {
+        $out['header_nav_links'] = $merged['header_nav_links'];
+    }
 
     require_once dirname(__DIR__, 2) . '/includes/bh-cms-site-settings.php';
     foreach (bh_cms_site_settings_defaults(bh_cms_product_accent('shop')) as $key => $val) {
@@ -131,7 +160,15 @@ function sh_save_settings(array $settings): bool
         }
     }
 
+    $dir = dirname(sh_settings_file());
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0755, true);
+    }
+
     $json = json_encode($out, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    if ($json === false) {
+        return false;
+    }
     return file_put_contents(sh_settings_file(), $json, LOCK_EX) !== false;
 }
 

@@ -19,7 +19,6 @@ $mode = sh_merge_shop_mode_settings($settings);
                 '',
                 [
                     ['name' => 'shop_maintenance_allow_admin', 'label' => sh_settings_admin_label('shop_maintenance_allow_admin', $ta), 'checked' => !empty($mode['shop_maintenance_allow_admin'])],
-                    ['name' => 'shop_dev_errors', 'label' => sh_settings_admin_label('shop_dev_errors', $ta), 'checked' => !empty($mode['shop_dev_errors'])],
                     ['name' => 'cookie_consent_enabled', 'label' => sh_settings_admin_label('cookie_consent_enabled', $ta), 'checked' => !empty($mode['cookie_consent_enabled'])],
                 ],
                 'hard-hat'

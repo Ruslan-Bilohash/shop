@@ -68,12 +68,21 @@ function sh_block_template_label(array $tpl, string $field, string $lang, string
     return $fallback;
 }
 
+function sh_block_template_decode_field(string $value): string
+{
+    if (str_starts_with($value, 'b64:')) {
+        $decoded = base64_decode(substr($value, 4), true);
+        return $decoded !== false ? $decoded : $value;
+    }
+    return $value;
+}
+
 function sh_block_templates_apply_post(array $post, array $settings): array
 {
     require_once __DIR__ . '/homepage-blocks.php';
     $ids = $post['tpl_id'] ?? [];
     if (!is_array($ids)) {
-        return $settings;
+        $ids = ($ids !== '' && $ids !== null) ? [(string) $ids] : [];
     }
     $templates = [];
     foreach ($ids as $i) {
@@ -102,7 +111,7 @@ function sh_block_templates_apply_post(array $post, array $settings): array
         foreach (sh_langs() as $code => $_info) {
             $tpl['title'][$code] = trim((string) ($post['tpl_title_' . $code . '_' . $i] ?? ''));
             $tpl['subtitle'][$code] = trim((string) ($post['tpl_subtitle_' . $code . '_' . $i] ?? ''));
-            $tpl['body'][$code] = trim((string) ($post['tpl_body_' . $code . '_' . $i] ?? ''));
+            $tpl['body'][$code] = sh_block_template_decode_field(trim((string) ($post['tpl_body_' . $code . '_' . $i] ?? '')));
         }
         $templates[] = $tpl;
     }
@@ -110,7 +119,7 @@ function sh_block_templates_apply_post(array $post, array $settings): array
     $newPrompt = trim((string) ($post['new_tpl_prompt'] ?? ''));
     $newBodies = [];
     foreach (sh_langs() as $code => $_info) {
-        $newBodies[$code] = trim((string) ($post['new_tpl_body_' . $code] ?? ''));
+        $newBodies[$code] = sh_block_template_decode_field(trim((string) ($post['new_tpl_body_' . $code] ?? '')));
     }
     $hasNewBody = false;
     foreach ($newBodies as $body) {

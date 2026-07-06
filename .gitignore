@@ -23,3 +23,7 @@ prompt/
 **/mail-config.php
 .env
 .env.*
+data/leads.json
+
+# Deploy archives (local only)
+*.zip

@@ -14,9 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $saved = is_callable($bh_cms_save_settings) ? $bh_cms_save_settings($settings) : call_user_func($bh_cms_save_settings, $settings);
         $flash = $saved ? 'sitemap_ok' : 'error';
     } else {
+        $keyUpdated = ($settings_tab ?? '') === 'ai' && trim($_POST['ai_api_key'] ?? '') !== '';
         $settings = sh_settings_apply_post($settings_tab, $_POST, $settings);
         $saved = is_callable($bh_cms_save_settings) ? $bh_cms_save_settings($settings) : call_user_func($bh_cms_save_settings, $settings);
-        $flash = $saved ? 'success' : 'error';
+        if ($saved && $keyUpdated) {
+            $flash = 'ai_key_ok';
+        } else {
+            $flash = $saved ? 'success' : 'error';
+        }
     }
     $settings = is_callable($bh_cms_load_settings) ? $bh_cms_load_settings() : call_user_func($bh_cms_load_settings);
 }

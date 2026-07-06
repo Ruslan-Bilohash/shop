@@ -136,6 +136,8 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 
+<?php require __DIR__ . '/includes/screenshots-section.php'; ?>
+
 <section class="shs-section shs-tech" id="tech">
     <div class="shs-container">
         <h2 class="shs-section-title"><?= htmlspecialchars($t['tech']['title']) ?></h2>

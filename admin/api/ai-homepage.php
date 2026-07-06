@@ -1,9 +1,6 @@
 <?php
-require_once dirname(__DIR__, 2) . '/init.php';
-require_once dirname(__DIR__, 2) . '/includes/ai.php';
+require_once __DIR__ . '/_bootstrap.php';
 require_once dirname(__DIR__, 2) . '/includes/homepage-blocks.php';
-
-sh_admin_require();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     sh_json_response(['ok' => false, 'error' => 'POST required'], 405);

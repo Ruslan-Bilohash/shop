@@ -155,6 +155,7 @@ require __DIR__ . '/includes/payment-tabs.php';
                     </div>
 
                     <?php elseif ($payment_tab === 'google_pay'): ?>
+                    <p class="adm-help"><?= htmlspecialchars($tp['google_pay_help'] ?? 'Google Pay uses Stripe or PayPal as the payment gateway. Register at Google Pay Business Console and enable the wallet in your gateway dashboard.') ?></p>
                     <div class="adm-form-grid">
                         <div class="adm-field">
                             <label><?= htmlspecialchars($fields['gateway'] ?? 'Payment gateway') ?></label>
@@ -162,22 +163,34 @@ require __DIR__ . '/includes/payment-tabs.php';
                                 <option value="stripe" <?= ($cfg['gateway'] ?? 'stripe') === 'stripe' ? 'selected' : '' ?>>Stripe</option>
                                 <option value="paypal" <?= ($cfg['gateway'] ?? '') === 'paypal' ? 'selected' : '' ?>>PayPal</option>
                             </select>
+                            <small class="adm-field-hint"><?= htmlspecialchars($fields['gateway_hint'] ?? 'Complete Stripe/PayPal setup first — Google Pay routes charges through this gateway.') ?></small>
                         </div>
                         <div class="adm-field adm-field--wide">
-                            <label><?= htmlspecialchars($fields['merchant_id'] ?? 'Google Pay Merchant ID') ?></label>
-                            <input type="text" name="merchant_id" value="<?= htmlspecialchars($cfg['merchant_id'] ?? '') ?>" autocomplete="off">
+                            <label><?= htmlspecialchars($fields['google_merchant_id'] ?? $fields['merchant_id'] ?? 'Google Pay Merchant ID') ?></label>
+                            <input type="text" name="merchant_id" value="<?= htmlspecialchars($cfg['merchant_id'] ?? '') ?>" placeholder="BCR2DN4T…" autocomplete="off">
+                            <small class="adm-field-hint"><?= htmlspecialchars($fields['google_merchant_hint'] ?? 'From pay.google.com/business/console — Merchant profile ID.') ?></small>
                         </div>
+                    </div>
+                    <div class="adm-guide-links adm-payment-api-links">
+                        <strong><?= htmlspecialchars($tp['useful_links'] ?? 'Useful links') ?></strong>
+                        <ul>
+                            <li><a href="https://pay.google.com/business/console/" target="_blank" rel="noopener">Google Pay Business Console <i class="fas fa-external-link-alt"></i></a></li>
+                            <li><a href="https://stripe.com/docs/google-pay" target="_blank" rel="noopener">Stripe Google Pay <i class="fas fa-external-link-alt"></i></a></li>
+                        </ul>
                     </div>
 
                     <?php elseif ($payment_tab === 'apple_pay'): ?>
+                    <p class="adm-help"><?= htmlspecialchars($tp['apple_pay_help'] ?? 'Apple Pay on the web requires a Merchant ID, domain verification (Safari) and usually Stripe as the processor.') ?></p>
                     <div class="adm-form-grid">
                         <div class="adm-field adm-field--wide">
-                            <label><?= htmlspecialchars($fields['merchant_id'] ?? 'Apple Merchant ID') ?></label>
+                            <label><?= htmlspecialchars($fields['apple_merchant_id'] ?? $fields['merchant_id'] ?? 'Apple Merchant ID') ?></label>
                             <input type="text" name="merchant_id" value="<?= htmlspecialchars($cfg['merchant_id'] ?? '') ?>" placeholder="merchant.com.example" autocomplete="off">
+                            <small class="adm-field-hint"><?= htmlspecialchars($fields['apple_merchant_hint'] ?? 'Apple Developer → Identifiers → Merchant IDs.') ?></small>
                         </div>
                         <div class="adm-field adm-field--wide">
                             <label><?= htmlspecialchars($fields['domain'] ?? 'Verified domain') ?></label>
                             <input type="text" name="domain" value="<?= htmlspecialchars($cfg['domain'] ?? '') ?>" placeholder="bilohash.com" autocomplete="off">
+                            <small class="adm-field-hint"><?= htmlspecialchars($fields['apple_domain_hint'] ?? 'Host Apple domain verification file at /.well-known/apple-developer-merchantid-domain-association') ?></small>
                         </div>
                         <?php
                         sh_admin_toggle_section(
@@ -188,6 +201,13 @@ require __DIR__ . '/includes/payment-tabs.php';
                             'apple'
                         );
                         ?>
+                    </div>
+                    <div class="adm-guide-links adm-payment-api-links">
+                        <strong><?= htmlspecialchars($tp['useful_links'] ?? 'Useful links') ?></strong>
+                        <ul>
+                            <li><a href="https://developer.apple.com/account/resources/identifiers/list/merchant" target="_blank" rel="noopener">Apple Merchant IDs <i class="fas fa-external-link-alt"></i></a></li>
+                            <li><a href="https://stripe.com/docs/apple-pay" target="_blank" rel="noopener">Stripe Apple Pay <i class="fas fa-external-link-alt"></i></a></li>
+                        </ul>
                     </div>
 
                     <?php elseif ($payment_tab === 'cod'): ?>

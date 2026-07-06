@@ -33,6 +33,7 @@ $seo_schemas = $seo_schemas ?? shs_seo_schemas(shs_absolute_url($canonical), $pa
         </div>
         <nav class="shs-nav-desktop" aria-label="<?= htmlspecialchars($t['nav']['main_nav'] ?? 'Main') ?>">
             <a href="<?= shs_url('index.php#features') ?>"><?= htmlspecialchars($t['nav']['features']) ?></a>
+            <a href="<?= shs_url('index.php#screenshots') ?>"><?= htmlspecialchars($t['nav']['screenshots'] ?? 'Screenshots') ?></a>
             <a href="<?= shs_url('index.php#seo') ?>"><?= htmlspecialchars($t['nav']['seo'] ?? 'SEO') ?></a>
             <a href="<?= shs_url('index.php#demo') ?>"><?= htmlspecialchars($t['nav']['demo']) ?></a>
         </nav>

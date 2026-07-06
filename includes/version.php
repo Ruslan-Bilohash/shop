@@ -50,10 +50,10 @@ function sh_version_releases_public(): array
 
 function sh_public_style_version(): string
 {
-    return '22';
+    return '23';
 }
 
 function sh_public_script_version(): string
 {
-    return '9';
+    return '10';
 }

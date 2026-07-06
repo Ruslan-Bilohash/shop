@@ -48,10 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $names = [];
     foreach (sh_langs() as $code => $_info) {
         $names[$code] = trim($_POST['name_' . $code] ?? '');
-        if ($names[$code] === '') {
-            $errors[] = $tp['names_required'] ?? 'Fill category name for all languages.';
-            break;
-        }
+    }
+    $names = sh_category_normalize_names($names);
+    $defaultLang = sh_site_default_lang();
+    $hasLabel = trim($names[$defaultLang] ?? '') !== ''
+        || trim($names['en'] ?? '') !== ''
+        || trim($names['no'] ?? '') !== '';
+    if (!$hasLabel) {
+        $errors[] = $tp['names_required'] ?? 'Enter at least one category name (default or English).';
     }
 
     if ($errors === []) {
@@ -90,6 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'seo'    => sh_admin_parse_seo_post($_POST, 'category'),
     ];
     $flash = 'error';
+}
+
+if (is_array($record) && isset($record['name']) && is_array($record['name'])) {
+    $record['name'] = sh_category_normalize_names($record['name']);
 }
 
 $seo_record = $record ?? ['seo' => []];
@@ -178,7 +186,7 @@ require __DIR__ . '/includes/layout.php';
         </div>
 
         <div class="adm-card">
-            <div class="adm-card-head"><h2><?= htmlspecialchars($tp['names_title'] ?? 'Names (4 languages)') ?></h2></div>
+            <div class="adm-card-head"><h2><?= htmlspecialchars($tp['names_title'] ?? 'Names') ?> (<?= count(sh_langs()) ?>)</h2></div>
             <div class="adm-card-body padded">
                 <div class="adm-form-grid adm-cat-names-grid">
                     <?php foreach (sh_langs() as $code => $info): ?>

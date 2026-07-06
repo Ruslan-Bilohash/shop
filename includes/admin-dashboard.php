@@ -33,37 +33,3 @@ function sh_admin_dashboard_stats(): array
             : 0,
     ]);
 }
-
-/** @return list<array{key:string,ok:bool,label:string,url:string}> */
-function sh_admin_health_checks(array $ta): array
-{
-    require_once __DIR__ . '/payment-settings.php';
-    require_once __DIR__ . '/site-settings.php';
-    $settings = sh_load_settings();
-    $dash = $ta['dashboard_page'] ?? [];
-    $checks = $dash['health'] ?? [];
-
-    $paymentsOk = false;
-    foreach (['stripe', 'paypal', 'vipps'] as $provider) {
-        if (sh_payment_is_configured($provider, $settings) && !empty($settings[$provider]['enabled'])) {
-            $paymentsOk = true;
-            break;
-        }
-    }
-
-    $items = [
-        ['key' => 'shop_open', 'ok' => sh_admin_dashboard_stats()['shop_open'], 'url' => 'settings-store.php'],
-        ['key' => 'payments', 'ok' => $paymentsOk, 'url' => 'payments.php'],
-        ['key' => 'seo', 'ok' => trim($settings['seo_site_name'] ?? '') !== '', 'url' => 'settings-seo.php'],
-        ['key' => 'recaptcha', 'ok' => !empty($settings['recaptcha_enabled']) && trim($settings['recaptcha_site_key'] ?? '') !== '', 'url' => 'settings-recaptcha.php'],
-        ['key' => 'tracking', 'ok' => trim($settings['tracking_gtag_id'] ?? '') !== '' || trim($settings['tracking_meta_pixel'] ?? '') !== '', 'url' => 'settings-analytics.php'],
-    ];
-
-    foreach ($items as &$item) {
-        $item['label'] = $checks[$item['key']] ?? $item['key'];
-        $item['url'] = sh_admin_url($item['url']);
-    }
-    unset($item);
-
-    return $items;
-}

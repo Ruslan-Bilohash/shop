@@ -25,7 +25,7 @@ function sh_ai_defaults(): array
         'ai_api_key'              => '',
         'ai_api_base'             => '',
         'ai_model'                => 'grok-3-mini',
-        'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with keys no, en, uk, ru, sv (short desc 1-2 sentences each). seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title max 60 chars, meta description max 155 chars. Professional, SEO-friendly, demo-safe tone.',
+        'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars, meta description 120-160 chars. Professional, SEO-friendly, demo-safe tone.',
         'ai_source_lang'          => 'en',
     ];
 }
@@ -82,12 +82,14 @@ function sh_ai_enabled(?array $settings = null): bool
 /**
  * @return array{ok:bool,demo:bool,data:array,error:string}
  */
-function sh_ai_generate_product(array $settings, string $productName, string $categorySlug = '', string $sourceLang = 'en'): array
+function sh_ai_generate_product(array $settings, string $productName, string $categorySlug = '', string $sourceLang = 'en', string $briefDescription = ''): array
 {
     $productName = trim($productName);
     if ($productName === '') {
         return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Product name required'];
     }
+
+    $briefDescription = trim($briefDescription);
 
     $ai = sh_ai_settings($settings);
     $categoryLabel = $categorySlug;
@@ -103,23 +105,29 @@ function sh_ai_generate_product(array $settings, string $productName, string $ca
         return [
             'ok'    => true,
             'demo'  => true,
-            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang),
+            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
             'error' => '',
         ];
     }
+
+    $langList = implode(', ', array_keys(sh_langs()));
+    $briefBlock = $briefDescription !== ''
+        ? ' Merchant brief (expand into full copy): "' . mb_substr($briefDescription, 0, 800) . '".'
+        : '';
 
     $prompt = str_replace(
         ['{product_name}', '{category}', '{source_lang}'],
         [$productName, $categoryLabel, sh_ai_lang_names()[$sourceLang] ?? $sourceLang],
         (string) ($ai['ai_prompt_product'] ?? sh_ai_defaults()['ai_prompt_product'])
     );
+    $prompt .= $briefBlock . ' Languages required in JSON: ' . $langList . '.';
 
     $result = sh_ai_call_chat($ai, $prompt, 1800);
     if (!$result['ok']) {
         return [
             'ok'    => true,
             'demo'  => true,
-            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang),
+            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
             'error' => $result['error'],
         ];
     }
@@ -129,7 +137,7 @@ function sh_ai_generate_product(array $settings, string $productName, string $ca
         return [
             'ok'    => true,
             'demo'  => true,
-            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang),
+            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
             'error' => 'Invalid JSON from AI',
         ];
     }
@@ -327,7 +335,7 @@ function sh_ai_parse_product_json(string $raw): ?array
 }
 
 /** @return array */
-function sh_ai_product_fallback(string $productName, string $category, string $sourceLang): array
+function sh_ai_product_fallback(string $productName, string $category, string $sourceLang, string $briefDescription = ''): array
 {
     $langs = array_keys(sh_langs());
     $names = [];
@@ -335,37 +343,47 @@ function sh_ai_product_fallback(string $productName, string $category, string $s
     $metaTitle = [];
     $metaDesc = [];
     $metaKw = [];
+    $briefSuffix = $briefDescription !== '' ? ' ' . $briefDescription : '';
 
     $templates = [
         'en' => [
-            'desc' => '{name} — quality product for everyday use. Demo listing for {category}. Fast delivery across Norway & EU.',
-            'meta_desc' => 'Buy {name} online. {category} — demo Shop CMS product with multilingual SEO.',
+            'desc' => '{name} — quality product for everyday use.{brief} Category: {category}. Fast delivery across Norway & EU.',
+            'meta_desc' => 'Buy {name} online.{brief} {category} — Shop CMS demo with multilingual SEO and Schema.org.',
         ],
         'no' => [
-            'desc' => '{name} — kvalitetsprodukt for daglig bruk. Demoprodukt for {category}. Rask levering i Norge og EU.',
-            'meta_desc' => 'Kjøp {name} på nett. {category} — demo Shop CMS-produkt med flerspråklig SEO.',
+            'desc' => '{name} — kvalitetsprodukt for daglig bruk.{brief} Kategori: {category}. Rask levering i Norge og EU.',
+            'meta_desc' => 'Kjøp {name} på nett.{brief} {category} — Shop CMS-demo med flerspråklig SEO.',
         ],
         'uk' => [
-            'desc' => '{name} — якісний товар для щоденного використання. Демо для {category}. Швидка доставка по Норвегії та ЄС.',
-            'meta_desc' => 'Купити {name} онлайн. {category} — демо-товар Shop CMS з багатомовним SEO.',
+            'desc' => '{name} — якісний товар для щоденного використання.{brief} Категорія: {category}. Швидка доставка по Норвегії та ЄС.',
+            'meta_desc' => 'Купити {name} онлайн.{brief} {category} — демо Shop CMS з багатомовним SEO та Schema.org.',
         ],
         'ru' => [
-            'desc' => '{name} — качественный товар для повседневного использования. Демо для {category}. Быстрая доставка по Норвегии и ЕС.',
-            'meta_desc' => 'Купить {name} онлайн. {category} — демо-товар Shop CMS с многоязычным SEO.',
+            'desc' => '{name} — качественный товар для повседневного использования.{brief} Категория: {category}. Быстрая доставка по Норвегии и ЕС.',
+            'meta_desc' => 'Купить {name} онлайн.{brief} {category} — демо Shop CMS с многоязычным SEO.',
         ],
         'sv' => [
-            'desc' => '{name} — kvalitetsprodukt för vardagsbruk. Demoprodukt för {category}. Snabb leverans i Norge och EU.',
-            'meta_desc' => 'Köp {name} online. {category} — demo Shop CMS-produkt med flerspråkig SEO.',
+            'desc' => '{name} — kvalitetsprodukt för vardagsbruk.{brief} Kategori: {category}. Snabb leverans i Norge och EU.',
+            'meta_desc' => 'Köp {name} online.{brief} {category} — Shop CMS-demo med flerspråkig SEO.',
+        ],
+        'lt' => [
+            'desc' => '{name} — kokybiškas produktas kasdieniam naudojimui.{brief} Kategorija: {category}. Greitas pristatymas Norvegijoje ir ES.',
+            'meta_desc' => 'Pirkite {name} internetu.{brief} {category} — Shop CMS demo su daugiakalbiu SEO.',
         ],
     ];
 
+    $briefText = $briefSuffix;
     foreach ($langs as $code) {
         $tpl = $templates[$code] ?? $templates['en'];
         $names[$code] = $productName;
-        $desc[$code] = str_replace(['{name}', '{category}'], [$productName, $category ?: 'shop'], $tpl['desc']);
-        $metaTitle[$code] = $productName . ' — Shop CMS';
-        $metaDesc[$code] = str_replace(['{name}', '{category}'], [$productName, $category ?: 'shop'], $tpl['meta_desc']);
-        $metaKw[$code] = strtolower(str_replace(' ', ', ', $productName)) . ', ' . strtolower($category);
+        $repl = ['{name}' => $productName, '{category}' => $category ?: 'shop', '{brief}' => $briefText];
+        $desc[$code] = strtr($tpl['desc'], $repl);
+        if (mb_strlen($desc[$code]) < 80 && $briefDescription !== '') {
+            $desc[$code] .= ' ' . $briefDescription;
+        }
+        $metaTitle[$code] = mb_substr($productName . ' | ' . ($category ?: 'Shop'), 0, 60);
+        $metaDesc[$code] = mb_substr(strtr($tpl['meta_desc'], $repl), 0, 160);
+        $metaKw[$code] = strtolower(str_replace(' ', ', ', $productName)) . ', ' . strtolower($category ?: 'ecommerce');
     }
 
     if ($sourceLang !== 'en' && isset($names[$sourceLang])) {

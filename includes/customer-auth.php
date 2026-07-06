@@ -219,21 +219,24 @@ function sh_customer_logout(): void
 
 function sh_customer_auth_apply_post(array $post, array $settings): array
 {
+    $existing = sh_customer_auth_settings($settings);
     $settings['customer_auth_enabled'] = !empty($post['customer_auth_enabled']);
     $settings['customer_phone_login'] = !empty($post['customer_phone_login']);
     $settings['customer_email_login'] = !empty($post['customer_email_login']);
     $settings['customer_google_login'] = !empty($post['customer_google_login']);
     $settings['customer_apple_login'] = !empty($post['customer_apple_login']);
     $settings['customer_google_client_id'] = trim($post['customer_google_client_id'] ?? '');
-    if (trim($post['customer_google_client_secret'] ?? '') !== '') {
-        $settings['customer_google_client_secret'] = trim($post['customer_google_client_secret']);
-    }
+    $googleSecret = trim($post['customer_google_client_secret'] ?? '');
+    $settings['customer_google_client_secret'] = $googleSecret !== ''
+        ? $googleSecret
+        : (string) ($existing['customer_google_client_secret'] ?? '');
     $settings['customer_apple_client_id'] = trim($post['customer_apple_client_id'] ?? '');
     $settings['customer_apple_team_id'] = trim($post['customer_apple_team_id'] ?? '');
     $settings['customer_apple_key_id'] = trim($post['customer_apple_key_id'] ?? '');
-    if (trim($post['customer_apple_private_key'] ?? '') !== '') {
-        $settings['customer_apple_private_key'] = trim($post['customer_apple_private_key']);
-    }
+    $appleKey = trim($post['customer_apple_private_key'] ?? '');
+    $settings['customer_apple_private_key'] = $appleKey !== ''
+        ? $appleKey
+        : (string) ($existing['customer_apple_private_key'] ?? '');
     return $settings;
 }
 

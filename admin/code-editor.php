@@ -62,7 +62,6 @@ require __DIR__ . '/includes/layout.php';
 
     <div class="adm-form-actions adm-form-actions-sticky">
         <button type="submit" class="adm-btn adm-btn-primary"><i class="fas fa-save"></i> <?= htmlspecialchars(sh_settings_admin_label('save', $ta)) ?></button>
-        <a href="<?= sh_url('index.php') ?>" class="adm-btn adm-btn-outline" target="_blank"><i class="fas fa-external-link-alt"></i> <?= htmlspecialchars($ta['view_site'] ?? 'View site') ?></a>
     </div>
 </form>
 

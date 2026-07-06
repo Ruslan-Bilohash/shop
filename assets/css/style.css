@@ -518,6 +518,27 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
 
 /* Platform & steps */
 .sh-platform-section, .sh-ecosystem-section { background: var(--sh-cream); border-top: 1px solid var(--sh-border); padding: 40px 0; }
+.sh-ecosystem-head { text-align: center; max-width: 640px; margin: 0 auto 24px; }
+.sh-ecosystem-title {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    margin: 0 0 10px; padding: 10px 20px; font-size: clamp(1.15rem, 2.5vw, 1.45rem);
+    background: linear-gradient(135deg, var(--sh-primary-light), #fff);
+    border: 1px solid #bfdbfe; border-radius: 12px; color: var(--sh-text);
+    box-shadow: 0 4px 16px rgba(37, 99, 235, .08);
+}
+.sh-ecosystem-title i { color: var(--sh-primary); }
+.sh-ecosystem-sub { margin: 0; color: var(--sh-text-muted); font-size: 14px; line-height: 1.55; }
+.sh-ecosystem-more { margin-top: 16px; }
+.sh-ecosystem-more[hidden] { display: none !important; }
+.sh-ecosystem-more.is-open { display: grid !important; }
+.sh-ecosystem-more-actions { display: flex; justify-content: center; margin-top: 18px; }
+.sh-ecosystem-more-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px;
+    border: 1px solid var(--sh-border); border-radius: var(--sh-radius);
+    background: var(--sh-bg-card); color: var(--sh-text); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: border-color .15s, color .15s, background .15s;
+}
+.sh-ecosystem-more-btn:hover { border-color: var(--sh-primary); color: var(--sh-primary); background: var(--sh-primary-light); }
 .sh-platform-grid, .sh-ecosystem-grid, .sh-steps-grid, .sh-why-grid {
     display: grid; gap: 16px;
 }
@@ -818,7 +839,7 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
 .sh-empty-sub { display: block; color: var(--sh-text-muted); margin-bottom: 16px; }
 
 /* Footer */
-.sh-footer { background: linear-gradient(180deg, #f8fafc 0%, var(--sh-bg-card) 100%); border-top: 1px solid var(--sh-border); margin-top: 48px; }
+.sh-footer { background: var(--sh-bg-card); border-top: 1px solid var(--sh-border); margin-top: 48px; }
 .sh-footer-cta {
     position: relative; overflow: hidden;
     background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #3b82f6 100%);

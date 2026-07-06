@@ -62,12 +62,12 @@ function shs_seo_json(array $graphs): string
 
 function shs_site_style_version(): string
 {
-    return '7';
+    return '9';
 }
 
 function shs_site_script_version(): string
 {
-    return '3';
+    return '4';
 }
 
 function shs_critical_css(): string

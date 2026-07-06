@@ -142,12 +142,12 @@ require __DIR__ . '/includes/layout.php';
                             <a href="<?= sh_url('search.php?category=' . urlencode($slug)) ?>" class="adm-btn adm-btn-outline adm-btn-sm" target="_blank">
                                 <i class="fas fa-external-link-alt"></i>
                             </a>
-                            <?php if ($count === 0): ?>
-                            <form method="post" class="adm-inline-form" onsubmit="return confirm('<?= htmlspecialchars($tp['delete_confirm'] ?? 'Delete this category?') ?>')">
+                            <form method="post" class="adm-inline-form" onsubmit="return confirm('<?= htmlspecialchars($count > 0 ? ($tp['delete_confirm'] ?? 'Delete this category? Products will become uncategorized.') : ($tp['delete_confirm_empty'] ?? $tp['delete_confirm'] ?? 'Delete this category?')) ?>')">
                                 <input type="hidden" name="delete_slug" value="<?= htmlspecialchars($slug) ?>">
-                                <button type="submit" class="adm-btn adm-btn-danger adm-btn-sm"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="adm-btn adm-btn-danger adm-btn-sm" title="<?= htmlspecialchars($tp['delete'] ?? 'Delete') ?>">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </form>
-                            <?php endif; ?>
                         </div>
                     </td>
                 </tr>

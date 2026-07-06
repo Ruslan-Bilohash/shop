@@ -19,6 +19,10 @@
         }).filter(Boolean);
     }
 
+    function notifyChecklist() {
+        document.dispatchEvent(new CustomEvent('shProductImagesChanged'));
+    }
+
     function syncHidden() {
         var urls = images();
         if (jsonInput) {
@@ -27,6 +31,7 @@
         if (urlInput) {
             urlInput.value = urls[0] || '';
         }
+        notifyChecklist();
     }
 
     function setStatus(msg, type) {

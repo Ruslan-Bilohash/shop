@@ -8,6 +8,7 @@ $sections = sh_admin_settings_sections($tab, $ta);
 $ai = sh_ai_settings($settings);
 $resolved = sh_ai_resolve_config($ai);
 $providers = sh_ai_providers();
+$aiKeySet = trim((string) ($ai['ai_api_key'] ?? '')) !== '';
 ?>
 <form method="post" class="adm-settings-form" id="sh-ai-settings-form">
     <?php sh_admin_section_open($tab, 'ai-connection', $sections['ai-connection'] ?? sh_settings_admin_label('ai_section', $ta), 'wand-magic-sparkles', $ta); ?>
@@ -48,8 +49,18 @@ $providers = sh_ai_providers();
                 </div>
                 <div class="adm-field adm-field--wide">
                     <label><?= htmlspecialchars(sh_settings_admin_label('ai_api_key', $ta)) ?></label>
-                    <input type="password" name="ai_api_key" value="" autocomplete="new-password"
-                           placeholder="<?= !empty($ai['ai_api_key']) ? '••••••••' : 'xai-... or sk-...' ?>">
+                    <?php if ($aiKeySet): ?>
+                    <p class="adm-help adm-help-compact"><i class="fas fa-check-circle"></i> <?= htmlspecialchars(sh_settings_admin_label('secret_saved', $ta)) ?></p>
+                    <?php endif; ?>
+                    <div class="adm-secret-field">
+                        <input type="password" name="ai_api_key" id="shAiApiKey" class="adm-secret-input"
+                               value=""
+                               autocomplete="new-password" spellcheck="false"
+                               placeholder="<?= htmlspecialchars($aiKeySet ? sh_settings_admin_label('secret_keep', $ta) : 'xai-... or sk-...') ?>">
+                        <button type="button" class="adm-btn adm-btn-outline adm-btn-sm adm-secret-toggle" data-target="shAiApiKey" aria-label="Toggle visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                     <?php sh_admin_render_field_hint($tab, 'ai_api_key', $ta); ?>
                 </div>
                 <div class="adm-field">

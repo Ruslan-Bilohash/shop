@@ -2,6 +2,7 @@
 require_once __DIR__ . '/init.php';
 require_once dirname(__DIR__) . '/includes/admin-dashboard.php';
 require_once dirname(__DIR__) . '/includes/site-settings.php';
+require_once dirname(__DIR__) . '/includes/seo-checklist.php';
 sh_admin_require();
 
 $admin_page = 'dashboard';
@@ -13,6 +14,7 @@ $stats = sh_admin_dashboard_stats();
 $chart = sh_admin_category_chart();
 $featured = array_values(array_filter($products, fn($p) => !empty($p['featured'])));
 $health = sh_admin_health_checks($ta);
+$health_all_ok = sh_admin_health_all_ok($health);
 $groups = sh_settings_tab_groups();
 $tabs = sh_settings_tabs();
 
@@ -115,7 +117,7 @@ require __DIR__ . '/includes/layout.php';
     </div>
 </div>
 
-<div class="adm-dash-grid adm-dash-grid--3">
+<div class="adm-dash-grid <?= $health_all_ok ? 'adm-dash-grid--2' : 'adm-dash-grid--3' ?>">
     <div class="adm-card">
         <div class="adm-card-head">
             <h2><i class="fas fa-chart-bar"></i> <?= htmlspecialchars($ta['by_category'] ?? 'By category') ?></h2>
@@ -128,22 +130,9 @@ require __DIR__ . '/includes/layout.php';
         </div>
     </div>
 
-    <div class="adm-card">
-        <div class="adm-card-head">
-            <h2><i class="fas fa-heart-pulse"></i> <?= htmlspecialchars($dp['health_title'] ?? 'Launch checklist') ?></h2>
-        </div>
-        <div class="adm-card-body padded">
-            <ul class="adm-health-list">
-                <?php foreach ($health as $check): ?>
-                <li class="adm-health-item <?= $check['ok'] ? 'is-ok' : 'is-pending' ?>">
-                    <span class="adm-health-icon"><i class="fas fa-<?= $check['ok'] ? 'check-circle' : 'circle' ?>"></i></span>
-                    <span class="adm-health-label"><?= htmlspecialchars($check['label']) ?></span>
-                    <a href="<?= htmlspecialchars($check['url']) ?>" class="adm-health-link"><?= htmlspecialchars($dp['health_fix'] ?? 'Configure') ?> <i class="fas fa-arrow-right"></i></a>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    </div>
+    <?php if (!$health_all_ok): ?>
+    <?php require __DIR__ . '/includes/launch-checklist.php'; ?>
+    <?php endif; ?>
 
     <div class="adm-card">
         <div class="adm-card-head">
@@ -167,6 +156,10 @@ require __DIR__ . '/includes/layout.php';
         </div>
     </div>
 </div>
+
+<?php if ($health_all_ok): ?>
+<?php require __DIR__ . '/includes/launch-checklist.php'; ?>
+<?php endif; ?>
 
 <div class="adm-card">
     <div class="adm-card-head">
