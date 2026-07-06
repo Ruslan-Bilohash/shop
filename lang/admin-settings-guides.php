@@ -343,6 +343,31 @@ $en = [
             'posten_api_key' => 'API key from Bring — leave blank to keep current value.',
         ],
     ],
+    'nova_poshta' => [
+        'intro' => 'Nova Poshta (Ukraine) API: parcel tracking, checkout warehouse picker, and sender branch.',
+        'guide' => [
+            'title' => 'Nova Poshta setup',
+            'steps' => [
+                'Enable integration and demo mode while developing.',
+                'Get an API key from novaposhta.ua → Business → API and click «Test API connection».',
+                'Pick sender city and warehouse — saved for checkout and future label API.',
+                'Enable tracking and open track-np.php with a TTN number (11–14 digits).',
+                'Optional: enable warehouse picker on checkout for Ukrainian delivery.',
+            ],
+            'links' => [
+                ['label' => 'Nova Poshta API docs', 'url' => 'https://developers.novaposhta.ua/'],
+            ],
+            'note' => 'Without an API key, demo mode returns sample cities, warehouses and tracking timeline.',
+        ],
+        'sections' => [
+            'nova-poshta-main' => 'Nova Poshta API',
+            'nova-poshta-sender' => 'Sender warehouse',
+        ],
+        'hints' => [
+            'nova_poshta_api_key' => 'API key from business account — leave blank to keep current value.',
+            'nova_poshta_sender_phone' => 'Sender phone helps TrackingDocument API return full status.',
+        ],
+    ],
     'languages' => [
         'intro' => 'Add or disable storefront languages. Use AI translate to generate lang/*.php from English.',
         'guide' => [
@@ -692,6 +717,31 @@ $uk = [
         'hints' => [
             'posten_client_id' => 'Bring Tracking Client ID.',
             'posten_api_key' => 'API key — залиште порожнім, щоб зберегти поточний.',
+        ],
+    ],
+    'nova_poshta' => [
+        'intro' => 'API Нова пошта (Україна): відстеження, вибір відділення на checkout і склад відправника.',
+        'guide' => [
+            'title' => 'Налаштування Нова пошта',
+            'steps' => [
+                'Увімкніть інтеграцію та демо-режим на час розробки.',
+                'Отримайте API-ключ на novaposhta.ua → Бізнес → API і натисніть «Перевірити API».',
+                'Оберіть місто та відділення відправника — зберігається для checkout і майбутніх накладних.',
+                'Увімкніть відстеження і відкрийте track-np.php з номером ТТН (11–14 цифр).',
+                'Опційно: увімкніть вибір відділення на checkout для доставки по Україні.',
+            ],
+            'links' => [
+                ['label' => 'Документація API Нова пошта', 'url' => 'https://developers.novaposhta.ua/'],
+            ],
+            'note' => 'Без API-ключа демо-режим показує зразкові міста, відділення та статуси відстеження.',
+        ],
+        'sections' => [
+            'nova-poshta-main' => 'API Нова пошта',
+            'nova-poshta-sender' => 'Склад відправника',
+        ],
+        'hints' => [
+            'nova_poshta_api_key' => 'Ключ з бізнес-кабінету — залиште порожнім, щоб зберегти поточний.',
+            'nova_poshta_sender_phone' => 'Телефон відправника допомагає API відстеження повертати повний статус.',
         ],
     ],
     'languages' => [

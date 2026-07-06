@@ -76,6 +76,8 @@ function sh_settings_secret_keys(): array
 {
     return [
         'ai_api_key',
+        'nova_poshta_api_key',
+        'posten_api_key',
         'customer_google_client_secret',
         'customer_apple_private_key',
     ];

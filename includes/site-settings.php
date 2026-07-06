@@ -199,6 +199,11 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings = sh_posten_settings_apply_post($post, $settings);
     }
 
+    if ($section === 'nova_poshta') {
+        require_once __DIR__ . '/store-settings.php';
+        $settings = sh_nova_poshta_settings_apply_post($post, $settings);
+    }
+
     return $settings;
 }
 
@@ -229,7 +234,8 @@ function sh_settings_tabs(): array
         'pages'      => ['file' => 'settings-pages.php',      'icon' => 'file-lines', 'group' => 'content'],
         'footer'     => ['file' => 'settings-footer.php',     'icon' => 'link', 'group' => 'content'],
         'header'     => ['file' => 'settings-header.php',     'icon' => 'bars', 'group' => 'content'],
-        'posten'     => ['file' => 'settings-posten.php',     'icon' => 'truck', 'group' => 'integrations'],
+        'posten'      => ['file' => 'settings-posten.php',      'icon' => 'truck', 'group' => 'integrations'],
+        'nova_poshta' => ['file' => 'settings-nova-poshta.php', 'icon' => 'warehouse', 'group' => 'integrations'],
         'appearance' => ['file' => 'settings-appearance.php', 'icon' => 'palette', 'group' => 'design'],
         'seo'        => ['file' => 'settings-seo.php',        'icon' => 'chart-line', 'group' => 'marketing'],
         'analytics'  => ['file' => 'settings-analytics.php',  'icon' => 'chart-pie', 'group' => 'marketing'],
@@ -268,7 +274,7 @@ function sh_settings_tab_groups(): array
         'integrations' => [
             'label_key' => 'settings_group_integrations',
             'icon'      => 'plug',
-            'tabs'      => ['chat', 'ai', 'recaptcha', 'customer_auth', 'payments', 'posten'],
+            'tabs'      => ['chat', 'ai', 'recaptcha', 'customer_auth', 'payments', 'posten', 'nova_poshta'],
         ],
         'advanced' => [
             'label_key' => 'settings_group_advanced',

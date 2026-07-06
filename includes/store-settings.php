@@ -109,6 +109,18 @@ function sh_store_settings_defaults(): array
         'posten_client_id'        => '',
         'posten_demo_mode'        => true,
 
+        'nova_poshta_enabled'              => false,
+        'nova_poshta_track_enabled'        => true,
+        'nova_poshta_checkout_enabled'     => false,
+        'nova_poshta_demo_mode'            => true,
+        'nova_poshta_api_key'              => '',
+        'nova_poshta_sender_city_ref'      => '',
+        'nova_poshta_sender_city_name'     => '',
+        'nova_poshta_sender_warehouse_ref' => '',
+        'nova_poshta_sender_warehouse_name'=> '',
+        'nova_poshta_sender_phone'         => '',
+        'nova_poshta_default_weight_kg'    => 1,
+
         'site_languages'          => [],
 
         'customer_auth_enabled'         => true,
@@ -239,6 +251,25 @@ function sh_posten_settings_apply_post(array $post, array $settings): array
     $settings['posten_client_id'] = trim($post['posten_client_id'] ?? '');
     if (trim($post['posten_api_key'] ?? '') !== '') {
         $settings['posten_api_key'] = trim($post['posten_api_key']);
+    }
+    return $settings;
+}
+
+function sh_nova_poshta_settings_apply_post(array $post, array $settings): array
+{
+    $settings = sh_merge_store_settings($settings);
+    $settings['nova_poshta_enabled'] = !empty($post['nova_poshta_enabled']);
+    $settings['nova_poshta_track_enabled'] = !empty($post['nova_poshta_track_enabled']);
+    $settings['nova_poshta_checkout_enabled'] = !empty($post['nova_poshta_checkout_enabled']);
+    $settings['nova_poshta_demo_mode'] = !empty($post['nova_poshta_demo_mode']);
+    $settings['nova_poshta_sender_city_ref'] = trim($post['nova_poshta_sender_city_ref'] ?? '');
+    $settings['nova_poshta_sender_city_name'] = trim($post['nova_poshta_sender_city_name'] ?? '');
+    $settings['nova_poshta_sender_warehouse_ref'] = trim($post['nova_poshta_sender_warehouse_ref'] ?? '');
+    $settings['nova_poshta_sender_warehouse_name'] = trim($post['nova_poshta_sender_warehouse_name'] ?? '');
+    $settings['nova_poshta_sender_phone'] = trim($post['nova_poshta_sender_phone'] ?? '');
+    $settings['nova_poshta_default_weight_kg'] = max(0.1, min(30.0, (float) ($post['nova_poshta_default_weight_kg'] ?? 1)));
+    if (trim($post['nova_poshta_api_key'] ?? '') !== '') {
+        $settings['nova_poshta_api_key'] = trim($post['nova_poshta_api_key']);
     }
     return $settings;
 }
