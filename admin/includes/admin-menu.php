@@ -113,6 +113,18 @@ function sh_admin_sidebar_menu(): array
         }
     }
 
+    $secConsole = dirname(__DIR__, 2) . '/includes/security-console.php';
+    if (is_file($secConsole)) {
+        $menu[] = [
+            'id'   => 'security-console',
+            'type' => 'link',
+            'label_key' => 'security_console',
+            'icon' => 'shield-halved',
+            'url'  => 'security-console.php',
+            'page' => 'security-console',
+        ];
+    }
+
     return $menu;
 }
 
