@@ -18,6 +18,7 @@ if (is_file($shModeFile)) {
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/seo.php';
 require_once __DIR__ . '/includes/site-settings.php';
+require_once __DIR__ . '/includes/site-integrations.php';
 require_once __DIR__ . '/includes/version.php';
 if (function_exists('sh_boot_dev_errors')) {
     sh_boot_dev_errors();

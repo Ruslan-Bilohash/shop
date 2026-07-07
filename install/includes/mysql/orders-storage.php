@@ -184,17 +184,6 @@ function sh_order_update_status(string $id, string $status): bool
     return $changed && sh_orders_save($orders);
 }
 
-/** @return array<string, mixed>|null */
-function sh_order_by_id(string $id): ?array
-{
-    foreach (sh_orders_load() as $order) {
-        if (($order['id'] ?? '') === $id) {
-            return $order;
-        }
-    }
-    return null;
-}
-
 function sh_order_update_payment_status(string $id, string $paymentStatus, ?string $gateway = null): bool
 {
     $orders = sh_orders_load();

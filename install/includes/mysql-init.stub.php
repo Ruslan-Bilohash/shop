@@ -1,8 +1,4 @@
 <?php
-/**
- * Shop CMS — MySQL runtime bootstrap (activated after JSON migration).
- * This file is copied to init.php when migrate-to-mysql.php completes.
- */
 require_once __DIR__ . '/includes/database.php';
 sh_install_redirect_if_needed();
 require_once __DIR__ . '/config.php';
@@ -22,6 +18,7 @@ if (is_file($shModeFile)) {
 require_once __DIR__ . '/includes/helpers.php';
 require_once __DIR__ . '/includes/seo.php';
 require_once __DIR__ . '/includes/site-settings.php';
+require_once __DIR__ . '/includes/site-integrations.php';
 require_once __DIR__ . '/includes/version.php';
 if (function_exists('sh_boot_dev_errors')) {
     sh_boot_dev_errors();
