@@ -24,13 +24,32 @@ if ($sourceLang === '' || !array_key_exists($sourceLang, sh_langs())) {
     $sourceLang = (string) (sh_ai_settings($settings)['ai_source_lang'] ?? 'en');
 }
 
-require_once dirname(__DIR__, 2) . '/includes/payment-settings.php';
-$settings = sh_load_settings();
-$result = sh_ai_generate_product($settings, $productName, $category, $sourceLang, $brief);
-
-sh_json_response([
-    'ok'    => $result['ok'],
-    'demo'  => $result['demo'],
-    'data'  => $result['data'],
-    'error' => $result['error'],
-], $result['ok'] ? 200 : 400);
+try {
+    require_once dirname(__DIR__, 2) . '/includes/payment-settings.php';
+    $settings = sh_load_settings();
+    $result = sh_ai_generate_product($settings, $productName, $category, $sourceLang, $brief);
+    if (!$result['ok'] && $productName !== '') {
+        $result = [
+            'ok'    => true,
+            'demo'  => true,
+            'data'  => sh_ai_product_fallback($productName, $category, $sourceLang, $brief),
+            'error' => $result['error'] ?? 'AI unavailable',
+        ];
+    }
+    sh_json_response([
+        'ok'    => $result['ok'],
+        'demo'  => $result['demo'] ?? false,
+        'data'  => $result['data'] ?? [],
+        'error' => $result['error'] ?? '',
+    ], $result['ok'] ? 200 : 400);
+} catch (Throwable $e) {
+    if ($productName !== '') {
+        sh_json_response([
+            'ok'    => true,
+            'demo'  => true,
+            'data'  => sh_ai_product_fallback($productName, $category, $sourceLang, $brief),
+            'error' => $e->getMessage(),
+        ], 200);
+    }
+    sh_json_response(['ok' => false, 'demo' => false, 'data' => [], 'error' => $e->getMessage()], 500);
+}

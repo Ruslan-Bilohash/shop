@@ -155,7 +155,7 @@ if ($aiSeoTips === [] && !empty($tp['seo_checklist'])) {
 }
 
 $admin_extra_js = [
-    sh_asset('js/admin-product.js') . '?v=8',
+    sh_asset('js/admin-product.js') . '?v=9',
     sh_asset('js/admin-product-images.js') . '?v=2',
     sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];

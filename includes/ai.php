@@ -765,8 +765,13 @@ function sh_ai_product_fallback(string $productName, string $category, string $s
         $metaKw[$code] = strtolower(str_replace(' ', ', ', $productName)) . ', ' . strtolower($category ?: 'ecommerce');
     }
 
-    if ($sourceLang !== 'en' && isset($names[$sourceLang])) {
+    if ($sourceLang !== '' && isset($names[$sourceLang])) {
         $names[$sourceLang] = $productName;
+    }
+    if ($briefDescription !== '' && isset($desc[$sourceLang])) {
+        $desc[$sourceLang] = mb_strlen($briefDescription) > 40
+            ? $productName . ' — ' . $briefDescription
+            : $desc[$sourceLang];
     }
 
     return [

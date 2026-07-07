@@ -4,6 +4,10 @@
 
     var apiUrl = form.getAttribute('data-ai-url') || '';
     var sourceLang = form.getAttribute('data-ai-source-lang') || 'en';
+    var langCodes = (window.SH_CHECKLIST_LANGS || []).map(function (c) { return c.code; });
+    if (langCodes.length === 0) {
+        langCodes = ['no', 'en', 'uk', 'ru', 'sv'];
+    }
     var aiNameInput = document.getElementById('shAiProductName');
     var aiBriefInput = document.getElementById('shAiProductBrief');
     var sourceNameField = form.querySelector('[name="name_' + sourceLang + '"]');
@@ -145,8 +149,38 @@
         });
     }
 
+    function buildClientDemoData(productName, category, brief) {
+        var langs = langCodes.length ? langCodes : ['no', 'en', 'uk', 'ru', 'sv'];
+        var names = {};
+        var desc = {};
+        var metaTitle = {};
+        var metaDesc = {};
+        var metaKw = {};
+        var briefText = brief ? ' ' + brief : '';
+        langs.forEach(function (code) {
+            names[code] = productName;
+            desc[code] = productName + ' — demo product.' + briefText + (category ? ' Category: ' + category + '.' : '');
+            metaTitle[code] = (productName + ' | ' + (category || 'Shop')).slice(0, 60);
+            metaDesc[code] = fitMetaDescription(
+                'Buy ' + productName + ' online — secure checkout, multilingual storefront.' + briefText
+            );
+            metaKw[code] = productName.toLowerCase().replace(/\s+/g, ', ') + ', shop, demo';
+        });
+        return {
+            names: names,
+            desc: desc,
+            seo: { meta_title: metaTitle, meta_description: metaDesc, meta_keywords: metaKw },
+            brand: productName
+        };
+    }
+
     function applyAiData(res, statusEl, btn) {
-        if (!res.ok || !res.data) throw new Error(res.error || 'AI failed');
+        if (!res || !res.data || typeof res.data !== 'object') {
+            throw new Error((res && res.error) || 'AI failed');
+        }
+        if (res.ok === false) {
+            throw new Error(res.error || 'AI failed');
+        }
         var data = res.data;
         fillLangFields('name_', data.names);
         if (data.desc) fillLangFields('desc_', data.desc);
@@ -166,13 +200,17 @@
         }
         openLangSpoilers();
         form.dispatchEvent(new CustomEvent('shProductAiFilled', { bubbles: true }));
+        var namesPanel = document.getElementById('product-section-names');
+        if (namesPanel) {
+            namesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         var msg = res.demo
             ? (btn.getAttribute('data-demo-ok') || 'Demo templates applied.')
             : (btn.getAttribute('data-ok') || 'Generated.');
         if (res.demo && res.error) {
-            msg += ' — ' + res.error;
+            msg += ' (' + res.error + ')';
         }
-        setStatus(statusEl, msg, res.demo ? (res.error ? 'error' : 'info') : 'success');
+        setStatus(statusEl, msg, res.demo ? 'info' : 'success');
     }
 
     function parseApiResponse(r) {
@@ -253,7 +291,16 @@
                 applyAiData(res, statusEl, btn);
             })
             .catch(function (err) {
-                setStatus(statusEl, err.message || (btn.getAttribute('data-failed') || 'Failed'), 'error');
+                try {
+                    applyAiData({
+                        ok: true,
+                        demo: true,
+                        data: buildClientDemoData(productName, category, brief),
+                        error: err.message || ''
+                    }, statusEl, btn);
+                } catch (e2) {
+                    setStatus(statusEl, err.message || (btn.getAttribute('data-failed') || 'Failed'), 'error');
+                }
             })
             .finally(function () {
                 setLoading(btn, false);
