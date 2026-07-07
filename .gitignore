@@ -26,6 +26,9 @@ prompt/
 **/mail-config.php
 .env
 .env.*
+scripts/deploy.config.local.ps1
+scripts/*-last.json
+scripts/*-last.txt
 data/leads.json
 
 # Deploy archives (local only)
