@@ -198,8 +198,17 @@ return array_replace_recursive($en, [
     ],
     'checkout' => [
         'title' => 'Оформление', 'payment_title' => 'Способ оплаты', 'summary' => 'Итого заказа',
-        'place_order' => 'Демо-заказ', 'demo_success' => 'Демо-заказ оформлен — корзина очищена.',
-        'methods' => ['stripe' => 'Карта (Stripe)', 'paypal' => 'PayPal', 'vipps' => 'Vipps', 'cod' => 'Наложенный платёж'],
+        'place_order' => 'Оформить заказ', 'place_order_disabled' => 'Оплата отключена (разработка)',
+        'demo_success' => 'Демо-заказ оформлен — корзина очищена.',
+        'dev_note' => 'Режим разработки — настройте Paysera / Revolut в Админ → Платежи. Отключите SH_DEMO_MODE для живой оплаты.',
+        'dev_banner' => 'Режим разработки — кнопки оплаты отключены. Демо-данные заполнены в админке.',
+        'dev_disabled' => 'Оплата отключена в режиме разработки / демо.',
+        'live_note' => 'Вы будете перенаправлены к выбранному платёжному провайдеру.',
+        'gateway_error' => 'Ошибка платёжного шлюза: %s',
+        'methods' => [
+            'stripe' => 'Карта (Stripe)', 'paypal' => 'PayPal', 'vipps' => 'Vipps',
+            'paysera' => 'Paysera (карты и банки)', 'revolut' => 'Revolut Pay', 'cod' => 'Наложенный платёж',
+        ],
     ],
     'footer' => [
         'cta_title'       => 'Заказать индивидуальный интернет-магазин',
@@ -357,7 +366,9 @@ return array_replace_recursive($en, [
             'enable_provider' => 'Включить этот способ оплаты на checkout',
             'status_configured' => 'Настроено', 'status_pending' => 'Не настроено',
             'guide_title' => 'Инструкция по настройке', 'useful_links' => 'Полезные ссылки',
-            'tabs' => ['paypal' => 'PayPal', 'stripe' => 'Stripe', 'vipps' => 'Vipps', 'google_pay' => 'Google Pay', 'apple_pay' => 'Apple Pay'],
+            'tabs' => ['paypal' => 'PayPal', 'stripe' => 'Stripe', 'vipps' => 'Vipps', 'paysera' => 'Paysera', 'revolut' => 'Revolut', 'cod' => 'Наложенный платёж', 'google_pay' => 'Google Pay', 'apple_pay' => 'Apple Pay'],
+            'paysera_help' => 'Paysera WebToPay — карты и интернет-банкинг (Балтия / ЕС). Тест через sandbox.paysera.com.',
+            'revolut_help' => 'Revolut Merchant API — карты и Revolut Pay. Sandbox-ключи из Revolut Business.',
             'fields' => [
                 'mode' => 'Режим', 'currency' => 'Валюта', 'client_id' => 'Client ID', 'client_secret' => 'Client Secret',
                 'publishable_key' => 'Publishable key', 'secret_key' => 'Secret key', 'webhook_secret' => 'Webhook signing secret',

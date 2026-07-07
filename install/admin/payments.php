@@ -31,16 +31,16 @@ $guide = $guides[$payment_tab] ?? [];
 $configured = sh_payment_is_configured($payment_tab, $settings);
 $demo_mode = defined('SH_DEMO_MODE') && SH_DEMO_MODE;
 
+if ($flash === 'success') {
+    $admin_flash = ['type' => 'success', 'msg' => $tp['saved'] ?? 'Settings saved.'];
+} elseif ($flash === 'error') {
+    $admin_flash = ['type' => 'error', 'msg' => $tp['save_error'] ?? 'Could not save settings.'];
+}
+
 require __DIR__ . '/includes/layout.php';
 sh_render_settings_tabs('sh_admin_url', $ta);
 require __DIR__ . '/includes/payment-tabs.php';
 ?>
-
-<?php if ($flash === 'success'): ?>
-<div class="adm-alert adm-alert-success"><i class="fas fa-check-circle"></i> <?= htmlspecialchars($tp['saved'] ?? 'Settings saved.') ?></div>
-<?php elseif ($flash === 'error'): ?>
-<div class="adm-alert adm-alert-error"><i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($tp['save_error'] ?? 'Could not save settings.') ?></div>
-<?php endif; ?>
 
 <?php if ($demo_mode): ?>
 <div class="adm-alert adm-alert-info">
@@ -152,6 +152,68 @@ require __DIR__ . '/includes/payment-tabs.php';
                             <label><?= htmlspecialchars($fields['callback_token'] ?? 'Callback auth token') ?></label>
                             <input type="password" name="callback_token" value="" placeholder="<?= htmlspecialchars($cfg['callback_token'] !== '' ? sh_secret_preview($cfg['callback_token']) : ($fields['secret_placeholder'] ?? 'Leave blank to keep current')) ?>" autocomplete="new-password">
                         </div>
+                    </div>
+
+                    <?php elseif ($payment_tab === 'paysera'): ?>
+                    <p class="adm-help"><?= htmlspecialchars($tp['paysera_help'] ?? 'Paysera (WebToPay) — bank cards and online banking for Baltics and EU. Use test mode with sandbox.paysera.com first.') ?></p>
+                    <div class="adm-form-grid">
+                        <div class="adm-field">
+                            <label><?= htmlspecialchars($fields['mode'] ?? 'Mode') ?></label>
+                            <select name="mode">
+                                <option value="test" <?= ($cfg['mode'] ?? '') === 'test' ? 'selected' : '' ?>>Test (sandbox)</option>
+                                <option value="live" <?= ($cfg['mode'] ?? '') === 'live' ? 'selected' : '' ?>>Live</option>
+                            </select>
+                        </div>
+                        <div class="adm-field">
+                            <label><?= htmlspecialchars($fields['currency'] ?? 'Currency') ?></label>
+                            <input type="text" name="currency" value="<?= htmlspecialchars($cfg['currency'] ?? 'EUR') ?>" maxlength="3">
+                        </div>
+                        <div class="adm-field">
+                            <label><?= htmlspecialchars($fields['paysera_project_id'] ?? 'Project ID') ?></label>
+                            <input type="text" name="project_id" value="<?= htmlspecialchars($cfg['project_id'] ?? '') ?>" autocomplete="off" placeholder="123456">
+                        </div>
+                        <div class="adm-field adm-field--wide">
+                            <label><?= htmlspecialchars($fields['paysera_sign_password'] ?? 'Sign password') ?></label>
+                            <input type="password" name="sign_password" value="" placeholder="<?= htmlspecialchars($cfg['sign_password'] !== '' ? sh_secret_preview($cfg['sign_password']) : ($fields['secret_placeholder'] ?? 'Leave blank to keep current')) ?>" autocomplete="new-password">
+                        </div>
+                    </div>
+                    <div class="adm-guide-links adm-payment-api-links">
+                        <strong><?= htmlspecialchars($tp['useful_links'] ?? 'Useful links') ?></strong>
+                        <ul>
+                            <li><a href="https://www.paysera.com/en/checkout/" target="_blank" rel="noopener">Paysera Checkout <i class="fas fa-external-link-alt"></i></a></li>
+                            <li><a href="https://developers.paysera.com/" target="_blank" rel="noopener">Paysera Developers <i class="fas fa-external-link-alt"></i></a></li>
+                        </ul>
+                    </div>
+
+                    <?php elseif ($payment_tab === 'revolut'): ?>
+                    <p class="adm-help"><?= htmlspecialchars($tp['revolut_help'] ?? 'Revolut Merchant API — cards and Revolut Pay. Sandbox keys from Revolut Business → Merchant API.') ?></p>
+                    <div class="adm-form-grid">
+                        <div class="adm-field">
+                            <label><?= htmlspecialchars($fields['mode'] ?? 'Mode') ?></label>
+                            <select name="mode">
+                                <option value="sandbox" <?= ($cfg['mode'] ?? '') === 'sandbox' ? 'selected' : '' ?>>Sandbox</option>
+                                <option value="production" <?= ($cfg['mode'] ?? '') === 'production' ? 'selected' : '' ?>>Production</option>
+                            </select>
+                        </div>
+                        <div class="adm-field adm-field--wide">
+                            <label><?= htmlspecialchars($fields['revolut_public_key'] ?? 'Public API key (optional)') ?></label>
+                            <input type="text" name="public_key" value="<?= htmlspecialchars($cfg['public_key'] ?? '') ?>" autocomplete="off" placeholder="pk_…">
+                        </div>
+                        <div class="adm-field adm-field--wide">
+                            <label><?= htmlspecialchars($fields['secret_key'] ?? 'Secret API key') ?></label>
+                            <input type="password" name="secret_key" value="" placeholder="<?= htmlspecialchars($cfg['secret_key'] !== '' ? sh_secret_preview($cfg['secret_key']) : ($fields['secret_placeholder'] ?? 'Leave blank to keep current')) ?>" autocomplete="new-password">
+                        </div>
+                        <div class="adm-field adm-field--wide">
+                            <label><?= htmlspecialchars($fields['webhook_secret'] ?? 'Webhook signing secret') ?></label>
+                            <input type="password" name="webhook_secret" value="" placeholder="<?= htmlspecialchars($cfg['webhook_secret'] !== '' ? sh_secret_preview($cfg['webhook_secret']) : ($fields['secret_placeholder'] ?? 'Leave blank to keep current')) ?>" autocomplete="new-password">
+                        </div>
+                    </div>
+                    <div class="adm-guide-links adm-payment-api-links">
+                        <strong><?= htmlspecialchars($tp['useful_links'] ?? 'Useful links') ?></strong>
+                        <ul>
+                            <li><a href="https://developer.revolut.com/docs/merchant/merchant-api/" target="_blank" rel="noopener">Revolut Merchant API <i class="fas fa-external-link-alt"></i></a></li>
+                            <li><a href="https://business.revolut.com/merchant" target="_blank" rel="noopener">Revolut Business Merchant <i class="fas fa-external-link-alt"></i></a></li>
+                        </ul>
                     </div>
 
                     <?php elseif ($payment_tab === 'google_pay'): ?>

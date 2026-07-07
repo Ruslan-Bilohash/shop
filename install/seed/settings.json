@@ -1,26 +1,40 @@
 {
     "paypal": {
-        "enabled": true,
+        "enabled": false,
         "mode": "sandbox",
-        "client_id": "",
-        "client_secret": "",
+        "client_id": "demo_paypal_client_id",
+        "client_secret": "demo_paypal_client_secret",
         "currency": "NOK"
     },
     "stripe": {
-        "enabled": true,
+        "enabled": false,
         "mode": "test",
-        "publishable_key": "123",
-        "secret_key": "123",
-        "webhook_secret": ""
+        "publishable_key": "pk_demo_stripe_test_bilohash",
+        "secret_key": "sk_demo_stripe_test_bilohash",
+        "webhook_secret": "whsec_demo_stripe_bilohash"
     },
     "vipps": {
-        "enabled": true,
+        "enabled": false,
         "environment": "test",
         "client_id": "",
         "client_secret": "",
         "subscription_key": "",
         "merchant_serial": "",
         "callback_token": ""
+    },
+    "paysera": {
+        "enabled": true,
+        "mode": "test",
+        "project_id": "123456",
+        "sign_password": "demo_paysera_sign_password_change_me",
+        "currency": "EUR"
+    },
+    "revolut": {
+        "enabled": true,
+        "mode": "sandbox",
+        "public_key": "pk_demo_revolut_sandbox_bilohash",
+        "secret_key": "sk_demo_revolut_sandbox_bilohash_change_me",
+        "webhook_secret": "whsec_demo_revolut_webhook_bilohash"
     },
     "google_pay": {
         "enabled": true,
@@ -116,8 +130,8 @@
             },
             "content": {
                 "no": "Betalingsmetoder i produksjon:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, kontant ved levering<br>\r\n<br>\r\nDemokassen simulerer betaling — konfigurer i Admin → Betalinger.",
-                "en": "Accepted payment methods in production builds:<br>\r\n<br>\r\n• Stripe (cards, Apple Pay, Google Pay)<br>\r\n• PayPal<br>\r\n• Vipps (Norway)<br>\r\n• Cash on delivery (optional)<br>\r\n<br>\r\nDemo checkout simulates payment — configure providers in Admin → Payments.",
-                "uk": "Способи оплати у продакшн:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, накладений платіж<br>\r\n<br>\r\nДемо-каса симулює оплату.",
+                "en": "Accepted payment methods in production builds:<br>\r\n<br>\r\n• Stripe (cards, Apple Pay, Google Pay)<br>\r\n• PayPal<br>\r\n• Vipps (Norway)<br>\r\n• Paysera (Baltics / EU banks & cards)<br>\r\n• Revolut Pay (EU / UK)<br>\r\n• Cash on delivery (optional)<br>\r\n<br>\r\nDemo checkout disables payment buttons — configure providers in Admin → Payments.",
+                "uk": "Способи оплати у продакшн:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, Paysera, Revolut, накладений платіж<br>\r\n<br>\r\nНа розробці кнопки оплати вимкнені — демо-дані в Адмін → Платежі.",
                 "ru": "Способы оплаты в продакшене:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, наложенный платёж<br>\r\n<br>\r\nДемо-касса симулирует оплату.",
                 "sv": "Betalningsmetoder i produktion:<br>\r\n<br>\r\n• Stripe, PayPal, Vipps, postförskott<br>\r\n<br>\r\nDemokassan simulerar betalning."
             },

@@ -1330,6 +1330,11 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
     font-weight: 600; transition: border-color .2s;
 }
 .sh-payment-method input:checked + .sh-payment-method-box { border-color: var(--sh-primary); background: rgba(37,99,235,.06); }
+.sh-payment-method.is-disabled { cursor: not-allowed; opacity: .72; }
+.sh-payment-method.is-disabled .sh-payment-method-box { pointer-events: none; }
+.sh-checkout-form.is-dev-disabled .sh-checkout-customer input { background: #f8fafc; }
+.sh-checkout-dev-banner { margin-bottom: 16px; }
+.sh-btn-primary:disabled, .sh-btn-primary[disabled] { opacity: .55; cursor: not-allowed; filter: grayscale(.25); }
 .sh-checkout-cod-note { font-size: 13px; color: var(--sh-text-muted); margin-bottom: 16px; }
 .sh-checkout-lines { list-style: none; padding: 0; margin: 0 0 16px; }
 .sh-checkout-lines li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--sh-border); font-size: 14px; }

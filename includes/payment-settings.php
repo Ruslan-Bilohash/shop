@@ -28,6 +28,20 @@ function sh_default_payment_settings(): array
             'merchant_serial'   => '',
             'callback_token'    => '',
         ],
+        'paysera' => [
+            'enabled'       => false,
+            'mode'          => 'test',
+            'project_id'    => '',
+            'sign_password' => '',
+            'currency'      => 'EUR',
+        ],
+        'revolut' => [
+            'enabled'        => false,
+            'mode'           => 'sandbox',
+            'public_key'     => '',
+            'secret_key'     => '',
+            'webhook_secret' => '',
+        ],
         'google_pay' => [
             'enabled'     => false,
             'merchant_id' => '',
@@ -174,10 +188,24 @@ function sh_payment_tabs(): array
         'paypal'     => ['icon' => 'fab fa-paypal', 'brand' => true],
         'stripe'     => ['icon' => 'fab fa-stripe-s', 'brand' => true],
         'vipps'      => ['icon' => 'fas fa-mobile-alt', 'brand' => false],
+        'paysera'    => ['icon' => 'fas fa-university', 'brand' => false],
+        'revolut'    => ['icon' => 'fas fa-credit-card', 'brand' => false],
         'cod'        => ['icon' => 'fas fa-truck', 'brand' => false],
         'google_pay' => ['icon' => 'fab fa-google-pay', 'brand' => true],
         'apple_pay'  => ['icon' => 'fab fa-apple-pay', 'brand' => true],
     ];
+}
+
+/** Checkout payment buttons disabled on demo / development builds. */
+function sh_checkout_payments_disabled(): bool
+{
+    if (defined('SH_DEMO_MODE') && SH_DEMO_MODE) {
+        return true;
+    }
+    if (function_exists('sh_shop_dev_errors_enabled') && sh_shop_dev_errors_enabled()) {
+        return true;
+    }
+    return false;
 }
 
 function sh_payment_tab_valid(string $tab): bool
@@ -234,6 +262,30 @@ function sh_payment_apply_post(string $tab, array $post, array $settings): array
             }
             break;
 
+        case 'paysera':
+            $settings['paysera']['enabled'] = $bool('enabled');
+            $settings['paysera']['mode'] = in_array($post['mode'] ?? '', ['test', 'live'], true)
+                ? $post['mode'] : 'test';
+            $settings['paysera']['project_id'] = $str('project_id');
+            if ($str('sign_password') !== '') {
+                $settings['paysera']['sign_password'] = $str('sign_password');
+            }
+            $settings['paysera']['currency'] = strtoupper($str('currency') ?: 'EUR');
+            break;
+
+        case 'revolut':
+            $settings['revolut']['enabled'] = $bool('enabled');
+            $settings['revolut']['mode'] = in_array($post['mode'] ?? '', ['sandbox', 'production'], true)
+                ? $post['mode'] : 'sandbox';
+            $settings['revolut']['public_key'] = $str('public_key');
+            if ($str('secret_key') !== '') {
+                $settings['revolut']['secret_key'] = $str('secret_key');
+            }
+            if ($str('webhook_secret') !== '') {
+                $settings['revolut']['webhook_secret'] = $str('webhook_secret');
+            }
+            break;
+
         case 'google_pay':
             $settings['google_pay']['enabled'] = $bool('enabled');
             $settings['google_pay']['merchant_id'] = $str('merchant_id');
@@ -269,6 +321,8 @@ function sh_payment_is_configured(string $provider, ?array $settings = null): bo
         'stripe' => !empty($cfg['publishable_key']) && !empty($cfg['secret_key']),
         'vipps'  => !empty($cfg['client_id']) && !empty($cfg['client_secret'])
             && !empty($cfg['subscription_key']) && !empty($cfg['merchant_serial']),
+        'paysera' => !empty($cfg['project_id']) && !empty($cfg['sign_password']),
+        'revolut' => !empty($cfg['secret_key']),
         'google_pay' => !empty($cfg['merchant_id']),
         'apple_pay'  => !empty($cfg['merchant_id']) && !empty($cfg['domain']),
         'cod'        => !empty($cfg['enabled']),
@@ -282,7 +336,7 @@ function sh_enabled_checkout_methods(?array $settings = null): array
     $settings ??= sh_load_settings();
     $out = [];
     foreach (sh_payment_tabs() as $key => $meta) {
-        if (!in_array($key, ['stripe', 'paypal', 'vipps', 'cod'], true)) {
+        if (!in_array($key, ['stripe', 'paypal', 'vipps', 'paysera', 'revolut', 'cod'], true)) {
             continue;
         }
         if (empty($settings[$key]['enabled'])) {

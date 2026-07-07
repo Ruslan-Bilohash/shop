@@ -128,9 +128,18 @@ return array_replace_recursive($en, [
     ],
     'checkout' => [
         'title' => 'Kasse', 'payment_title' => 'Betalingsmetode', 'summary' => 'Ordresammendrag',
-        'place_order' => 'Legg demoordre', 'demo_note' => 'Kun demo — ingen betaling eller frakt.',
+        'place_order' => 'Legg inn ordre', 'place_order_disabled' => 'Betaling deaktivert (utvikling)',
+        'demo_note' => 'Kun demo — ingen betaling eller frakt.',
+        'dev_note' => 'Utviklingsmodus — konfigurer Paysera / Revolut i Admin → Betalinger. Sett SH_DEMO_MODE til false for live checkout.',
+        'dev_banner' => 'Utviklingsmodus — betalingsknapper er deaktivert. Demo-data er fylt ut i admin.',
+        'dev_disabled' => 'Betaling er deaktivert i demo / utviklingsmodus.',
+        'live_note' => 'Du sendes videre til valgt betalingsleverandør.',
+        'gateway_error' => 'Betalingsgateway-feil: %s',
         'demo_success' => 'Demoordre lagt — handlekurv tømt.',
-        'methods' => ['stripe' => 'Kort (Stripe)', 'paypal' => 'PayPal', 'vipps' => 'Vipps', 'cod' => 'Postoppkrav'],
+        'methods' => [
+            'stripe' => 'Kort (Stripe)', 'paypal' => 'PayPal', 'vipps' => 'Vipps',
+            'paysera' => 'Paysera (kort og bank)', 'revolut' => 'Revolut Pay', 'cod' => 'Postoppkrav',
+        ],
     ],
     'ecosystem' => [
         'title' => 'Andre Bilohash CMS-produkter',
@@ -279,7 +288,9 @@ return array_replace_recursive($en, [
             'enable_provider' => 'Aktiver denne betalingsmetoden i checkout',
             'status_configured' => 'Konfigurert', 'status_pending' => 'Ikke konfigurert',
             'guide_title' => 'Oppsettveiledning', 'useful_links' => 'Nyttige lenker',
-            'tabs' => ['paypal' => 'PayPal', 'stripe' => 'Stripe', 'vipps' => 'Vipps', 'google_pay' => 'Google Pay', 'apple_pay' => 'Apple Pay'],
+            'tabs' => ['paypal' => 'PayPal', 'stripe' => 'Stripe', 'vipps' => 'Vipps', 'paysera' => 'Paysera', 'revolut' => 'Revolut', 'cod' => 'Postoppkrav', 'google_pay' => 'Google Pay', 'apple_pay' => 'Apple Pay'],
+            'paysera_help' => 'Paysera WebToPay — kort og nettbank (Baltikum / EU). Test med sandbox.paysera.com.',
+            'revolut_help' => 'Revolut Merchant API — kort og Revolut Pay. Sandbox-nøkler fra Revolut Business.',
             'fields' => [
                 'mode' => 'Modus', 'currency' => 'Valuta', 'client_id' => 'Client ID', 'client_secret' => 'Client Secret',
                 'publishable_key' => 'Publishable key', 'secret_key' => 'Secret key', 'webhook_secret' => 'Webhook signing secret',

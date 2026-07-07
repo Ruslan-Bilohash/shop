@@ -16,10 +16,28 @@ $flash = '';
 $flash_type = '';
 
 $placed_order = null;
+$checkout_disabled = sh_checkout_payments_disabled();
+
+if (!empty($_GET['paid']) && !empty($_GET['order'])) {
+    require_once __DIR__ . '/includes/orders-storage.php';
+    $returnOrder = sh_order_by_id((string) $_GET['order']);
+    if (is_array($returnOrder)) {
+        $placed_order = $returnOrder;
+        $flash = sprintf(
+            $t['checkout']['order_success'] ?? 'Order placed. Invoice %s created.',
+            $returnOrder['invoice_no'] ?? ''
+        );
+        $flash_type = 'success';
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if ($checkout_disabled) {
+        $flash = $t['checkout']['dev_disabled'] ?? 'Payments are disabled in development / demo mode.';
+        $flash_type = 'error';
+    } else {
     $method = trim($_POST['payment_method'] ?? '');
-    $valid = ['stripe', 'paypal', 'vipps', 'cod'];
+    $valid = ['stripe', 'paypal', 'vipps', 'paysera', 'revolut', 'cod'];
     if (in_array($method, $valid, true) && !empty($settings[$method]['enabled'])) {
         require_once __DIR__ . '/includes/orders-storage.php';
         require_once __DIR__ . '/includes/invoice-mail.php';
@@ -47,25 +65,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        if ($placed_order) {
+        if ($placed_order && in_array($method, ['paysera', 'revolut'], true) && sh_payment_is_configured($method, $settings)) {
+            try {
+                if ($method === 'paysera') {
+                    require_once __DIR__ . '/includes/paysera-gateway.php';
+                    $payUrl = sh_paysera_build_payment_url($placed_order, $settings);
+                    sh_cart_clear();
+                    header('Location: ' . $payUrl, true, 302);
+                    exit;
+                }
+                if ($method === 'revolut') {
+                    require_once __DIR__ . '/includes/revolut-gateway.php';
+                    $rev = sh_revolut_create_checkout($placed_order, $settings);
+                    sh_cart_clear();
+                    header('Location: ' . $rev['checkout_url'], true, 302);
+                    exit;
+                }
+            } catch (Throwable $e) {
+                $flash = ($t['checkout']['gateway_error'] ?? 'Payment gateway error: %s');
+                $flash = is_string($flash) && str_contains($flash, '%s')
+                    ? sprintf($flash, $e->getMessage())
+                    : ($t['checkout']['gateway_error'] ?? 'Payment gateway error.');
+                $flash_type = 'error';
+            }
+        } elseif ($placed_order) {
             $flash = sprintf(
                 $t['checkout']['order_success'] ?? 'Order placed. Invoice %s created.',
                 $placed_order['invoice_no'] ?? ''
             );
+            $flash_type = 'success';
+            sh_cart_clear();
         } else {
             $flash = $t['checkout']['demo_success'] ?? 'Demo order placed — no payment processed.';
+            $flash_type = 'success';
+            sh_cart_clear();
         }
-        $flash_type = 'success';
-        sh_cart_clear();
     } else {
         $flash = $t['checkout']['method_invalid'] ?? 'Please select a valid payment method.';
         $flash_type = 'error';
     }
+    }
 }
 
+$method_icons = [
+    'stripe'  => 'fab fa-stripe-s',
+    'paypal'  => 'fab fa-paypal',
+    'vipps'   => 'fas fa-mobile-alt',
+    'paysera' => 'fas fa-university',
+    'revolut' => 'fas fa-credit-card',
+    'cod'     => 'fas fa-truck',
+];
 $methods = [];
-foreach (['stripe' => 'fab fa-stripe-s', 'paypal' => 'fab fa-paypal', 'vipps' => 'fas fa-mobile-alt', 'cod' => 'fas fa-truck'] as $key => $icon) {
+foreach ($method_icons as $key => $icon) {
     if (empty($settings[$key]['enabled'])) {
+        continue;
+    }
+    if ($key !== 'cod' && !sh_payment_is_configured($key, $settings)) {
         continue;
     }
     $label = ($key === 'cod' && trim($settings['cod']['title'] ?? '') !== '')
@@ -121,10 +176,16 @@ if (empty($flash)) {
     <div class="sh-checkout-grid">
         <section class="sh-form-card">
             <h2><?= htmlspecialchars($t['checkout']['payment_title'] ?? 'Payment method') ?></h2>
+            <?php if ($checkout_disabled): ?>
+            <div class="sh-alert sh-alert-info sh-checkout-dev-banner">
+                <i class="fas fa-code"></i>
+                <?= htmlspecialchars($t['checkout']['dev_banner'] ?? 'Development mode — payment buttons are disabled. Configure Paysera / Revolut in admin and set SH_DEMO_MODE to false for live checkout.') ?>
+            </div>
+            <?php endif; ?>
             <?php if (empty($methods)): ?>
             <p class="sh-checkout-note"><?= htmlspecialchars($t['checkout']['no_methods'] ?? 'No payment methods enabled. Configure them in admin.') ?></p>
             <?php else: ?>
-            <form method="post" class="sh-checkout-form">
+            <form method="post" class="sh-checkout-form<?= $checkout_disabled ? ' is-dev-disabled' : '' ?>">
                 <h3><?= htmlspecialchars($t['checkout']['customer_title'] ?? 'Customer details') ?></h3>
                 <div class="sh-form-grid sh-checkout-customer">
                     <label class="sh-field sh-field--wide">
@@ -159,8 +220,8 @@ if (empty($flash)) {
                 <h3><?= htmlspecialchars($t['checkout']['payment_title'] ?? 'Payment method') ?></h3>
                 <div class="sh-payment-methods">
                     <?php foreach ($methods as $i => $m): ?>
-                    <label class="sh-payment-method">
-                        <input type="radio" name="payment_method" value="<?= htmlspecialchars($m['id']) ?>" <?= $i === 0 ? 'checked' : '' ?>>
+                    <label class="sh-payment-method<?= $checkout_disabled ? ' is-disabled' : '' ?>">
+                        <input type="radio" name="payment_method" value="<?= htmlspecialchars($m['id']) ?>" <?= $i === 0 ? 'checked' : '' ?> <?= $checkout_disabled ? 'disabled' : '' ?>>
                         <span class="sh-payment-method-box">
                             <i class="<?= htmlspecialchars($m['icon']) ?>" aria-hidden="true"></i>
                             <span><?= htmlspecialchars($m['label']) ?></span>
@@ -171,10 +232,15 @@ if (empty($flash)) {
                 <?php if (!empty($settings['cod']['enabled']) && trim($settings['cod']['instructions'] ?? '') !== ''): ?>
                 <p class="sh-checkout-cod-note"><?= htmlspecialchars($settings['cod']['instructions']) ?></p>
                 <?php endif; ?>
-                <button type="submit" class="sh-btn-primary sh-btn-lg sh-btn-block">
-                    <i class="fas fa-lock"></i> <?= htmlspecialchars($t['checkout']['place_order'] ?? 'Place demo order') ?>
+                <button type="submit" class="sh-btn-primary sh-btn-lg sh-btn-block" <?= $checkout_disabled ? 'disabled' : '' ?>>
+                    <i class="fas fa-<?= $checkout_disabled ? 'ban' : 'lock' ?>"></i>
+                    <?= htmlspecialchars($checkout_disabled
+                        ? ($t['checkout']['place_order_disabled'] ?? 'Payments disabled (dev)')
+                        : ($t['checkout']['place_order'] ?? 'Place order')) ?>
                 </button>
-                <p class="sh-checkout-note"><?= htmlspecialchars($t['checkout']['demo_note'] ?? $t['cart']['checkout_note']) ?></p>
+                <p class="sh-checkout-note"><?= htmlspecialchars($checkout_disabled
+                    ? ($t['checkout']['dev_note'] ?? $t['checkout']['demo_note'] ?? '')
+                    : ($t['checkout']['live_note'] ?? $t['checkout']['demo_note'] ?? $t['cart']['checkout_note'] ?? '')) ?></p>
             </form>
             <?php endif; ?>
         </section>
