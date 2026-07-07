@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/includes/changelog.php';
+require_once dirname(__DIR__) . '/includes/pagespeed-insights.php';
 require_once dirname(__DIR__) . '/includes/vertical-lib.php';
 $shs_changelog_split = shs_changelog_split_releases();
 $shs_older_count = count($shs_changelog_split['older']);
@@ -170,11 +171,18 @@ require __DIR__ . '/includes/header.php';
     <div class="shs-container">
         <h2 class="shs-section-title"><?= htmlspecialchars($t['seo']['title']) ?></h2>
         <p class="shs-lead shs-text-center"><?= htmlspecialchars($t['seo']['subtitle']) ?></p>
-        <?php if (!empty($t['seo']['scores'])): ?>
+        <?php
+        $shs_psi = sh_psi_get(shs_absolute_url($canon_abs), 'mobile', false, $t['seo']['scores'] ?? []);
+        $shs_psi_scores = $shs_psi['scores'] !== [] ? $shs_psi['scores'] : ($t['seo']['scores'] ?? []);
+        $shs_psi_vitals = $shs_psi['vitals'] !== [] ? $shs_psi['vitals'] : ($t['seo']['vitals'] ?? []);
+        if (!empty($shs_psi_scores)):
+        ?>
         <div class="shs-lighthouse-panel">
-            <h3 class="shs-seo-block-title"><i class="fas fa-gauge-high"></i> <?= htmlspecialchars($t['seo']['lighthouse_title']) ?></h3>
+            <h3 class="shs-seo-block-title"><i class="fas fa-gauge-high"></i> <?= htmlspecialchars($t['seo']['lighthouse_title']) ?>
+                <?php if ($shs_psi['demo']): ?><span class="shs-psi-demo-badge"><?= htmlspecialchars($t['seo']['psi_demo_badge'] ?? 'demo') ?></span><?php endif; ?>
+            </h3>
             <div class="shs-lighthouse-grid">
-                <?php foreach ($t['seo']['scores'] as $sc):
+                <?php foreach ($shs_psi_scores as $sc):
                     $ring = min(100, max(0, (int) ($sc['value'] ?? 0)));
                 ?>
                 <div class="shs-lighthouse-card <?= !empty($sc['highlight']) ? 'is-highlight' : '' ?>">
@@ -188,9 +196,9 @@ require __DIR__ . '/includes/header.php';
                 </div>
                 <?php endforeach; ?>
             </div>
-            <?php if (!empty($t['seo']['vitals'])): ?>
+            <?php if (!empty($shs_psi_vitals)): ?>
             <div class="shs-vitals-row">
-                <?php foreach ($t['seo']['vitals'] as $v): ?>
+                <?php foreach ($shs_psi_vitals as $v): ?>
                 <span class="shs-vital"><em><?= htmlspecialchars($v['label']) ?></em> <?= htmlspecialchars($v['boost']) ?></span>
                 <?php endforeach; ?>
             </div>

@@ -5,6 +5,7 @@ sh_admin_require();
 require_once dirname(__DIR__) . '/includes/site-health-console.php';
 require_once dirname(__DIR__) . '/includes/seo-checklist.php';
 require_once dirname(__DIR__) . '/includes/payment-settings.php';
+require_once dirname(__DIR__) . '/includes/pagespeed-insights.php';
 
 $admin_page = 'health-console';
 $ta = $t['admin'] ?? [];
@@ -17,13 +18,19 @@ $report = sh_health_composite_report($settings, $labels, $lang, $ta);
 $gradeLabels = $hp['grades'] ?? $ta['security_console_page']['grades'] ?? [];
 $gradeKey = $report['grade']['key'] ?? 'fair';
 
-$admin_extra_js = [sh_asset('js/admin-health-console.js') . '?v=1'];
+$psiUrl = sh_psi_default_url();
+$psi = sh_psi_get($psiUrl, 'mobile', false, [], $settings);
+$psiLabels = $hp['pagespeed'] ?? [];
+
+$admin_extra_js = [sh_asset('js/admin-health-console.js') . '?v=2'];
 
 require __DIR__ . '/includes/layout.php';
 ?>
 
 <div class="adm-hc-console" id="shHealthConsole"
-     data-trend="<?= htmlspecialchars(json_encode($report['trend'], JSON_UNESCAPED_UNICODE)) ?>">
+     data-trend="<?= htmlspecialchars(json_encode($report['trend'], JSON_UNESCAPED_UNICODE)) ?>"
+     data-psi-api="<?= htmlspecialchars(sh_admin_url('api/pagespeed.php')) ?>"
+     data-psi-url="<?= htmlspecialchars($psiUrl) ?>">
 
     <div class="adm-hc-hero">
         <div class="adm-hc-hero-gauge">
@@ -88,6 +95,40 @@ require __DIR__ . '/includes/layout.php';
             <?php endif; ?>
         </div>
         <?php endforeach; ?>
+    </div>
+
+    <div class="adm-card adm-hc-psi" id="shHealthPsi">
+        <div class="adm-card-head">
+            <h2><i class="fas fa-gauge-high"></i> <?= htmlspecialchars($psiLabels['title'] ?? 'PageSpeed Insights') ?></h2>
+            <div class="adm-hc-psi-actions">
+                <select id="shPsiStrategy" class="adm-select adm-select-sm" aria-label="<?= htmlspecialchars($psiLabels['strategy'] ?? 'Strategy') ?>">
+                    <option value="mobile"><?= htmlspecialchars($psiLabels['mobile'] ?? 'Mobile') ?></option>
+                    <option value="desktop"><?= htmlspecialchars($psiLabels['desktop'] ?? 'Desktop') ?></option>
+                </select>
+                <button type="button" class="adm-btn adm-btn-sm adm-btn-outline" id="shPsiRefresh">
+                    <i class="fas fa-rotate"></i> <?= htmlspecialchars($psiLabels['refresh'] ?? 'Refresh') ?>
+                </button>
+            </div>
+        </div>
+        <div class="adm-card-body padded">
+            <?php if ($psi['demo']): ?>
+            <span class="adm-demo-pill"><i class="fas fa-flask"></i> <?= htmlspecialchars($psiLabels['demo_badge'] ?? 'Demo / cached') ?></span>
+            <?php endif; ?>
+            <p class="adm-muted adm-hc-psi-url"><code><?= htmlspecialchars($psi['url']) ?></code></p>
+            <div class="adm-hc-psi-grid" id="shPsiScores">
+                <?php foreach ($psi['scores'] as $sc):
+                    $ring = min(100, max(0, (int) ($sc['value'] ?? 0)));
+                ?>
+                <div class="adm-hc-psi-card <?= !empty($sc['highlight']) ? 'is-highlight' : '' ?>">
+                    <div class="adm-hc-psi-ring" style="--adm-psi:<?= $ring ?>"><span><?= $ring ?></span></div>
+                    <strong><?= htmlspecialchars($sc['label']) ?></strong>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <p class="adm-hc-psi-meta" id="shPsiMeta">
+                <?= $psi['fetched_at'] !== '' ? htmlspecialchars(strtr($psiLabels['fetched'] ?? 'Updated: {time}', ['{time}' => $psi['fetched_at']])) : '' ?>
+            </p>
+        </div>
     </div>
 
     <div class="adm-hc-grid">

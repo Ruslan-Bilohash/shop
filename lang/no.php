@@ -338,6 +338,10 @@ return array_replace_recursive($en, [
         'google_analytics_menu' => 'Google Analytics',
         'ai_agent_console' => 'AI-rådgiver',
         'design_demos_console' => 'Designdemoer',
+        'billing_demo_console' => 'Betalingsdemo',
+        'demo_accounts_title' => 'Hurtig demo-innlogging',
+        'demo_role_owner' => 'Administrator (eier)',
+        'demo_role_staff' => 'Demobruker',
         'nav_group_consoles' => 'Konsoller',
         'health_console' => 'Nettstedshelse',
         'seo_agent_console' => 'AI SEO-agent',
@@ -346,8 +350,8 @@ return array_replace_recursive($en, [
         'billing_banner' => [
             'badge' => 'Shop CMS + BILOHASH AI',
             'text' => '{monthly}/mnd + BILOHASH AI API eller {demo} demoforespørsler · eller {yearly}/år (EUR {eur_m} / {eur_y})',
-            'cta' => 'Bestill lisens',
-            'link' => 'https://bilohash.com/shop/site/order.php',
+            'cta' => 'Demobetaling',
+            'link' => 'billing-demo',
         ],
         'ai_agent_widget' => [
             'title' => 'AI-rådgiver',

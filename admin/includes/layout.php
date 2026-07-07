@@ -50,6 +50,12 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
             <button type="button" class="adm-menu-btn" id="admMenuBtn" aria-label="<?= htmlspecialchars($ta['menu'] ?? 'Menu') ?>"><i class="fas fa-bars"></i></button>
             <h1><?= htmlspecialchars($layout_title) ?></h1>
             <div class="adm-topbar-actions">
+                <?php if (sh_admin_logged()): ?>
+                <span class="adm-role-badge adm-role-badge--<?= htmlspecialchars(sh_admin_role()) ?>" title="<?= htmlspecialchars(sh_admin_display_name()) ?>">
+                    <i class="fas fa-<?= sh_admin_is_owner() ? 'crown' : 'user' ?>"></i>
+                    <?= htmlspecialchars(sh_admin_display_name()) ?>
+                </span>
+                <?php endif; ?>
                 <div class="adm-lang-dropdown" id="admLangDropdown">
                     <button type="button" class="adm-lang-dropdown-btn" id="admLangBtn" aria-haspopup="listbox" aria-expanded="false">
                         <span class="adm-lang-dropdown-current">

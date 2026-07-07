@@ -1401,9 +1401,9 @@ function sh_ai_admin_agent_reply(array $settings, string $message, array $histor
             'uk' => 'Демо-радник: допомагаю з Shop CMS — SEO, політика конфіденційності, оплата, дизайн. Увімкніть AI у Налаштування → AI для живих відповідей.',
             'ru' => 'Демо-советник: помогаю с Shop CMS — SEO, политика конфиденциальности, оплата, дизайн. Включите AI в Настройки → AI.',
             'sv' => 'Demo-rådgivare: jag hjälper med Shop CMS — SEO, integritet, betalning, design. Aktivera AI under Inställningar → AI.',
-            default => 'Demo advisor: I help with Shop CMS — SEO, privacy policy, payments, design. Enable AI in Settings → AI for live answers.',
+            'en' => 'Demo advisor: I help with Shop CMS — SEO, privacy policy, payments, design. Enable AI in Settings → AI for live answers.',
         ];
-        $reply = $replies[$lang] ?? $replies['default'];
+        $reply = $replies[$lang] ?? $replies['en'];
         if (mb_strlen($message) > 20) {
             $reply .= ' You asked: «' . mb_substr($message, 0, 120) . '» — in production the AI agent answers with shop-specific steps.';
         }

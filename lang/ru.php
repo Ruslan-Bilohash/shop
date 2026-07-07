@@ -416,11 +416,15 @@ return array_replace_recursive($en, [
         'google_analytics_menu' => 'Google Analytics',
         'ai_agent_console' => 'ИИ-советник',
         'design_demos_console' => 'Демо дизайнов',
+        'billing_demo_console' => 'Демо оплаты',
+        'demo_accounts_title' => 'Быстрый демо-вход',
+        'demo_role_owner' => 'Администратор (вы)',
+        'demo_role_staff' => 'Демо-пользователь',
         'billing_banner' => [
             'badge' => 'Shop CMS + BILOHASH AI',
             'text' => '{monthly}/мес + BILOHASH AI API или {demo} демо-запросов · или {yearly}/год (EUR {eur_m} / {eur_y})',
             'cta' => 'Заказать лицензию',
-            'link' => 'https://bilohash.com/shop/site/order.php',
+            'link' => 'billing-demo',
         ],
         'ai_agent_widget' => [
             'title' => 'ИИ-советник',

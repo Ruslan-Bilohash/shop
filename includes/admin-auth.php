@@ -4,6 +4,16 @@
  * otherwise demo / demo2026.
  */
 define('SH_ADMIN_SESSION_KEY', 'sh_admin_logged');
+define('SH_ADMIN_ROLE_KEY', 'sh_admin_role');
+
+/** @return list<array{user:string,pass:string,role:string,name:string}> */
+function sh_admin_demo_accounts(): array
+{
+    return [
+        ['user' => 'bilohash', 'pass' => 'bilohash2026', 'role' => 'owner', 'name' => 'Ruslan (Owner)'],
+        ['user' => 'demo', 'pass' => 'demo2026', 'role' => 'demo', 'name' => 'Demo user'],
+    ];
+}
 
 /** @return array{user:string,pass_hash:?string,pass_plain:?string} */
 function sh_admin_credentials(): array
@@ -44,25 +54,59 @@ function sh_admin_logged(): bool
 function sh_admin_login(string $user, string $pass): bool
 {
     $creds = sh_admin_credentials();
-    if ($user !== $creds['user']) {
-        return false;
+    if ($user === $creds['user']) {
+        $ok = $creds['pass_hash'] !== null
+            ? password_verify($pass, $creds['pass_hash'])
+            : ($pass === (string) ($creds['pass_plain'] ?? ''));
+        if ($ok) {
+            sh_admin_start();
+            $_SESSION[SH_ADMIN_SESSION_KEY] = true;
+            $_SESSION['sh_admin_user'] = $user;
+            $_SESSION[SH_ADMIN_ROLE_KEY] = 'owner';
+            return true;
+        }
     }
-    $ok = $creds['pass_hash'] !== null
-        ? password_verify($pass, $creds['pass_hash'])
-        : ($pass === (string) ($creds['pass_plain'] ?? ''));
-    if (!$ok) {
-        return false;
+
+    foreach (sh_admin_demo_accounts() as $acc) {
+        if ($user === $acc['user'] && $pass === $acc['pass']) {
+            sh_admin_start();
+            $_SESSION[SH_ADMIN_SESSION_KEY] = true;
+            $_SESSION['sh_admin_user'] = $user;
+            $_SESSION[SH_ADMIN_ROLE_KEY] = $acc['role'];
+            return true;
+        }
     }
+
+    return false;
+}
+
+function sh_admin_role(): string
+{
     sh_admin_start();
-    $_SESSION[SH_ADMIN_SESSION_KEY] = true;
-    $_SESSION['sh_admin_user'] = $user;
-    return true;
+    return (string) ($_SESSION[SH_ADMIN_ROLE_KEY] ?? 'owner');
+}
+
+function sh_admin_is_owner(): bool
+{
+    return sh_admin_role() === 'owner';
+}
+
+function sh_admin_display_name(): string
+{
+    sh_admin_start();
+    $user = (string) ($_SESSION['sh_admin_user'] ?? '');
+    foreach (sh_admin_demo_accounts() as $acc) {
+        if ($acc['user'] === $user) {
+            return $acc['name'];
+        }
+    }
+    return $user !== '' ? $user : 'Admin';
 }
 
 function sh_admin_logout(): void
 {
     sh_admin_start();
-    unset($_SESSION[SH_ADMIN_SESSION_KEY], $_SESSION['sh_admin_user']);
+    unset($_SESSION[SH_ADMIN_SESSION_KEY], $_SESSION['sh_admin_user'], $_SESSION[SH_ADMIN_ROLE_KEY]);
 }
 
 function sh_admin_require(): void

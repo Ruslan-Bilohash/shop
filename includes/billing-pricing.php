@@ -184,13 +184,16 @@ function sh_billing_render_admin_banner(array $ta, string $lang): void
     $text = sh_billing_banner_text($labels, $lang);
     $badge = (string) ($labels['badge'] ?? 'Shop CMS');
     $link = (string) ($labels['link'] ?? '');
+    if ($link === '' || $link === 'billing-demo') {
+        $link = function_exists('sh_admin_url') ? sh_admin_url('billing-demo.php') : '';
+    }
     ?>
     <div class="adm-billing-banner" role="status">
         <div class="adm-billing-banner-inner">
             <span class="adm-billing-badge"><i class="fas fa-crown" aria-hidden="true"></i> <?= htmlspecialchars($badge) ?></span>
             <p class="adm-billing-text"><?= htmlspecialchars($text) ?></p>
             <?php if ($link !== ''): ?>
-            <a href="<?= htmlspecialchars($link) ?>" class="adm-btn adm-btn-sm adm-btn-outline adm-billing-cta" target="_blank" rel="noopener noreferrer">
+            <a href="<?= htmlspecialchars($link) ?>" class="adm-btn adm-btn-sm adm-btn-outline adm-billing-cta">
                 <?= htmlspecialchars((string) ($labels['cta'] ?? 'Details')) ?>
             </a>
             <?php endif; ?>

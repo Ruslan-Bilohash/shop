@@ -46,4 +46,71 @@
 
 .adm-dd-meta { padding: 14px 16px 16px; border-top: 1px solid var(--adm-border, #e2e8f0); }
 .adm-dd-meta h3 { margin: 0 0 6px; font-size: 16px; }
-.adm-dd-meta p { margin: 0 0 12px; font-size: 13px; color: var(--adm-muted, #64748b); line-height: 1.45; }
+.adm-dd-meta p { margin: 0 0 8px; font-size: 13px; color: var(--adm-muted, #64748b); line-height: 1.45; }
+.adm-dd-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.adm-dd-tag {
+    font-size: 10px; padding: 2px 6px; border-radius: 999px;
+    background: #f1f5f9; color: #64748b;
+}
+.adm-dd-card { cursor: pointer; transition: box-shadow .15s, border-color .15s; }
+.adm-dd-card.is-selected { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.15); }
+.adm-dd-card.is-hidden { display: none; }
+.adm-dd-preview--sm { min-height: 120px; padding: 10px; }
+.adm-dd-preview--sm .adm-dd-mock-hero { height: 36px; }
+.adm-dd-preview--sm .adm-dd-mock-products div { height: 40px; }
+
+.adm-dd-workspace {
+    display: flex; flex-direction: column; gap: 16px;
+}
+@media (min-width: 1024px) {
+    .adm-dd-workspace {
+        display: grid;
+        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+        align-items: start;
+        gap: 20px;
+    }
+    .adm-dd-sidebar { position: sticky; top: 12px; max-height: calc(100vh - 120px); overflow: auto; }
+    .adm-dd-list { grid-template-columns: 1fr; }
+}
+.adm-dd-search-label { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--adm-muted); }
+.adm-dd-search {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--adm-border, #e2e8f0);
+    border-radius: 8px; margin-bottom: 12px; font-size: 14px;
+}
+.adm-dd-stage {
+    border: 1px solid var(--adm-border, #e2e8f0); border-radius: 12px; padding: 16px; background: #fff;
+}
+.adm-dd-stage-head h2 { margin: 0 0 4px; font-size: 18px; }
+.adm-dd-stage-head p { margin: 0 0 12px; font-size: 13px; color: var(--adm-muted); }
+.adm-dd-live-preview {
+    border-radius: 12px; overflow: hidden; min-height: 320px; margin-bottom: 12px;
+    padding: 12px;
+}
+.adm-dd-live-chrome {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 10px; font-size: 11px; color: #64748b;
+}
+.adm-dd-live-chrome span { width: 8px; height: 8px; border-radius: 50%; background: rgba(0,0,0,.15); }
+.adm-dd-live-chrome em { margin-left: auto; font-style: normal; }
+.adm-dd-live-nav { display: flex; gap: 8px; margin-bottom: 12px; }
+.adm-dd-live-nav span { height: 8px; border-radius: 4px; background: rgba(0,0,0,.12); flex: 1; }
+.adm-dd-live-hero { height: 88px; border-radius: 10px; margin-bottom: 12px; }
+.adm-dd-live-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.adm-dd-live-grid div { height: 72px; border-radius: 8px; background: rgba(255,255,255,.85); border: 1px solid rgba(0,0,0,.08); }
+
+.adm-dd--ocean .adm-dd-preview, .adm-dd--ocean.adm-dd-live-preview { background: #ecfeff; }
+.adm-dd--ocean .adm-dd-mock-hero, .adm-dd--ocean .adm-dd-live-hero { background: linear-gradient(90deg, #0891b2, #22d3ee); }
+.adm-dd--ocean .adm-dd-mock-products div, .adm-dd--ocean .adm-dd-live-grid div { background: #fff; border-color: #a5f3fc; }
+
+.adm-dd--coral .adm-dd-preview, .adm-dd--coral.adm-dd-live-preview { background: #fff7ed; }
+.adm-dd--coral .adm-dd-mock-hero, .adm-dd--coral .adm-dd-live-hero { background: linear-gradient(90deg, #ea580c, #fdba74); border-radius: 16px; }
+.adm-dd--coral .adm-dd-mock-products div, .adm-dd--coral .adm-dd-live-grid div { background: #fff; box-shadow: 0 4px 12px rgba(234,88,12,.12); border: none; }
+
+.adm-dd--retro .adm-dd-preview, .adm-dd--retro.adm-dd-live-preview { background: #faf7f2; }
+.adm-dd--retro .adm-dd-mock-hero, .adm-dd--retro .adm-dd-live-hero { background: linear-gradient(90deg, #78716c, #a8a29e); }
+.adm-dd--retro .adm-dd-mock-products div, .adm-dd--retro .adm-dd-live-grid div { background: #fff; border: 2px solid #e7e5e4; }
+
+.adm-dd--neon .adm-dd-preview, .adm-dd--neon.adm-dd-live-preview { background: #0b1220; }
+.adm-dd--neon .adm-dd-mock-header span, .adm-dd--neon .adm-dd-live-chrome span { background: rgba(34,211,238,.35); }
+.adm-dd--neon .adm-dd-mock-hero, .adm-dd--neon .adm-dd-live-hero { background: linear-gradient(90deg, #06b6d4, #22d3ee); box-shadow: 0 0 20px rgba(34,211,238,.35); }
+.adm-dd--neon .adm-dd-mock-products div, .adm-dd--neon .adm-dd-live-grid div { background: #111827; border: 1px solid rgba(34,211,238,.35); }
+.adm-dd--neon .adm-dd-live-nav span { background: rgba(34,211,238,.2); }

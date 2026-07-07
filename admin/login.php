@@ -34,7 +34,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1><?= htmlspecialchars($ta['login_title'] ?? 'Shop CMS Admin') ?></h1>
             <p class="sub"><?= htmlspecialchars($ta['login_sub'] ?? 'Demo administration panel') ?></p>
         </div>
-        <div class="adm-demo-hint"><i class="fas fa-info-circle"></i> <?= htmlspecialchars($ta['demo_creds'] ?? 'Demo login: demo / demo2026') ?></div>
+        <div class="adm-demo-hint"><i class="fas fa-info-circle"></i> <?= htmlspecialchars($ta['demo_accounts_title'] ?? 'Demo accounts') ?></div>
+        <div class="adm-demo-accounts">
+            <button type="button" class="adm-demo-acc adm-demo-acc--owner" data-user="bilohash" data-pass="bilohash2026">
+                <i class="fas fa-crown"></i>
+                <span><strong><?= htmlspecialchars($ta['demo_role_owner'] ?? 'Administrator (you)') ?></strong><small>bilohash / bilohash2026</small></span>
+            </button>
+            <button type="button" class="adm-demo-acc adm-demo-acc--demo" data-user="demo" data-pass="demo2026">
+                <i class="fas fa-user"></i>
+                <span><strong><?= htmlspecialchars($ta['demo_role_staff'] ?? 'Demo user') ?></strong><small>demo / demo2026</small></span>
+            </button>
+        </div>
         <?php if ($error): ?>
         <div class="adm-login-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
@@ -51,6 +61,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <i class="fas fa-sign-in-alt"></i> <?= htmlspecialchars($ta['login_btn'] ?? 'Log in') ?>
             </button>
         </form>
+        <script>
+        document.querySelectorAll('.adm-demo-acc').forEach(function(btn){
+            btn.addEventListener('click',function(){
+                document.getElementById('username').value=btn.dataset.user||'';
+                document.getElementById('password').value=btn.dataset.pass||'';
+                var f=document.querySelector('.adm-login-box form');if(f)f.submit();
+            });
+        });
+        </script>
         <p style="text-align:center;margin-top:20px;font-size:12px">
             <a href="<?= sh_url('index.php') ?>">← <?= htmlspecialchars($t['breadcrumb_home'] ?? 'Home') ?></a>
         </p>

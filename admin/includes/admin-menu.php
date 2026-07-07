@@ -75,6 +75,15 @@ function sh_admin_sidebar_menu(): array
         'page' => 'design-demos',
     ];
 
+    $menu[] = [
+        'id'   => 'billing-demo',
+        'type' => 'link',
+        'label_key' => 'billing_demo_console',
+        'icon' => 'credit-card',
+        'url'  => 'billing-demo.php',
+        'page' => 'billing-demo',
+    ];
+
     $settingsOnlyGroups = ['shop', 'content', 'design', 'marketing', 'integrations', 'advanced'];
     foreach ($settingsOnlyGroups as $gkey) {
         if (!isset($groups[$gkey])) {

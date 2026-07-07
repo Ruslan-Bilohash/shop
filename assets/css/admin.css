@@ -1683,3 +1683,78 @@ body.adm-modal-open { overflow: hidden; }
 }
 .adm-pa-item--high strong { color: #b91c1c; }
 .adm-pa-item--medium strong { color: #b45309; }
+
+/* Demo login accounts */
+.adm-demo-accounts { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.adm-demo-acc {
+    display: flex; align-items: center; gap: 10px; width: 100%;
+    padding: 10px 12px; border-radius: 10px; border: 1px solid var(--adm-border);
+    background: #f8fafc; cursor: pointer; text-align: left;
+}
+.adm-demo-acc strong { display: block; font-size: 13px; }
+.adm-demo-acc small { color: var(--adm-muted); font-size: 11px; }
+.adm-demo-acc--owner { border-color: #bfdbfe; background: #eff6ff; }
+.adm-demo-acc--owner i { color: #1d4ed8; }
+.adm-demo-acc--demo i { color: #64748b; }
+
+/* Role badge in topbar */
+.adm-role-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; padding: 6px 10px; border-radius: 999px;
+    border: 1px solid var(--adm-border); background: #f8fafc; color: #334155;
+}
+.adm-role-badge--owner { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; }
+.adm-role-badge--demo { background: #f1f5f9; }
+
+/* Billing demo */
+.adm-bd-page { display: flex; flex-direction: column; gap: 16px; }
+.adm-bd-grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .adm-bd-grid { grid-template-columns: repeat(2, 1fr); } }
+.adm-bd-plan {
+    position: relative; border: 1px solid var(--adm-border); border-radius: 12px;
+    padding: 20px; background: #fff;
+}
+.adm-bd-plan.is-active { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.12); }
+.adm-bd-plan--yearly { border-color: #86efac; }
+.adm-bd-save {
+    position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; padding: 3px 8px; border-radius: 999px;
+    background: #dcfce7; color: #166534;
+}
+.adm-bd-price { font-size: 28px; font-weight: 800; margin: 8px 0 4px; }
+.adm-bd-price small { font-size: 14px; font-weight: 600; color: var(--adm-muted); }
+.adm-bd-eur { font-size: 12px; color: var(--adm-muted); margin: 0 0 12px; }
+.adm-bd-features { list-style: none; margin: 0 0 16px; padding: 0; font-size: 13px; }
+.adm-bd-features li { padding: 4px 0; }
+.adm-bd-features i { color: #059669; margin-right: 6px; }
+.adm-bd-api { margin: 12px 0; }
+.adm-bd-api-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+.adm-bd-api-bar { height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 10px; }
+.adm-bd-api-bar span { display: block; height: 100%; background: linear-gradient(90deg, #2563eb, #7c3aed); transition: width .3s; }
+.adm-bd-msg { font-size: 13px; padding: 10px 12px; border-radius: 8px; }
+.adm-bd-msg.is-ok { background: #ecfdf5; color: #065f46; }
+.adm-bd-msg.is-err { background: #fef2f2; color: #991b1b; }
+.adm-demo-pill {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; padding: 4px 10px; border-radius: 999px;
+    background: #fef3c7; color: #92400e; margin-top: 8px;
+}
+
+/* PageSpeed in health console */
+.adm-hc-psi .adm-card-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.adm-hc-psi-actions { display: flex; gap: 8px; align-items: center; }
+.adm-hc-psi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; margin-top: 12px; }
+.adm-hc-psi-card { text-align: center; font-size: 12px; }
+.adm-hc-psi-card.is-highlight strong { color: #2563eb; }
+.adm-hc-psi-ring {
+    --adm-psi: 0;
+    width: 72px; height: 72px; margin: 0 auto 8px; border-radius: 50%;
+    background: conic-gradient(#2563eb calc(var(--adm-psi) * 1%), #e2e8f0 0);
+    display: grid; place-items: center; position: relative;
+}
+.adm-hc-psi-ring::before {
+    content: ''; position: absolute; inset: 6px; border-radius: 50%; background: #fff;
+}
+.adm-hc-psi-ring span { position: relative; font-weight: 800; font-size: 18px; }
+.adm-hc-psi-url code { font-size: 11px; word-break: break-all; }
+.adm-hc-psi-meta { font-size: 11px; color: var(--adm-muted); margin-top: 8px; }

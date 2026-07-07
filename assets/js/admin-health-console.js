@@ -151,4 +151,41 @@
     window.addEventListener('resize', function () {
         window.requestAnimationFrame(redraw);
     });
+
+    var psiApi = root.getAttribute('data-psi-api') || '';
+    var psiUrl = root.getAttribute('data-psi-url') || '';
+    var refreshBtn = document.getElementById('shPsiRefresh');
+    var strategySel = document.getElementById('shPsiStrategy');
+    var scoresEl = document.getElementById('shPsiScores');
+    var metaEl = document.getElementById('shPsiMeta');
+
+    function renderPsiScores(scores) {
+        if (!scoresEl || !Array.isArray(scores)) return;
+        scoresEl.innerHTML = scores.map(function (sc) {
+            var val = Math.max(0, Math.min(100, parseInt(sc.value || 0, 10)));
+            var hi = sc.highlight ? ' is-highlight' : '';
+            return '<div class="adm-hc-psi-card' + hi + '"><div class="adm-hc-psi-ring" style="--adm-psi:' + val + '"><span>' + val + '</span></div><strong>' + (sc.label || '') + '</strong></div>';
+        }).join('');
+    }
+
+    if (refreshBtn && psiApi) {
+        refreshBtn.addEventListener('click', function () {
+            refreshBtn.disabled = true;
+            fetch(psiApi, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    url: psiUrl,
+                    strategy: strategySel ? strategySel.value : 'mobile',
+                    refresh: true
+                })
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (res.ok) {
+                    renderPsiScores(res.scores);
+                    if (metaEl) metaEl.textContent = res.fetched_at ? ('Updated: ' + res.fetched_at) : '';
+                }
+            }).finally(function () { refreshBtn.disabled = false; });
+        });
+    }
 })();

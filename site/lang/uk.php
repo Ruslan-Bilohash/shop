@@ -103,6 +103,7 @@ return array_replace_recursive($en, [
         'title' => 'SEO і дружність до Google',
         'subtitle' => 'Пошукова оптимізація з коробки: швидкість, структуровані дані, соцпревʼю та налаштування в адмінці — без плагінів.',
         'lighthouse_title' => 'Google PageSpeed Insights (демо)',
+        'psi_demo_badge' => 'демо',
         'scores' => [
             ['label' => 'Продуктивність', 'value' => '99'],
             ['label' => 'Спеціальні можливості', 'value' => '100'],
