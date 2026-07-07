@@ -113,15 +113,47 @@ function sh_admin_sidebar_menu(): array
         }
     }
 
+    $consoleItems = [];
+    $healthInc = dirname(__DIR__, 2) . '/includes/site-health-console.php';
+    if (is_file($healthInc)) {
+        $consoleItems[] = [
+            'label_key' => 'health_console',
+            'icon'      => 'heart-pulse',
+            'url'       => 'health-console.php',
+            'page'      => 'health-console',
+        ];
+    }
+    $consoleItems[] = [
+        'label_key' => 'seo_agent_console',
+        'icon'      => 'robot',
+        'url'       => 'seo-agent-console.php',
+        'page'      => 'seo-agent-console',
+    ];
     $secConsole = dirname(__DIR__, 2) . '/includes/security-console.php';
     if (is_file($secConsole)) {
-        $menu[] = [
-            'id'   => 'security-console',
-            'type' => 'link',
+        $consoleItems[] = [
             'label_key' => 'security_console',
-            'icon' => 'shield-halved',
-            'url'  => 'security-console.php',
-            'page' => 'security-console',
+            'icon'      => 'shield-halved',
+            'url'       => 'security-console.php',
+            'page'      => 'security-console',
+        ];
+    }
+    $changelogInc = dirname(__DIR__, 2) . '/includes/changelog-console.php';
+    if (is_file($changelogInc)) {
+        $consoleItems[] = [
+            'label_key' => 'changelog_console',
+            'icon'      => 'clock-rotate-left',
+            'url'       => 'changelog-console.php',
+            'page'      => 'changelog-console',
+        ];
+    }
+    if ($consoleItems !== []) {
+        $menu[] = [
+            'id'        => 'consoles',
+            'type'      => 'group',
+            'label_key' => 'nav_group_consoles',
+            'icon'      => 'gauge-high',
+            'items'     => $consoleItems,
         ];
     }
 

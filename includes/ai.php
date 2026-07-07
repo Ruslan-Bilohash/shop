@@ -1195,6 +1195,186 @@ function sh_ai_generate_homepage_blocks(array $settings): array
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
 }
 
+/**
+ * Per-page SEO suggestions for AI SEO Agent console.
+ *
+ * @param array{key:string,type:string,label:string,score:int,issues:list<string>,edit_url?:string,public_url?:string} $page
+ * @return array{ok:bool,demo:bool,suggestions:list<array{priority:string,title:string,detail:string,action?:string}>,summary:string,error:string}
+ */
+function sh_ai_seo_page_suggestions(array $settings, array $page, string $lang = 'en'): array
+{
+    $lang = trim($lang) ?: 'en';
+    $label = trim((string) ($page['label'] ?? 'Page'));
+    $score = (int) ($page['score'] ?? 0);
+    $issues = is_array($page['issues'] ?? null) ? $page['issues'] : [];
+    $type = (string) ($page['type'] ?? 'page');
+
+    $issueHints = [
+        'missing_title'      => 'Add a unique meta title (30–60 chars) with primary keyword near the start.',
+        'title_length'       => 'Adjust meta title length — aim for 30–60 characters.',
+        'missing_desc'       => 'Write a compelling meta description (120–160 chars) with a clear benefit.',
+        'desc_length'        => 'Tune meta description to 120–160 characters for rich snippets.',
+        'missing_keywords'     => 'Add 3–5 focus keywords aligned with search intent.',
+        'missing_og'         => 'Set an OG image (1200×630) for social sharing.',
+        'missing_brand'        => 'Fill brand name for Product schema trust signals.',
+        'missing_identifiers'  => 'Add GTIN or MPN for Google Shopping eligibility.',
+        'missing_schema'       => 'Enable Product + Offer JSON-LD schema.',
+        'missing_sitemap'      => 'Turn on XML sitemap in SEO settings.',
+        'missing_global'       => 'Complete global site name and Organization schema.',
+        'missing_intro'        => 'Add category intro copy — helps rankings and conversions.',
+        'intro_length'         => 'Expand category intro to 80–300 characters.',
+    ];
+
+    if (!sh_ai_enabled($settings)) {
+        $suggestions = [];
+        foreach ($issues as $tag) {
+            $suggestions[] = [
+                'priority' => str_contains((string) $tag, 'missing') ? 'high' : 'medium',
+                'title'    => str_replace('_', ' ', ucfirst((string) $tag)),
+                'detail'   => $issueHints[$tag] ?? 'Review and fix this SEO signal.',
+                'action'   => 'edit',
+            ];
+        }
+        if ($suggestions === []) {
+            $suggestions[] = [
+                'priority' => 'low',
+                'title'    => 'Maintain momentum',
+                'detail'   => 'Score is ' . $score . '/100 — refresh copy quarterly and monitor Search Console.',
+                'action'   => 'monitor',
+            ];
+        }
+        return [
+            'ok'          => true,
+            'demo'        => true,
+            'suggestions' => array_slice($suggestions, 0, 8),
+            'summary'     => 'Rule-based audit for "' . $label . '" (enable AI in Settings → AI for deeper copy suggestions).',
+            'error'       => '',
+        ];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $issuesText = $issues !== [] ? implode(', ', $issues) : 'none detected';
+    $prompt = 'You are an e-commerce SEO consultant. Analyze this page and return ONLY valid JSON: '
+        . '{"summary":"one sentence","suggestions":[{"priority":"high|medium|low","title":"short","detail":"actionable 1-2 sentences","action":"edit|schema|content|monitor"}]}. '
+        . 'Page: "' . $label . '". Type: ' . $type . '. Language: ' . $lang . '. Current SEO score: ' . $score . '/100. '
+        . 'Issues: ' . $issuesText . '. '
+        . 'Focus on psychologically selling copy, CTR, and technical SEO. Max 6 suggestions.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 900, 'seo');
+    if (!$result['ok']) {
+        return sh_ai_seo_page_suggestions(array_merge($settings, ['ai_enabled' => false]), $page, $lang);
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return sh_ai_seo_page_suggestions(array_merge($settings, ['ai_enabled' => false]), $page, $lang);
+    }
+
+    $suggestions = [];
+    foreach (is_array($parsed['suggestions'] ?? null) ? $parsed['suggestions'] : [] as $s) {
+        if (!is_array($s)) {
+            continue;
+        }
+        $suggestions[] = [
+            'priority' => in_array($s['priority'] ?? '', ['high', 'medium', 'low'], true) ? $s['priority'] : 'medium',
+            'title'    => trim((string) ($s['title'] ?? '')),
+            'detail'   => trim((string) ($s['detail'] ?? '')),
+            'action'   => trim((string) ($s['action'] ?? 'edit')),
+        ];
+    }
+
+    return [
+        'ok'          => true,
+        'demo'        => false,
+        'suggestions' => array_slice(array_filter($suggestions, static fn($s) => $s['title'] !== ''), 0, 8),
+        'summary'     => trim((string) ($parsed['summary'] ?? '')),
+        'error'       => '',
+    ];
+}
+
+/**
+ * AI security scan recommendations for Security console.
+ *
+ * @param list<array{id:string,severity:string,ok:bool,label:string,detail:string}> $checks
+ * @return array{ok:bool,demo:bool,recommendations:list<array{priority:string,title:string,detail:string}>,summary:string,error:string}
+ */
+function sh_ai_security_recommendations(array $settings, array $checks, int $score): array
+{
+    $failed = array_values(array_filter($checks, static fn($c) => empty($c['ok'])));
+    if (!sh_ai_enabled($settings)) {
+        $recs = [];
+        foreach ($failed as $c) {
+            $recs[] = [
+                'priority' => (string) ($c['severity'] ?? 'medium'),
+                'title'    => (string) ($c['label'] ?? 'Issue'),
+                'detail'   => (string) ($c['detail'] ?? 'Review in Security console.'),
+            ];
+        }
+        if ($recs === []) {
+            $recs[] = [
+                'priority' => 'low',
+                'title'    => 'Security posture looks good',
+                'detail'   => 'Score ' . $score . '/100 — schedule monthly rescans and keep PHP updated.',
+            ];
+        }
+        return [
+            'ok'              => true,
+            'demo'            => true,
+            'recommendations' => array_slice($recs, 0, 10),
+            'summary'         => 'Rule-based security review (enable AI for prioritized remediation plan).',
+            'error'           => '',
+        ];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $failedLines = [];
+    foreach (array_slice($failed, 0, 12) as $c) {
+        $failedLines[] = ($c['label'] ?? '') . ' [' . ($c['severity'] ?? '') . ']: ' . ($c['detail'] ?? '');
+    }
+    $prompt = 'You are a PHP e-commerce security auditor. Security score: ' . $score . '/100. '
+        . 'Failed checks: ' . ($failedLines !== [] ? implode('; ', $failedLines) : 'none') . '. '
+        . 'Return ONLY valid JSON: {"summary":"one sentence","recommendations":[{"priority":"critical|high|medium|low","title":"short","detail":"action steps"}]}. '
+        . 'Max 8 items, ordered by risk. Be specific for shared hosting (Hostinger).';
+
+    $result = sh_ai_call_chat($ai, $prompt, 900, 'seo');
+    if (!$result['ok']) {
+        return sh_ai_security_recommendations(array_merge($settings, ['ai_enabled' => false]), $checks, $score);
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return sh_ai_security_recommendations(array_merge($settings, ['ai_enabled' => false]), $checks, $score);
+    }
+
+    $recs = [];
+    foreach (is_array($parsed['recommendations'] ?? null) ? $parsed['recommendations'] : [] as $r) {
+        if (!is_array($r)) {
+            continue;
+        }
+        $recs[] = [
+            'priority' => trim((string) ($r['priority'] ?? 'medium')),
+            'title'    => trim((string) ($r['title'] ?? '')),
+            'detail'   => trim((string) ($r['detail'] ?? '')),
+        ];
+    }
+
+    return [
+        'ok'              => true,
+        'demo'            => false,
+        'recommendations' => array_slice(array_filter($recs, static fn($r) => $r['title'] !== ''), 0, 10),
+        'summary'         => trim((string) ($parsed['summary'] ?? '')),
+        'error'           => '',
+    ];
+}
+
 function sh_json_response(array $data, int $code = 200): void
 {
     http_response_code($code);

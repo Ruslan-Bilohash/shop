@@ -311,6 +311,14 @@ return [
         'back_to_product' => 'Back to product page',
     ],
     'changelog_items' => [
+        '1.6.0' => [
+            'Site health console — composite score, 14-day trend charts, radar pillar balance',
+            'Conversion psychology checklist — trust, urgency, payments, homepage blocks',
+            'AI SEO Agent — per-page audit with AI suggestions (demo mode without API key)',
+            'AI security scanner — prioritized remediation in Security console',
+            'Changelog console — searchable release timeline synced with product site',
+            'Admin Consoles menu group — health, SEO agent, security, changelog',
+        ],
         '1.5.1' => [
             'not_mysql JSON edition — standalone demo without MySQL (demo / demo2026)',
             'Admin AI API paths fixed when shop is not deployed at /shop',

@@ -3,6 +3,7 @@ require_once __DIR__ . '/init.php';
 sh_admin_require();
 
 require_once dirname(__DIR__) . '/includes/security-console.php';
+require_once dirname(__DIR__) . '/includes/site-health-console.php';
 
 $admin_page = 'security-console';
 $ta = $t['admin'] ?? [];
@@ -20,11 +21,18 @@ $server = sh_sec_server_snapshot();
 $vulnChecks = sh_sec_vulnerability_checks($labels);
 $score = sh_sec_score($vulnChecks);
 $gradeLabels = $sp['grades'] ?? [];
+$secTrend = sh_health_trend_data(14);
+$admin_extra_js = [sh_asset('js/admin-security-console.js') . '?v=1'];
 
 require __DIR__ . '/includes/layout.php';
 ?>
 
-<div class="adm-sec-console">
+<div class="adm-sec-console" id="shSecConsole"
+     data-api-scan="<?= htmlspecialchars(sh_admin_url('api/security-scan.php')) ?>"
+     data-api-ai="<?= htmlspecialchars(sh_admin_url('api/ai-security-scan.php')) ?>"
+     data-trend="<?= htmlspecialchars(json_encode($secTrend, JSON_UNESCAPED_UNICODE)) ?>"
+     data-scanning="<?= htmlspecialchars($sp['ajax_scanning'] ?? 'Scanning ports…') ?>"
+     data-ai-scanning="<?= htmlspecialchars($sp['ai_scanning'] ?? 'AI security scan…') ?>">
     <div class="adm-sec-hero">
         <div class="adm-sec-hero-main">
             <span class="adm-sec-score adm-sec-score--<?= htmlspecialchars($score['grade']) ?>">
@@ -58,6 +66,7 @@ require __DIR__ . '/includes/layout.php';
                         <input type="text" id="shSecHost" name="host" value="<?= htmlspecialchars($scanHost) ?>" class="adm-input-sm" pattern="[a-zA-Z0-9.\-:]+" maxlength="64">
                     </div>
                     <button type="submit" class="adm-btn adm-btn-outline adm-btn-sm"><i class="fas fa-rotate"></i> <?= htmlspecialchars($sp['rescan'] ?? 'Rescan') ?></button>
+                    <button type="button" class="adm-btn adm-btn-outline adm-btn-sm" id="shSecRescanAjax"><i class="fas fa-bolt"></i> <?= htmlspecialchars($sp['rescan_ajax'] ?? 'Quick rescan') ?></button>
                 </form>
                 <div class="adm-table-wrap adm-sec-port-wrap">
                     <table class="adm-table adm-table-compact adm-sec-port-table">
@@ -121,6 +130,30 @@ require __DIR__ . '/includes/layout.php';
                     </li>
                     <?php endforeach; ?>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="adm-sec-grid adm-sec-grid--extras">
+        <div class="adm-card adm-sec-card">
+            <div class="adm-card-head">
+                <h2><i class="fas fa-chart-line"></i> <?= htmlspecialchars($sp['trend_title'] ?? 'Security trend (14 days)') ?></h2>
+            </div>
+            <div class="adm-card-body padded">
+                <canvas id="shSecTrendChart" class="adm-sec-chart" height="140" aria-label="<?= htmlspecialchars($sp['trend_title'] ?? 'Trend') ?>"></canvas>
+            </div>
+        </div>
+
+        <div class="adm-card adm-sec-card">
+            <div class="adm-card-head">
+                <h2><i class="fas fa-robot"></i> <?= htmlspecialchars($sp['ai_title'] ?? 'AI security scanner') ?></h2>
+                <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="shSecAiScan">
+                    <i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars($sp['ai_run'] ?? 'Run AI scan') ?>
+                </button>
+            </div>
+            <div class="adm-card-body padded">
+                <p class="adm-help adm-help-compact"><?= htmlspecialchars($sp['ai_help'] ?? 'Prioritized remediation plan based on open vulnerability checks. Works in demo mode without API key.') ?></p>
+                <div id="shSecAiResult" class="adm-sec-ai-result" hidden></div>
             </div>
         </div>
     </div>

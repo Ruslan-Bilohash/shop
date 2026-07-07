@@ -11,8 +11,15 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($layout_title) ?> — <?= htmlspecialchars($ta['title_suffix'] ?? 'Shop CMS Admin') ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=31">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=33">
     <link rel="stylesheet" href="<?= htmlspecialchars(bh_cms_admin_settings_css_href()) ?>">
+    <?php foreach (($extra_css ?? []) as $cssHref): ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssHref) ?>">
+    <?php endforeach; ?>
+    <?php if (($settings_tab ?? '') === 'invoice'): ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/invoice-print-designs.css')) ?>?v=2">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/invoice-print.css')) ?>?v=2">
+    <?php endif; ?>
     <?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($settings_tab ?? '') === 'advanced' || ($admin_page ?? '') === 'code-editor'): ?>
     <?php require __DIR__ . '/code-editor-assets.php'; ?>
     <?php endif; ?>
