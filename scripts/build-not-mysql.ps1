@@ -106,7 +106,28 @@ foreach ($dir in $fixDirs) {
     }
 }
 
-$dbFile = Join-Path $dest 'includes\database.php'
-if (Test-Path $dbFile) { Remove-Item $dbFile -Force }
+# MySQL migration kit (full transition without re-upload)
+$migrateKit = @(
+    'migrate-to-mysql.php', 'schema.sql', 'install.php'
+)
+foreach ($f in $migrateKit) {
+    $src = Join-Path $root $f
+    if (Test-Path $src) {
+        Copy-Item $src (Join-Path $dest $f) -Force
+    }
+}
+$migrateInc = @('mysql-migrate.php', 'mysql-init.stub.php', 'database.php')
+foreach ($f in $migrateInc) {
+    $src = Join-Path $root "includes\$f"
+    if (Test-Path $src) {
+        Copy-Item $src (Join-Path $dest "includes\$f") -Force
+    }
+}
+$mysqlSrc = Join-Path $root 'includes\mysql'
+$mysqlDst = Join-Path $dest 'includes\mysql'
+if (Test-Path $mysqlSrc) {
+    if (-not (Test-Path $mysqlDst)) { New-Item -ItemType Directory -Path $mysqlDst -Force | Out-Null }
+    Copy-Item (Join-Path $mysqlSrc '*') $mysqlDst -Force
+}
 
-Write-Host 'Done. JSON package ready at not_mysql/'
+Write-Host 'Done. JSON package + migrate-to-mysql ready at not_mysql/'

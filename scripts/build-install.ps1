@@ -60,5 +60,26 @@ foreach ($dir in $fixDirs) {
 # Ecosystem deps (storefront includes/ + install/includes/)
 & (Join-Path $PSScriptRoot 'sync-ecosystem.ps1') | Out-Null
 
-# install.php and schema stay in install/ — do not overwrite from root
-Write-Host 'Done. Package ready at install/'
+# Migration & MySQL bootstrap (full transition)
+$extraRoot = @('schema.sql', 'migrate-to-mysql.php', 'install.php')
+foreach ($f in $extraRoot) {
+    $src = Join-Path $root $f
+    if (Test-Path $src) {
+        Copy-Item $src (Join-Path $dest $f) -Force
+    }
+}
+$migrateInc = @('mysql-migrate.php', 'mysql-init.stub.php')
+foreach ($f in $migrateInc) {
+    $src = Join-Path $root "includes\$f"
+    if (Test-Path $src) {
+        Copy-Item $src (Join-Path $dest "includes\$f") -Force
+    }
+}
+$mysqlSrc = Join-Path $root 'includes\mysql'
+$mysqlDst = Join-Path $dest 'includes\mysql'
+if (Test-Path $mysqlSrc) {
+    if (-not (Test-Path $mysqlDst)) { New-Item -ItemType Directory -Path $mysqlDst -Force | Out-Null }
+    Copy-Item (Join-Path $mysqlSrc '*') $mysqlDst -Force
+}
+
+Write-Host 'Done. MySQL package ready at install/'

@@ -20,8 +20,24 @@ REQUIREMENTS
 
 DATA STORAGE
 ============
-All shop data (products, categories, news, settings, leads) is stored in MySQL only.
-No JSON data files are used at runtime.
+All shop data is stored in MySQL only (8 tables). No JSON runtime files after install.
+
+Tables: products, categories, news, leads, orders, subscribers, customer_profiles, settings.
+
+MIGRATE FROM JSON EDITION (not_mysql)
+===================================
+If you have the JSON package with data/*.json files:
+
+1. Upload this MySQL package OR add migrate-to-mysql.php to your site root
+2. Open https://your-domain.com/shop/migrate-to-mysql.php
+3. Enter MySQL credentials — all JSON files are imported automatically
+4. JSON files are backed up to data/archive/ and renamed to *.json.migrated
+5. init.php switches to MySQL runtime automatically
+6. Delete migrate-to-mysql.php and install.php after verification
+
+FRESH INSTALL
+=============
+Open install.php — demo seed is imported into MySQL.
 
 LICENSE
 =======
