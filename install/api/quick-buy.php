@@ -36,4 +36,8 @@ if ($lead === null) {
     exit;
 }
 
+require_once dirname(__DIR__) . '/includes/telegram-notify.php';
+require_once dirname(__DIR__) . '/includes/payment-settings.php';
+sh_telegram_notify_quick_buy($lead, sh_load_settings());
+
 echo json_encode(['ok' => true, 'id' => $lead['id']]);

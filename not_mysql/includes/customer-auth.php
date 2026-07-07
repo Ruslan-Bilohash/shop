@@ -197,6 +197,23 @@ function sh_customer_post_login_url(): string
     return sh_url('index.php');
 }
 
+function sh_customer_login_demo(): void
+{
+    $_SESSION['sh_customer'] = [
+        'id'       => 'demo:customer',
+        'provider' => 'demo',
+        'name'     => 'Demo Customer',
+        'email'    => 'demo@bilohash.com',
+        'role'     => 'customer',
+    ];
+    if (is_file(__DIR__ . '/billing-demo-stats.php')) {
+        require_once __DIR__ . '/billing-demo-stats.php';
+        $lang = trim((string) ($_GET['lang'] ?? $_POST['lang'] ?? 'en')) ?: 'en';
+        sh_demo_stats_record('customer_demo_login', ['lang' => $lang, 'role' => 'customer']);
+    }
+    sh_customer_after_login();
+}
+
 function sh_customer_login_oauth(string $provider, string $externalId, string $name = '', string $email = ''): void
 {
     $provider = in_array($provider, ['google', 'apple'], true) ? $provider : 'oauth';
@@ -215,6 +232,13 @@ function sh_customer_login_oauth(string $provider, string $externalId, string $n
 function sh_customer_logout(): void
 {
     unset($_SESSION['sh_customer']);
+}
+
+function sh_customer_sms_login_enabled(?array $settings = null): bool
+{
+    require_once __DIR__ . '/sms.php';
+    $s = sh_sms_settings($settings);
+    return sh_customer_phone_login_enabled($settings) && (!empty($s['sms_enabled']) || sh_sms_demo_forced());
 }
 
 function sh_customer_auth_apply_post(array $post, array $settings): array
@@ -237,7 +261,8 @@ function sh_customer_auth_apply_post(array $post, array $settings): array
     $settings['customer_apple_private_key'] = $appleKey !== ''
         ? $appleKey
         : (string) ($existing['customer_apple_private_key'] ?? '');
-    return $settings;
+    require_once __DIR__ . '/sms.php';
+    return sh_sms_settings_apply_post($post, $settings);
 }
 
 function sh_customer_display_name(): string

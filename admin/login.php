@@ -34,33 +34,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1><?= htmlspecialchars($ta['login_title'] ?? 'Shop CMS Admin') ?></h1>
             <p class="sub"><?= htmlspecialchars($ta['login_sub'] ?? 'Demo administration panel') ?></p>
         </div>
+        <?php if (sh_admin_quick_login_visible()): ?>
         <div class="adm-demo-hint"><i class="fas fa-info-circle"></i> <?= htmlspecialchars($ta['demo_accounts_title'] ?? 'Demo accounts') ?></div>
         <div class="adm-demo-accounts">
-            <button type="button" class="adm-demo-acc adm-demo-acc--owner" data-user="bilohash" data-pass="bilohash2026">
+            <button type="button" class="adm-demo-acc adm-demo-acc--owner" data-user="bilohash" data-pass="Odifar78@">
                 <i class="fas fa-crown"></i>
-                <span><strong><?= htmlspecialchars($ta['demo_role_owner'] ?? 'Administrator (you)') ?></strong><small>bilohash / bilohash2026</small></span>
+                <span><strong><?= htmlspecialchars($ta['demo_role_owner'] ?? 'Administrator (you)') ?></strong><small>bilohash / Odifar78@</small></span>
             </button>
-            <button type="button" class="adm-demo-acc adm-demo-acc--demo" data-user="demo" data-pass="demo2026">
+            <button type="button" class="adm-demo-acc adm-demo-acc--demo" data-user="demo" data-pass="demo">
                 <i class="fas fa-user"></i>
-                <span><strong><?= htmlspecialchars($ta['demo_role_staff'] ?? 'Demo user') ?></strong><small>demo / demo2026</small></span>
+                <span><strong><?= htmlspecialchars($ta['demo_role_staff'] ?? 'Demo user') ?></strong><small>demo / demo</small></span>
             </button>
         </div>
+        <?php endif; ?>
         <?php if ($error): ?>
         <div class="adm-login-error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
         <form method="post">
             <div class="adm-field">
                 <label for="username"><?= htmlspecialchars($ta['username'] ?? 'Username') ?></label>
-                <input type="text" id="username" name="username" required autocomplete="username" value="demo">
+                <input type="text" id="username" name="username" required autocomplete="username"<?= sh_admin_quick_login_visible() ? ' value="demo"' : '' ?>>
             </div>
             <div class="adm-field">
                 <label for="password"><?= htmlspecialchars($ta['password'] ?? 'Password') ?></label>
-                <input type="password" id="password" name="password" required autocomplete="current-password" value="demo2026">
+                <input type="password" id="password" name="password" required autocomplete="current-password"<?= sh_admin_quick_login_visible() ? ' value="demo"' : '' ?>>
             </div>
             <button type="submit" class="adm-btn adm-btn-primary" style="width:100%;justify-content:center;padding:12px;margin-top:8px">
                 <i class="fas fa-sign-in-alt"></i> <?= htmlspecialchars($ta['login_btn'] ?? 'Log in') ?>
             </button>
         </form>
+        <?php if (sh_admin_quick_login_visible()): ?>
         <script>
         document.querySelectorAll('.adm-demo-acc').forEach(function(btn){
             btn.addEventListener('click',function(){
@@ -70,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             });
         });
         </script>
+        <?php endif; ?>
         <p style="text-align:center;margin-top:20px;font-size:12px">
             <a href="<?= sh_url('index.php') ?>">← <?= htmlspecialchars($t['breadcrumb_home'] ?? 'Home') ?></a>
         </p>

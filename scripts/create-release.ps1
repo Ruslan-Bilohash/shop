@@ -46,7 +46,8 @@ Write-Host "Release: $($release.html_url)"
 
 $assets = @(
     @{ Zip = "shop-install-$tag.zip"; Folder = 'install' },
-    @{ Zip = "shop-not-mysql-$tag.zip"; Folder = 'not_mysql' }
+    @{ Zip = "shop-not-mysql-$tag.zip"; Folder = 'not_mysql' },
+    @{ Zip = "shop-demo-30d-$tag.zip"; Folder = 'install'; Demo = $true }
 )
 
 foreach ($asset in $assets) {
@@ -54,7 +55,7 @@ foreach ($asset in $assets) {
     if (Test-Path $zip) { Remove-Item $zip -Force }
     $src = Join-Path $root $asset.Folder
     if (-not (Test-Path $src)) { throw "Missing folder: $src" }
-    Compress-Archive -Path (Join-Path $src '*') -DestinationPath $zip -Force
+    Compress-Archive -Path (Join-Path $src '*') -DestinationPath $zip -CompressionLevel Optimal -Force
     Write-Host "Packed: $($asset.Zip)"
 
     $uploadBase = ($release.upload_url -replace '\{\?name,label\}', '')

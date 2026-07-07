@@ -5,7 +5,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path $PSScriptRoot -Parent
 $dest = Join-Path $root 'not_mysql'
 
-$dirs = @('admin', 'api', 'assets', 'lang', 'site', 'uploads')
+$dirs = @('admin', 'api', 'assets', 'lang', 'site', 'uploads', 'screenshot')
 
 $files = @(
     'index.php', 'init.php', 'config.php', 'cart.php', 'checkout.php', 'contact.php', 'login.php', 'logout.php',

@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS `{prefix}customer_profiles` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `{prefix}product_reviews` (
+  `id` VARCHAR(64) NOT NULL,
+  `data` JSON NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `{prefix}settings` (
   `id` TINYINT UNSIGNED NOT NULL DEFAULT 1,
   `data` JSON NOT NULL,

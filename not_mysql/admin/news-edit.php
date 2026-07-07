@@ -160,15 +160,12 @@ $admin_extra_js = [
     sh_asset('js/admin-news.js') . '?v=1',
 ];
 
+if ($flash === 'error' && $errors !== []) {
+    $admin_flash = ['type' => 'error', 'msg' => implode(' ', $errors)];
+}
+
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash === 'error' && $errors !== []): ?>
-<div class="adm-alert adm-alert-error">
-    <i class="fas fa-exclamation-circle"></i>
-    <?= htmlspecialchars(implode(' ', $errors)) ?>
-</div>
-<?php endif; ?>
 
 <?php if (!$is_new): ?>
 <?php require __DIR__ . '/includes/edit-tabs.php'; ?>

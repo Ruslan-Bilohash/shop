@@ -69,7 +69,9 @@ if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
                     <li><a href="https://bilohash.com/" rel="author"><?= htmlspecialchars($ft['portfolio'] ?? 'Portfolio') ?></a></li>
                     <li><a href="<?= htmlspecialchars($sh_news_url) ?>" rel="related"><?= htmlspecialchars($ft['news'] ?? 'News') ?></a></li>
                     <li><a href="https://bilohash.com/news/" rel="related"><?= htmlspecialchars($ft['news_releases'] ?? 'News & releases') ?></a></li>
+                    <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
                     <li><a href="<?= sh_url('admin/login.php') ?>"><?= htmlspecialchars($ft['admin_demo'] ?? 'Admin demo') ?></a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
 
@@ -115,6 +117,15 @@ if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
             <div class="sh-footer-bottom-links">
                 <a href="<?= sh_url('sitemap.php') ?>"><?= htmlspecialchars($ft['sitemap'] ?? 'Sitemap') ?></a>
                 <a href="<?= sh_url('contact.php') ?>"><?= htmlspecialchars($sh_discuss) ?></a>
+                <?php
+                require_once __DIR__ . '/google-marketing.php';
+                $gmbFooter = sh_google_marketing_merge_settings($sh_site_settings);
+                if (sh_gmb_active($gmbFooter) && !empty($gmbFooter['gmb_show_footer']) && trim((string) ($gmbFooter['gmb_profile_url'] ?? '')) !== ''):
+                ?>
+                <a href="<?= htmlspecialchars($gmbFooter['gmb_profile_url']) ?>" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-google" aria-hidden="true"></i> <?= htmlspecialchars(sh_gmb_footer_link_label($gmbFooter)) ?>
+                </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -125,6 +136,8 @@ sh_render_tracking_snippets(sh_site_settings());
 sh_render_custom_footer_js(sh_site_settings());
 bh_cms_render_chat_widget('Shop CMS', sh_site_settings(), $lang ?? 'no');
 require __DIR__ . '/cookie-consent.php';
+sh_render_product_review_assets();
+sh_render_product_3d_assets();
 ?>
 </body>
 </html>

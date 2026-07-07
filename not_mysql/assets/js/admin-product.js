@@ -4,6 +4,10 @@
 
     var apiUrl = form.getAttribute('data-ai-url') || '';
     var sourceLang = form.getAttribute('data-ai-source-lang') || 'en';
+    var langCodes = (window.SH_CHECKLIST_LANGS || []).map(function (c) { return c.code; });
+    if (langCodes.length === 0) {
+        langCodes = ['no', 'en', 'uk', 'ru', 'sv'];
+    }
     var aiNameInput = document.getElementById('shAiProductName');
     var aiBriefInput = document.getElementById('shAiProductBrief');
     var sourceNameField = form.querySelector('[name="name_' + sourceLang + '"]');
@@ -17,6 +21,8 @@
         return form.querySelector('[name="' + name + '"]');
     }
 
+    var aiAsideBox = document.querySelector('.adm-product-edit-aside .adm-ai-source-box--aside');
+
     function setStatus(el, msg, type) {
         if (!el) return;
         el.textContent = msg;
@@ -27,19 +33,39 @@
         el.hidden = !msg;
     }
 
+    function setThinkingStatus(el, msg) {
+        if (!el) return;
+        var base = el.classList.contains('adm-ai-status--inline')
+            ? 'adm-ai-status adm-ai-status--inline'
+            : 'adm-ai-status adm-ai-status--block';
+        el.className = base + ' adm-ai-status--loading';
+        el.innerHTML = escapeHtml(msg || 'Thinking…')
+            + ' <span class="adm-ai-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span>';
+        el.hidden = false;
+    }
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = String(text || '');
+        return div.innerHTML;
+    }
+
     function setLoading(btn, loading) {
         if (!btn) return;
         btn.classList.toggle('is-loading', loading);
         btn.disabled = loading;
+        if (aiAsideBox) {
+            aiAsideBox.classList.toggle('is-ai-thinking', loading);
+        }
         var icon = btn.querySelector('.adm-ai-btn-icon');
         var label = btn.querySelector('.adm-ai-btn-label');
         if (icon) {
             icon.className = loading
-                ? 'fas fa-spinner adm-ai-btn-icon'
+                ? 'fas fa-brain adm-ai-btn-icon'
                 : 'fas fa-wand-magic-sparkles adm-ai-btn-icon';
         }
         if (label && loading) {
-            label.textContent = btn.getAttribute('data-generating') || 'Generating…';
+            label.textContent = btn.getAttribute('data-thinking') || btn.getAttribute('data-generating') || 'Thinking…';
         } else if (label) {
             label.textContent = btn.getAttribute('data-label-default') || label.textContent;
         }
@@ -108,11 +134,26 @@
         if (val) setFieldValue(sourceDescField, val);
     }
 
+    if (sourceNameField) {
+        sourceNameField.addEventListener('input', function () {
+            if (!aiNameInput) return;
+            var src = sourceNameField.value.trim();
+            if (src && (!aiNameInput.value.trim() || aiNameInput.dataset.syncedFromSource === '1')) {
+                aiNameInput.value = src;
+                aiNameInput.dataset.syncedFromSource = '1';
+            }
+        });
+    }
+
     if (aiNameInput) {
         if (!aiNameInput.value && sourceNameField && sourceNameField.value) {
             aiNameInput.value = sourceNameField.value.trim();
+            aiNameInput.dataset.syncedFromSource = '1';
         }
-        aiNameInput.addEventListener('input', syncAiNameToSource);
+        aiNameInput.addEventListener('input', function () {
+            aiNameInput.dataset.syncedFromSource = '0';
+            syncAiNameToSource();
+        });
         aiNameInput.addEventListener('change', syncAiNameToSource);
     }
 
@@ -145,8 +186,38 @@
         });
     }
 
+    function buildClientDemoData(productName, category, brief) {
+        var langs = langCodes.length ? langCodes : ['no', 'en', 'uk', 'ru', 'sv'];
+        var names = {};
+        var desc = {};
+        var metaTitle = {};
+        var metaDesc = {};
+        var metaKw = {};
+        var briefText = brief ? ' ' + brief : '';
+        langs.forEach(function (code) {
+            names[code] = productName;
+            desc[code] = productName + ' — demo product.' + briefText + (category ? ' Category: ' + category + '.' : '');
+            metaTitle[code] = (productName + ' | ' + (category || 'Shop')).slice(0, 60);
+            metaDesc[code] = fitMetaDescription(
+                'Buy ' + productName + ' online — secure checkout, multilingual storefront.' + briefText
+            );
+            metaKw[code] = productName.toLowerCase().replace(/\s+/g, ', ') + ', shop, demo';
+        });
+        return {
+            names: names,
+            desc: desc,
+            seo: { meta_title: metaTitle, meta_description: metaDesc, meta_keywords: metaKw },
+            brand: productName
+        };
+    }
+
     function applyAiData(res, statusEl, btn) {
-        if (!res.ok || !res.data) throw new Error(res.error || 'AI failed');
+        if (!res || !res.data || typeof res.data !== 'object') {
+            throw new Error((res && res.error) || 'AI failed');
+        }
+        if (res.ok === false) {
+            throw new Error(res.error || 'AI failed');
+        }
         var data = res.data;
         fillLangFields('name_', data.names);
         if (data.desc) fillLangFields('desc_', data.desc);
@@ -166,13 +237,17 @@
         }
         openLangSpoilers();
         form.dispatchEvent(new CustomEvent('shProductAiFilled', { bubbles: true }));
+        var namesPanel = document.getElementById('product-section-names');
+        if (namesPanel) {
+            namesPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
         var msg = res.demo
             ? (btn.getAttribute('data-demo-ok') || 'Demo templates applied.')
             : (btn.getAttribute('data-ok') || 'Generated.');
         if (res.demo && res.error) {
-            msg += ' — ' + res.error;
+            msg += ' (' + res.error + ')';
         }
-        setStatus(statusEl, msg, res.demo ? (res.error ? 'error' : 'info') : 'success');
+        setStatus(statusEl, msg, res.demo ? 'info' : 'success');
     }
 
     function parseApiResponse(r) {
@@ -189,11 +264,25 @@
                 }
                 throw new Error(text || ('HTTP ' + r.status));
             }
-            if (!r.ok) {
+            if (!r.ok && (!res || typeof res !== 'object')) {
                 throw new Error((res && res.error) || ('HTTP ' + r.status));
             }
             return res;
         });
+    }
+
+    function hasAiPayload(data) {
+        if (!data || typeof data !== 'object') return false;
+        return !!(data.names || data.desc || data.seo);
+    }
+
+    function applyDemoFallback(productName, category, brief, statusEl, btn, reason) {
+        applyAiData({
+            ok: true,
+            demo: true,
+            data: buildClientDemoData(productName, category, brief),
+            error: reason || ''
+        }, statusEl, btn);
     }
 
     function requestAi(productName, category, brief) {
@@ -245,20 +334,42 @@
 
         syncAiNameToSource();
         syncAiBriefToSource();
+        var thinkingMsg = btn.getAttribute('data-thinking') || btn.getAttribute('data-generating') || 'Thinking…';
+        var startedAt = Date.now();
+        var minThinkingMs = 700;
+
         setLoading(btn, true);
-        setStatus(statusEl, btn.getAttribute('data-generating') || 'Generating…', 'loading');
+        setThinkingStatus(statusEl, thinkingMsg);
+
+        function finishLoading() {
+            var wait = Math.max(0, minThinkingMs - (Date.now() - startedAt));
+            window.setTimeout(function () {
+                setLoading(btn, false);
+            }, wait);
+        }
 
         requestAi(productName, category, brief)
             .then(function (res) {
+                if (!res || res.ok === false || !hasAiPayload(res.data)) {
+                    applyDemoFallback(productName, category, brief, statusEl, btn, (res && res.error) || '');
+                    return;
+                }
                 applyAiData(res, statusEl, btn);
             })
             .catch(function (err) {
-                setStatus(statusEl, err.message || (btn.getAttribute('data-failed') || 'Failed'), 'error');
+                try {
+                    applyDemoFallback(productName, category, brief, statusEl, btn, err.message || '');
+                } catch (e2) {
+                    setStatus(statusEl, err.message || (btn.getAttribute('data-failed') || 'Failed'), 'error');
+                }
             })
-            .finally(function () {
-                setLoading(btn, false);
-            });
+            .finally(finishLoading);
     }
+
+    form.addEventListener('submit', function () {
+        syncAiNameToSource();
+        syncAiBriefToSource();
+    });
 
     var btnGenerate = document.getElementById('shAiGenerateBtn');
     var statusEl = document.getElementById('shAiStatus');

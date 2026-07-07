@@ -38,13 +38,36 @@ $canon_abs = sh_absolute_url($canonical);
             <span class="sh-logo-icon"><i class="fas fa-store"></i></span>
             <span class="sh-logo-text"><?= htmlspecialchars($t['meta']['site_name']) ?></span>
         </a>
-        <div class="sh-header-actions" style="margin-left:auto;display:flex;gap:8px;align-items:center">
-            <?php require __DIR__ . '/lang-dropdown.php'; ?>
-            <a href="<?= sh_url('solutions.php') ?>" class="sh-btn-outline"><?= htmlspecialchars($hub_label) ?></a>
-            <a href="<?= sh_url('admin/login.php') ?>" class="sh-btn-outline"><i class="fas fa-user-shield"></i> Admin</a>
+        <div class="sh-header-panel" id="shHeaderPanel">
+            <div class="sh-panel-head">
+                <span class="sh-panel-title"><?= htmlspecialchars($t['meta']['site_name']) ?></span>
+                <button type="button" class="sh-menu-close" id="shMenuClose" aria-label="<?= htmlspecialchars($t['nav']['menu_close'] ?? 'Close menu') ?>">
+                    <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+            </div>
+            <nav class="sh-nav" aria-label="<?= htmlspecialchars($t['nav']['main_nav'] ?? 'Main') ?>">
+                <a href="<?= sh_url('index.php') ?>"><?= htmlspecialchars($t['nav']['shop']) ?></a>
+                <a href="<?= sh_url('solutions.php') ?>"><?= htmlspecialchars($hub_label) ?></a>
+                <a href="<?= sh_url('contact.php') ?>"><?= htmlspecialchars(cms_contact_texts('shop', $lang)['nav_discuss']) ?></a>
+            </nav>
+            <div class="sh-header-actions">
+                <?php $lang_dropdown_variant = 'header'; require __DIR__ . '/lang-dropdown.php'; unset($lang_dropdown_variant); ?>
+                <a href="<?= sh_url('solutions.php') ?>" class="sh-btn-outline"><?= htmlspecialchars($hub_label) ?></a>
+                <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
+                <a href="<?= sh_url('admin/login.php') ?>" class="sh-btn-outline"><i class="fas fa-user-shield"></i> Admin</a>
+                <?php endif; ?>
+            </div>
+        </div>
+        <div class="sh-header-mobile-tools">
+            <?php $lang_dropdown_variant = 'mobile'; require __DIR__ . '/lang-dropdown.php'; unset($lang_dropdown_variant); ?>
+            <button type="button" class="sh-menu-toggle" id="shMenuBtn" aria-label="<?= htmlspecialchars($t['nav']['menu'] ?? 'Menu') ?>" aria-expanded="false" aria-controls="shHeaderPanel">
+                <i class="fas fa-bars sh-menu-icon-open" aria-hidden="true"></i>
+                <i class="fas fa-times sh-menu-icon-close" aria-hidden="true"></i>
+            </button>
         </div>
     </div>
 </header>
+<div class="sh-overlay" id="shOverlay" hidden aria-hidden="true"></div>
 </div>
 
 <main class="sh-container sh-vertical-main">
@@ -124,6 +147,7 @@ $canon_abs = sh_absolute_url($canonical);
     </section>
 </main>
 
+<script src="<?= htmlspecialchars(sh_asset('js/main.js')) ?>?v=<?= sh_public_script_version() ?>" defer></script>
 <?php
 $sh_skip_ecosystem = true;
 require __DIR__ . '/footer.php';

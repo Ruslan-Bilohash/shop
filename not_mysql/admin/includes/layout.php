@@ -11,13 +11,20 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($layout_title) ?> — <?= htmlspecialchars($ta['title_suffix'] ?? 'Shop CMS Admin') ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=29">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=42">
     <link rel="stylesheet" href="<?= htmlspecialchars(bh_cms_admin_settings_css_href()) ?>">
-    <?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($admin_page ?? '') === 'code-editor'): ?>
+    <?php foreach (($extra_css ?? []) as $cssHref): ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssHref) ?>">
+    <?php endforeach; ?>
+    <?php if (($settings_tab ?? '') === 'invoice'): ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/invoice-print-designs.css')) ?>?v=2">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/invoice-print.css')) ?>?v=2">
+    <?php endif; ?>
+    <?php if (($settings_tab ?? '') === 'homepage' || ($settings_tab ?? '') === 'block_builder' || ($settings_tab ?? '') === 'advanced' || ($admin_page ?? '') === 'code-editor'): ?>
     <?php require __DIR__ . '/code-editor-assets.php'; ?>
     <?php endif; ?>
 </head>
-<body class="adm-body">
+<body class="adm-body<?= ($admin_page ?? '') === 'code-editor' ? ' adm-body--code-editor' : '' ?>">
 <div class="adm-sidebar-overlay" id="admOverlay" hidden></div>
 <div class="adm-layout">
     <aside class="adm-sidebar" id="admSidebar">
@@ -43,6 +50,44 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
             <button type="button" class="adm-menu-btn" id="admMenuBtn" aria-label="<?= htmlspecialchars($ta['menu'] ?? 'Menu') ?>"><i class="fas fa-bars"></i></button>
             <h1><?= htmlspecialchars($layout_title) ?></h1>
             <div class="adm-topbar-actions">
+                <?php if (sh_admin_logged()): ?>
+                <span class="adm-role-badge adm-role-badge--<?= htmlspecialchars(sh_admin_role()) ?>" title="<?= htmlspecialchars(sh_admin_display_name()) ?>">
+                    <i class="fas fa-<?= sh_admin_is_owner() ? 'crown' : 'user' ?>"></i>
+                    <?= htmlspecialchars(sh_admin_display_name()) ?>
+                </span>
+                <?php if (function_exists('sh_admin_is_owner') && sh_admin_is_owner()): ?>
+                <?php $opTb = $ta['owner_page'] ?? []; ?>
+                <a href="<?= sh_admin_url('owner.php') ?>" class="adm-api-badge adm-api-badge--topbar adm-api-badge--owner" title="<?= htmlspecialchars($opTb['api_hint'] ?? 'Unlimited BILOHASH AI API for owner') ?>">
+                    <i class="fas fa-bolt"></i>
+                    <?= htmlspecialchars($opTb['api_topbar'] ?? 'AI: ∞') ?>
+                </a>
+                <?php elseif (function_exists('sh_admin_is_demo_user') && sh_admin_is_demo_user()): ?>
+                <?php
+                require_once dirname(__DIR__, 2) . '/includes/admin-api-usage.php';
+                $apiLimit = sh_admin_api_limit();
+                $apiRemaining = sh_admin_api_remaining();
+                $apiUsed = max(0, $apiLimit - ($apiRemaining >= 0 ? $apiRemaining : $apiLimit));
+                ?>
+                <span class="adm-api-badge adm-api-badge--topbar" title="<?= htmlspecialchars($ta['api_quota_hint'] ?? 'Demo AI API test quota') ?>">
+                    <i class="fas fa-bolt"></i>
+                    <?= htmlspecialchars(strtr($ta['api_quota'] ?? 'API: {used}/{limit}', [
+                        '{used}'  => (string) $apiUsed,
+                        '{limit}' => (string) $apiLimit,
+                    ])) ?>
+                </span>
+                <?php endif; ?>
+                <?php
+                $aiWidgetTa = is_array($ta['ai_agent_widget'] ?? null) ? $ta['ai_agent_widget'] : [];
+                if (($admin_page ?? '') !== 'ai-agent' && ($aiWidgetTa['enabled'] ?? true) !== false):
+                ?>
+                <button type="button" class="adm-topbar-ai-btn" id="shAiAgentTopbarBtn"
+                        aria-expanded="false" aria-controls="shAiAgentWidget"
+                        title="<?= htmlspecialchars($aiWidgetTa['fab_title'] ?? 'AI Advisor') ?>">
+                    <i class="fas fa-robot" aria-hidden="true"></i>
+                    <span class="adm-topbar-ai-label"><?= htmlspecialchars($aiWidgetTa['title_short'] ?? ($aiWidgetTa['title'] ?? 'AI Advisor')) ?></span>
+                </button>
+                <?php endif; ?>
+                <?php endif; ?>
                 <div class="adm-lang-dropdown" id="admLangDropdown">
                     <button type="button" class="adm-lang-dropdown-btn" id="admLangBtn" aria-haspopup="listbox" aria-expanded="false">
                         <span class="adm-lang-dropdown-current">
@@ -70,3 +115,9 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
             </div>
         </header>
         <div class="adm-content">
+        <?php
+        require_once __DIR__ . '/admin-flash.php';
+        sh_admin_render_flash_toast(sh_admin_flash_resolve($ta), $ta);
+        require_once dirname(__DIR__, 2) . '/includes/billing-pricing.php';
+        sh_billing_render_admin_banner($ta, $lang);
+        ?>

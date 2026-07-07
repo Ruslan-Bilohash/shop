@@ -1,7 +1,17 @@
 <?php
 require_once __DIR__ . '/init.php';
+require_once __DIR__ . '/includes/changelog.php';
+require_once dirname(__DIR__) . '/includes/pagespeed-insights.php';
 require_once dirname(__DIR__) . '/includes/vertical-lib.php';
-require_once dirname(__DIR__, 2) . '/includes/cms-contact.php';
+$shs_changelog_split = shs_changelog_split_releases();
+$shs_older_count = count($shs_changelog_split['older']);
+$shs_cms_contact = dirname(__DIR__) . '/includes/cms-contact.php';
+if (!is_file($shs_cms_contact)) {
+    $shs_cms_contact = dirname(__DIR__, 2) . '/includes/cms-contact.php';
+}
+if (is_file($shs_cms_contact)) {
+    require_once $shs_cms_contact;
+}
 $canonical = $site_url . '/';
 $page_title = $t['meta']['title'];
 $page_desc  = $t['meta']['description'];
@@ -133,6 +143,14 @@ require __DIR__ . '/includes/header.php';
             </article>
             <?php endforeach; ?>
         </div>
+        <?php if ($shs_older_count > 0): ?>
+        <p class="shs-features-versions">
+            <a href="<?= shs_url('versions.php') ?>" class="shs-versions-link">
+                <i class="fas fa-history" aria-hidden="true"></i>
+                <?= htmlspecialchars(sprintf($t['version']['older_versions_link'] ?? $t['version']['older_versions'] ?? 'Older versions (%d)', $shs_older_count)) ?>
+            </a>
+        </p>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -153,11 +171,18 @@ require __DIR__ . '/includes/header.php';
     <div class="shs-container">
         <h2 class="shs-section-title"><?= htmlspecialchars($t['seo']['title']) ?></h2>
         <p class="shs-lead shs-text-center"><?= htmlspecialchars($t['seo']['subtitle']) ?></p>
-        <?php if (!empty($t['seo']['scores'])): ?>
+        <?php
+        $shs_psi = sh_psi_get(shs_absolute_url($canon_abs), 'mobile', false, $t['seo']['scores'] ?? []);
+        $shs_psi_scores = $shs_psi['scores'] !== [] ? $shs_psi['scores'] : ($t['seo']['scores'] ?? []);
+        $shs_psi_vitals = $shs_psi['vitals'] !== [] ? $shs_psi['vitals'] : ($t['seo']['vitals'] ?? []);
+        if (!empty($shs_psi_scores)):
+        ?>
         <div class="shs-lighthouse-panel">
-            <h3 class="shs-seo-block-title"><i class="fas fa-gauge-high"></i> <?= htmlspecialchars($t['seo']['lighthouse_title']) ?></h3>
+            <h3 class="shs-seo-block-title"><i class="fas fa-gauge-high"></i> <?= htmlspecialchars($t['seo']['lighthouse_title']) ?>
+                <?php if ($shs_psi['demo']): ?><span class="shs-psi-demo-badge"><?= htmlspecialchars($t['seo']['psi_demo_badge'] ?? 'demo') ?></span><?php endif; ?>
+            </h3>
             <div class="shs-lighthouse-grid">
-                <?php foreach ($t['seo']['scores'] as $sc):
+                <?php foreach ($shs_psi_scores as $sc):
                     $ring = min(100, max(0, (int) ($sc['value'] ?? 0)));
                 ?>
                 <div class="shs-lighthouse-card <?= !empty($sc['highlight']) ? 'is-highlight' : '' ?>">
@@ -171,9 +196,9 @@ require __DIR__ . '/includes/header.php';
                 </div>
                 <?php endforeach; ?>
             </div>
-            <?php if (!empty($t['seo']['vitals'])): ?>
+            <?php if (!empty($shs_psi_vitals)): ?>
             <div class="shs-vitals-row">
-                <?php foreach ($t['seo']['vitals'] as $v): ?>
+                <?php foreach ($shs_psi_vitals as $v): ?>
                 <span class="shs-vital"><em><?= htmlspecialchars($v['label']) ?></em> <?= htmlspecialchars($v['boost']) ?></span>
                 <?php endforeach; ?>
             </div>
@@ -206,55 +231,18 @@ require __DIR__ . '/includes/header.php';
             </div>
             <div class="shs-version-changelog">
                 <h3><?= htmlspecialchars($t['version']['changelog_title']) ?></h3>
-                <?php
-                $shs_releases = sh_version_releases_public();
-                $shs_current_rel = null;
-                $shs_older_rels = [];
-                foreach ($shs_releases as $shs_rel) {
-                    if ($shs_rel['version'] === sh_version()) {
-                        $shs_current_rel = $shs_rel;
-                    } else {
-                        $shs_older_rels[] = $shs_rel;
-                    }
-                }
-                if ($shs_current_rel === null && $shs_releases !== []) {
-                    $shs_current_rel = $shs_releases[0];
-                    $shs_older_rels = array_slice($shs_releases, 1);
-                }
-                $shs_changelog_render = static function (array $rel, array $t, bool $is_current) {
-                    $items = $t['changelog_items'][$rel['version']] ?? [];
-                    if ($items === [] && !empty($t['changelog_notes'][$rel['version']])) {
-                        $items = [$t['changelog_notes'][$rel['version']]];
-                    }
-                    ?>
-                    <li class="<?= $is_current ? 'is-current' : '' ?>">
-                        <div class="shs-changelog-head">
-                            <strong>v<?= htmlspecialchars($rel['version']) ?></strong>
-                            <time datetime="<?= htmlspecialchars($rel['date']) ?>"><?= htmlspecialchars($rel['date']) ?></time>
-                        </div>
-                        <?php if ($items !== []): ?>
-                        <ul class="shs-changelog-items">
-                            <?php foreach ($items as $item): ?>
-                            <li><?= htmlspecialchars($item) ?></li>
-                            <?php endforeach; ?>
-                        </ul>
-                        <?php endif; ?>
-                    </li>
-                    <?php
-                };
-                ?>
-                <?php if ($shs_current_rel !== null): ?>
+                <?php if ($shs_changelog_split['current'] !== null): ?>
                 <ol class="shs-changelog-list shs-changelog-list--current">
-                    <?php $shs_changelog_render($shs_current_rel, $t, true); ?>
+                    <?php shs_changelog_render_release($shs_changelog_split['current'], $t, true); ?>
                 </ol>
                 <?php endif; ?>
-                <?php if ($shs_older_rels !== []): ?>
-                <details class="shs-changelog-spoiler">
-                    <summary><?= htmlspecialchars(sprintf($t['version']['older_versions'] ?? 'Older versions (%d)', count($shs_older_rels))) ?></summary>
-                    <ol class="shs-changelog-list shs-changelog-list--older">
-                        <?php foreach ($shs_older_rels as $rel) { $shs_changelog_render($rel, $t, false); } ?>
-                    </ol>
-                </details>
+                <?php if ($shs_older_count > 0): ?>
+                <p class="shs-version-older-link">
+                    <a href="<?= shs_url('versions.php') ?>" class="shs-versions-link">
+                        <i class="fas fa-history" aria-hidden="true"></i>
+                        <?= htmlspecialchars(sprintf($t['version']['older_versions_link'] ?? $t['version']['older_versions'] ?? 'Older versions (%d)', $shs_older_count)) ?>
+                    </a>
+                </p>
                 <?php endif; ?>
             </div>
         </div>

@@ -11,6 +11,18 @@ function sh_mysql_storage_available(): bool
         && sh_db_pdo() instanceof PDO;
 }
 
+/** MySQL console — owner/admin only, hidden for demo role. */
+function sh_mysql_console_visible(): bool
+{
+    if (!sh_mysql_storage_available()) {
+        return false;
+    }
+    if (function_exists('sh_admin_is_demo_user') && sh_admin_is_demo_user()) {
+        return false;
+    }
+    return true;
+}
+
 function sh_mysql_query_allowed(string $sql): bool
 {
     $sql = trim($sql);

@@ -92,6 +92,7 @@ function sh_render_header_nav_row(int $i, array $link, array $ta): void
                 '',
                 [
                     ['name' => 'menu_show_signin', 'label' => sh_settings_admin_label('menu_show_signin', $ta), 'checked' => !empty($menu['menu_show_signin'])],
+                    ['name' => 'menu_show_admin', 'label' => sh_settings_admin_label('menu_show_admin', $ta), 'checked' => !empty($menu['menu_show_admin'])],
                 ],
                 'user'
             ); ?>

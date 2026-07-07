@@ -1,6 +1,10 @@
 <?php
 require_once __DIR__ . '/seo.php';
-require_once dirname(__DIR__, 3) . '/includes/cms-contact.php';
+$shs_cms_contact = dirname(__DIR__, 2) . '/includes/cms-contact.php';
+if (!is_file($shs_cms_contact)) {
+    $shs_cms_contact = dirname(__DIR__, 3) . '/includes/cms-contact.php';
+}
+require_once $shs_cms_contact;
 $cms_nav_discuss = cms_contact_texts('shop', $lang)['nav_discuss'];
 $page_title = $page_title ?? $t['meta']['title'];
 $page_desc  = $page_desc ?? $t['meta']['description'];
@@ -20,12 +24,27 @@ $shs_section_prefix = $shs_on_home ? '' : shs_url('index.php');
 </head>
 <body>
 
+<?php
+$shsBilling = dirname(__DIR__, 2) . '/includes/billing-pricing.php';
+if (is_file($shsBilling)) {
+    require_once $shsBilling;
+    sh_billing_render_site_banner($t, $lang);
+}
+?>
 <header class="shs-header" id="shsHeader">
     <div class="shs-header-inner">
         <a href="<?= shs_url('index.php') ?>" class="shs-logo">
             <span class="shs-logo-icon">S</span>
             <span class="shs-logo-text">Shop <em>CMS</em></span>
         </a>
+        <nav class="shs-nav-desktop" aria-label="<?= htmlspecialchars($t['nav']['main_nav'] ?? 'Main') ?>">
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#features') ?>"><?= htmlspecialchars($t['nav']['features']) ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#screenshots') ?>"><?= htmlspecialchars($t['nav']['screenshots'] ?? 'Screenshots') ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#seo') ?>"><?= htmlspecialchars($t['nav']['seo'] ?? 'SEO') ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#demo') ?>"><?= htmlspecialchars($t['nav']['demo']) ?></a>
+            <a href="<?= shs_url('demo-install.php') ?>"><?= htmlspecialchars($t['nav']['install'] ?? 'Install') ?></a>
+            <a href="<?= shs_demo_url() ?>"><i class="fas fa-store" aria-hidden="true"></i> <?= htmlspecialchars($t['demo']['frontend']) ?></a>
+        </nav>
         <div class="shs-header-end">
             <a href="<?= shs_url('order.php') ?>" class="shs-btn-primary shs-header-cta">
                 <i class="fas fa-laptop-code" aria-hidden="true"></i>

@@ -98,6 +98,10 @@ function sh_bootstrap_data(): void
     if (!isset($_SESSION['sh_cart']) || !is_array($_SESSION['sh_cart'])) {
         $_SESSION['sh_cart'] = [];
     }
+    if (is_file(__DIR__ . '/product-reviews-storage.php')) {
+        require_once __DIR__ . '/product-reviews-storage.php';
+        sh_product_reviews_seed_demo();
+    }
 }
 
 function sh_cart_items(): array

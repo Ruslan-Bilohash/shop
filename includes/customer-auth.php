@@ -206,6 +206,11 @@ function sh_customer_login_demo(): void
         'email'    => 'demo@bilohash.com',
         'role'     => 'customer',
     ];
+    if (is_file(__DIR__ . '/billing-demo-stats.php')) {
+        require_once __DIR__ . '/billing-demo-stats.php';
+        $lang = trim((string) ($_GET['lang'] ?? $_POST['lang'] ?? 'en')) ?: 'en';
+        sh_demo_stats_record('customer_demo_login', ['lang' => $lang, 'role' => 'customer']);
+    }
     sh_customer_after_login();
 }
 

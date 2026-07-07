@@ -95,7 +95,9 @@ function sh_is_installed(): bool
 function sh_is_install_script(): bool
 {
     $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-    return str_ends_with($script, '/install.php') || str_ends_with($script, '/install/install.php');
+    return str_ends_with($script, '/install.php')
+        || str_ends_with($script, '/install/install.php')
+        || str_ends_with($script, '/migrate-to-mysql.php');
 }
 
 function sh_install_url(): string
@@ -118,7 +120,7 @@ function sh_install_redirect_if_needed(): void
         return;
     }
     $base = basename(str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? ''));
-    if (in_array($base, ['_health.php'], true)) {
+    if (in_array($base, ['_health.php', 'install.php', 'migrate-to-mysql.php'], true)) {
         return;
     }
     header('Location: ' . sh_install_url(), true, 302);
@@ -267,6 +269,18 @@ function sh_db_save_leads(array $list): bool
 }
 
 /** @return list<array<string, mixed>> */
+function sh_db_load_orders(): array
+{
+    return sh_db_load_collection('orders');
+}
+
+/** @param list<array<string, mixed>> $list */
+function sh_db_save_orders(array $list): bool
+{
+    return sh_db_save_collection('orders', array_values($list), 'id');
+}
+
+/** @return list<array<string, mixed>> */
 function sh_db_load_subscribers(): array
 {
     return sh_db_load_collection('subscribers');
@@ -290,6 +304,41 @@ function sh_db_load_customer_profiles(): array
         }
     }
     return $out;
+}
+
+function sh_db_ensure_product_reviews_table(): void
+{
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $pdo = sh_db_pdo();
+    if (!$pdo instanceof PDO) {
+        return;
+    }
+    $tbl = sh_db_table('product_reviews');
+    $pdo->exec(
+        'CREATE TABLE IF NOT EXISTS `' . $tbl . '` (
+          `id` VARCHAR(64) NOT NULL,
+          `data` JSON NOT NULL,
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+    );
+    $done = true;
+}
+
+/** @return list<array<string, mixed>> */
+function sh_db_load_product_reviews(): array
+{
+    sh_db_ensure_product_reviews_table();
+    return sh_db_load_collection('product_reviews');
+}
+
+/** @param list<array<string, mixed>> $list */
+function sh_db_save_product_reviews(array $list): bool
+{
+    sh_db_ensure_product_reviews_table();
+    return sh_db_save_collection('product_reviews', array_values($list), 'id');
 }
 
 /** @param array<string, array<string, mixed>> $profiles */

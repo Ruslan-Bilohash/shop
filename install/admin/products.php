@@ -10,9 +10,6 @@ $admin_page = 'products';
 $tp = $ta['products_page'] ?? [];
 $page_title = $ta['products'] ?? 'Products';
 
-$flash = $_SESSION['sh_admin_flash'] ?? null;
-unset($_SESSION['sh_admin_flash']);
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id'])) {
     $id = trim($_POST['delete_id'] ?? '');
     if ($id !== '' && sh_product_delete($id)) {
@@ -29,13 +26,6 @@ usort($products, fn($a, $b) => strcmp(sh_localized($a, 'name', $lang), sh_locali
 
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash): ?>
-<div class="adm-alert adm-alert-<?= $flash['type'] === 'success' ? 'success' : 'error' ?>">
-    <i class="fas fa-<?= $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-    <?= htmlspecialchars($flash['msg'] ?? '') ?>
-</div>
-<?php endif; ?>
 
 <div class="adm-alert adm-alert-info">
     <i class="fas fa-info-circle"></i> <?= htmlspecialchars($tp['note'] ?? 'Manage demo products, prices, stock and per-product SEO in the editor.') ?>

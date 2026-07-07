@@ -37,6 +37,14 @@ if (is_file($shsBilling)) {
             <span class="shs-logo-icon">S</span>
             <span class="shs-logo-text">Shop <em>CMS</em></span>
         </a>
+        <nav class="shs-nav-desktop" aria-label="<?= htmlspecialchars($t['nav']['main_nav'] ?? 'Main') ?>">
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#features') ?>"><?= htmlspecialchars($t['nav']['features']) ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#screenshots') ?>"><?= htmlspecialchars($t['nav']['screenshots'] ?? 'Screenshots') ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#seo') ?>"><?= htmlspecialchars($t['nav']['seo'] ?? 'SEO') ?></a>
+            <a href="<?= htmlspecialchars($shs_section_prefix . '#demo') ?>"><?= htmlspecialchars($t['nav']['demo']) ?></a>
+            <a href="<?= shs_url('demo-install.php') ?>"><?= htmlspecialchars($t['nav']['install'] ?? 'Install') ?></a>
+            <a href="<?= shs_demo_url() ?>"><i class="fas fa-store" aria-hidden="true"></i> <?= htmlspecialchars($t['demo']['frontend']) ?></a>
+        </nav>
         <div class="shs-header-end">
             <a href="<?= shs_url('order.php') ?>" class="shs-btn-primary shs-header-cta">
                 <i class="fas fa-laptop-code" aria-hidden="true"></i>

@@ -25,15 +25,24 @@ function sh_render_homepage_block(array $block): void
             </div>
             <?php endif; ?>
             <ul class="sh-about-features">
-                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars($t['about_script']['f1']) ?></li>
-                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars($t['about_script']['f2']) ?></li>
-                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars($t['about_script']['f3']) ?></li>
+                <?php for ($shFi = 1; $shFi <= 4; $shFi++):
+                    $shFk = 'f' . $shFi;
+                    if (empty($t['about_script'][$shFk])) {
+                        continue;
+                    }
+                ?>
+                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars((string) $t['about_script'][$shFk]) ?></li>
+                <?php endfor; ?>
             </ul>
             <div class="sh-about-actions">
                 <a href="<?= sh_url('index.php') ?>" class="sh-btn-primary"><i class="fas fa-play-circle"></i> <?= htmlspecialchars($t['about_script']['demo_btn']) ?></a>
+                <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
                 <a href="<?= sh_url('admin/login.php') ?>" class="sh-btn-outline-dark"><i class="fas fa-user-shield"></i> <?= htmlspecialchars($t['about_script']['admin_btn']) ?></a>
+                <?php endif; ?>
             </div>
+            <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
             <p class="sh-about-creds"><i class="fas fa-key"></i> <?= htmlspecialchars($t['about_script']['creds']) ?></p>
+            <?php endif; ?>
         </div>
         <div class="sh-about-script-visual">
             <div class="sh-about-mock">
@@ -65,7 +74,14 @@ function sh_render_homepage_block(array $block): void
             break;
 
         case 'featured':
+            require_once __DIR__ . '/product-3d-lib.php';
             $featured = sh_featured_products($limit);
+            $featured_3d = sh_homepage_3d_products();
+            $ids3d = array_flip(array_map(static fn($p) => (string) ($p['id'] ?? ''), $featured_3d));
+            $featured_rest = array_values(array_filter(
+                $featured,
+                static fn($p) => !isset($ids3d[(string) ($p['id'] ?? '')])
+            ));
             ?>
 <div class="sh-container">
     <div class="sh-section-head">
@@ -75,9 +91,16 @@ function sh_render_homepage_block(array $block): void
         </div>
         <a href="<?= sh_url('search.php') ?>" class="sh-link-more"><?= htmlspecialchars($t['home']['view_all']) ?> →</a>
     </div>
-    <div class="sh-product-grid">
-        <?php foreach ($featured as $product): require __DIR__ . '/product-card.php'; endforeach; ?>
+    <?php if ($featured_3d !== []): ?>
+    <div class="sh-product-3d-grid" aria-label="<?= htmlspecialchars($t['home']['featured_3d'] ?? '3D featured products') ?>">
+        <?php foreach ($featured_3d as $product): require __DIR__ . '/product-3d-card.php'; endforeach; ?>
     </div>
+    <?php endif; ?>
+    <?php if ($featured_rest !== []): ?>
+    <div class="sh-product-grid sh-product-grid--after-3d">
+        <?php foreach ($featured_rest as $product): require __DIR__ . '/product-card.php'; endforeach; ?>
+    </div>
+    <?php endif; ?>
 </div>
             <?php
             break;
@@ -212,6 +235,11 @@ function sh_render_homepage_block(array $block): void
     </div>
 </div>
             <?php
+            break;
+
+        case 'ecosystem_releases':
+            require_once __DIR__ . '/ecosystem-release-section.php';
+            sh_render_ecosystem_release_section();
             break;
 
         case 'custom':

@@ -20,6 +20,56 @@ function sh_product_by_id(string $id, bool $include_inactive = false): ?array
     return null;
 }
 
+/** Fill missing per-language strings from the first available translation. */
+function sh_product_normalize_lang_map(array $map, ?string $preferLang = null): array
+{
+    if (!function_exists('sh_langs')) {
+        require_once __DIR__ . '/store-settings.php';
+    }
+    $fallback = '';
+    $order = array_unique(array_filter(array_merge(
+        [$preferLang ?? ''],
+        ['en', 'no', 'uk', 'ru', 'sv', 'lt'],
+        array_keys($map),
+        array_keys(sh_langs())
+    )));
+    foreach ($order as $code) {
+        if ($code === '') {
+            continue;
+        }
+        $val = trim((string) ($map[$code] ?? ''));
+        if ($val !== '') {
+            $fallback = $val;
+            break;
+        }
+    }
+    foreach (array_keys(sh_langs()) as $code) {
+        if (trim((string) ($map[$code] ?? '')) === '' && $fallback !== '') {
+            $map[$code] = $fallback;
+        }
+    }
+    return $map;
+}
+
+/** Ensure product name, description and SEO meta fields exist for every active language. */
+function sh_product_normalize_record(array $record, ?string $preferLang = null): array
+{
+    if (isset($record['name']) && is_array($record['name'])) {
+        $record['name'] = sh_product_normalize_lang_map($record['name'], $preferLang);
+    }
+    if (isset($record['desc']) && is_array($record['desc'])) {
+        $record['desc'] = sh_product_normalize_lang_map($record['desc'], $preferLang);
+    }
+    if (!empty($record['seo']) && is_array($record['seo'])) {
+        foreach (['meta_title', 'meta_description', 'meta_keywords', 'intro'] as $seoKey) {
+            if (!empty($record['seo'][$seoKey]) && is_array($record['seo'][$seoKey])) {
+                $record['seo'][$seoKey] = sh_product_normalize_lang_map($record['seo'][$seoKey], $preferLang);
+            }
+        }
+    }
+    return $record;
+}
+
 function sh_localized(array $item, string $field, string $lang): string
 {
     $val = $item[$field] ?? '';

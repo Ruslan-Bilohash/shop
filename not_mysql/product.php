@@ -37,6 +37,9 @@ $on_sale      = sh_product_on_sale($product);
 $in_stock     = (int)($product['stock'] ?? 0) > 0;
 $related      = sh_related_products($product);
 $highlights   = sh_product_highlights($product, $lang);
+require_once __DIR__ . '/includes/product-reviews-storage.php';
+$review_agg   = sh_product_reviews_aggregate($id);
+$GLOBALS['sh_product_reviews_enabled'] = true;
 $canon_abs    = sh_product_canonical($product, $lang);
 $canonical    = $canon_abs;
 $page_title   = sh_product_meta_title($product, $lang);
@@ -103,6 +106,17 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
         <div class="sh-product-info">
             <a href="<?= sh_url('search.php?category=' . urlencode($cat)) ?>" class="sh-cat-tag sh-cat-tag-link"><?= htmlspecialchars(sh_category_label($cat, $lang)) ?></a>
             <h1><?= htmlspecialchars($name) ?></h1>
+            <?php if ($review_agg !== null):
+                $prUi = $t['product']['reviews'] ?? [];
+                $starsAria = sprintf($prUi['stars_aria'] ?? '%s out of 5', (string) $review_agg['rating']);
+                require_once __DIR__ . '/includes/product-reviews-section.php';
+                ?>
+            <a href="#shProductReviews" class="sh-product-rating-link">
+                <?= sh_product_reviews_stars_html((float) $review_agg['rating'], $starsAria) ?>
+                <span class="sh-product-rating-score"><?= htmlspecialchars((string) $review_agg['rating']) ?></span>
+                <span class="sh-product-rating-count"><?= htmlspecialchars(sprintf($prUi['count_short'] ?? '(%d)', (int) $review_agg['count'])) ?></span>
+            </a>
+            <?php endif; ?>
             <div class="sh-product-price-row">
                 <strong class="sh-price-lg"><?= sh_price($price) ?></strong>
                 <?php if ($on_sale): ?><span class="sh-price-was-lg"><?= sh_price($original) ?></span><?php endif; ?>
@@ -160,6 +174,7 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
     <div class="sh-tabs-wrap">
         <div class="sh-tabs" role="tablist">
             <button type="button" class="sh-tab active" data-tab="overview" role="tab" aria-selected="true"><?= htmlspecialchars($t['product']['tab_overview']) ?></button>
+            <button type="button" class="sh-tab" data-tab="reviews" role="tab"><?= htmlspecialchars($t['product']['tab_reviews'] ?? ($t['product']['reviews']['title'] ?? 'Reviews')) ?></button>
             <button type="button" class="sh-tab" data-tab="details" role="tab"><?= htmlspecialchars($t['product']['tab_details']) ?></button>
         </div>
         <div id="tab-overview" class="sh-tab-panel active">
@@ -172,6 +187,14 @@ sh_render_admin_storefront_bar($product['id'] ?? $id);
                 <?php endforeach; ?>
             </ul>
             <?php endif; ?>
+        </div>
+        <div id="tab-reviews" class="sh-tab-panel" hidden>
+            <?php
+            if (!function_exists('sh_render_product_reviews_section')) {
+                require_once __DIR__ . '/includes/product-reviews-section.php';
+            }
+            sh_render_product_reviews_section($product, $lang);
+            ?>
         </div>
         <div id="tab-details" class="sh-tab-panel" hidden>
             <dl class="sh-specs-table">

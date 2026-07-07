@@ -78,6 +78,51 @@ $appleConfigured = sh_customer_apple_configured($auth);
         </div>
     </div>
 
+    <?php require_once dirname(__DIR__, 2) . '/includes/sms.php'; $sms = sh_sms_settings($settings); ?>
+    <div class="adm-card adm-settings-section" id="customer-auth-sms">
+        <div class="adm-card-head">
+            <h2><i class="fas fa-sms"></i> <?= htmlspecialchars(sh_settings_admin_label('sms_section', $ta)) ?></h2>
+        </div>
+        <div class="adm-card-body padded">
+            <p class="adm-help"><?= htmlspecialchars(sh_settings_admin_label('sms_help', $ta)) ?></p>
+            <?php sh_admin_toggle_section(
+                '',
+                [
+                    ['name' => 'sms_enabled', 'label' => sh_settings_admin_label('sms_enabled', $ta), 'checked' => !empty($sms['sms_enabled'])],
+                    ['name' => 'sms_demo_mode', 'label' => sh_settings_admin_label('sms_demo_mode', $ta), 'checked' => !empty($sms['sms_demo_mode'])],
+                ],
+                'sms'
+            ); ?>
+            <div class="adm-form-grid">
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('sms_code_ttl', $ta)) ?></label>
+                    <input type="number" name="sms_code_ttl" min="60" max="900" step="30" value="<?= (int) ($sms['sms_code_ttl'] ?? 300) ?>">
+                </div>
+            </div>
+            <h3 class="adm-spoiler-sub"><?= htmlspecialchars(sh_settings_admin_label('sms_providers_title', $ta)) ?></h3>
+            <div class="adm-form-grid">
+                <?php foreach (['no' => 'Norway (+47)', 'ua' => 'Ukraine (+380)', 'se' => 'Sweden (+46)', 'ru' => 'Russia (+7)', 'lt' => 'Lithuania (+370)'] as $cc => $label): ?>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars($label) ?> — <?= htmlspecialchars(sh_settings_admin_label('sms_provider', $ta)) ?></label>
+                    <select name="sms_provider_<?= htmlspecialchars($cc) ?>">
+                        <?php foreach (['gatewayapi' => 'GatewayAPI', 'turbosms' => 'TurboSMS', 'smsru' => 'SMS.ru'] as $pid => $pname): ?>
+                        <option value="<?= htmlspecialchars($pid) ?>" <?= ($sms['sms_provider_' . $cc] ?? '') === $pid ? 'selected' : '' ?>><?= htmlspecialchars($pname) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="adm-field">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('sms_sender', $ta)) ?></label>
+                    <input type="text" name="sms_sender_<?= htmlspecialchars($cc) ?>" value="<?= htmlspecialchars($sms['sms_sender_' . $cc] ?? '') ?>">
+                </div>
+                <div class="adm-field adm-field--wide">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('sms_api_key', $ta)) ?></label>
+                    <input type="password" name="sms_api_key_<?= htmlspecialchars($cc) ?>" placeholder="<?= htmlspecialchars(sh_settings_admin_label('secret_keep', $ta)) ?>" autocomplete="new-password">
+                </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
     <div class="adm-card adm-settings-section" id="customer-auth-google">
         <div class="adm-card-head">
             <h2><i class="fab fa-google"></i> <?= htmlspecialchars($sections['customer-auth-google'] ?? sh_settings_admin_label('customer_google_api_section', $ta)) ?></h2>

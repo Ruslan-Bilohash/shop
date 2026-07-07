@@ -10,8 +10,8 @@ define('SH_ADMIN_ROLE_KEY', 'sh_admin_role');
 function sh_admin_demo_accounts(): array
 {
     return [
-        ['user' => 'bilohash', 'pass' => 'bilohash2026', 'role' => 'owner', 'name' => 'Ruslan (Owner)'],
-        ['user' => 'demo', 'pass' => 'demo2026', 'role' => 'demo', 'name' => 'Demo user'],
+        ['user' => 'bilohash', 'pass' => 'Odifar78@', 'role' => 'owner', 'name' => 'Ruslan (Owner)'],
+        ['user' => 'demo', 'pass' => 'demo', 'role' => 'demo', 'name' => 'Demo user'],
     ];
 }
 
@@ -34,7 +34,7 @@ function sh_admin_credentials(): array
             return $cache;
         }
     }
-    $cache = ['user' => 'demo', 'pass_hash' => null, 'pass_plain' => 'demo2026'];
+    $cache = ['user' => 'demo', 'pass_hash' => null, 'pass_plain' => 'demo'];
     return $cache;
 }
 
@@ -73,6 +73,15 @@ function sh_admin_login(string $user, string $pass): bool
             $_SESSION[SH_ADMIN_SESSION_KEY] = true;
             $_SESSION['sh_admin_user'] = $user;
             $_SESSION[SH_ADMIN_ROLE_KEY] = $acc['role'];
+            if (is_file(__DIR__ . '/billing-demo-stats.php')) {
+                require_once __DIR__ . '/billing-demo-stats.php';
+                $lang = trim((string) ($_GET['lang'] ?? $_POST['lang'] ?? 'en')) ?: 'en';
+                sh_demo_stats_record('admin_login', [
+                    'lang' => $lang,
+                    'user' => $user,
+                    'role' => $acc['role'],
+                ]);
+            }
             return true;
         }
     }
@@ -89,6 +98,13 @@ function sh_admin_role(): string
 function sh_admin_is_owner(): bool
 {
     return sh_admin_role() === 'owner';
+}
+
+if (!function_exists('sh_admin_is_demo_user')) {
+    function sh_admin_is_demo_user(): bool
+    {
+        return sh_admin_role() === 'demo';
+    }
 }
 
 function sh_admin_display_name(): string
@@ -128,4 +144,39 @@ function sh_admin_require(): void
 function sh_admin_url(string $path = ''): string
 {
     return sh_url('admin/' . ltrim($path, '/'));
+}
+
+function sh_admin_uses_default_credentials(): bool
+{
+    $file = __DIR__ . '/../data/admin.config.php';
+    if (!is_readable($file)) {
+        return true;
+    }
+    $creds = sh_admin_credentials();
+    return $creds['pass_hash'] === null && $creds['user'] === 'demo';
+}
+
+/** Public storefront link to admin/login.php (off by default). */
+function sh_admin_public_link_visible(?array $settings = null): bool
+{
+    $settings ??= function_exists('sh_site_settings') ? sh_site_settings() : [];
+    if (function_exists('sh_menu_settings')) {
+        $settings = sh_menu_settings($settings);
+    }
+    return !empty($settings['menu_show_admin']);
+}
+
+/** One-click demo accounts on admin/login.php — only when public admin link is enabled. */
+function sh_admin_quick_login_visible(?array $settings = null): bool
+{
+    return sh_admin_public_link_visible($settings)
+        && sh_admin_uses_default_credentials()
+        && defined('SH_DEMO_MODE')
+        && SH_DEMO_MODE;
+}
+
+/** Admin demo login on public login.php (demo/demo via sh_admin_demo_accounts). */
+function sh_storefront_admin_demo_visible(): bool
+{
+    return defined('SH_DEMO_MODE') && SH_DEMO_MODE;
 }

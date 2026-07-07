@@ -25,15 +25,24 @@ function sh_render_homepage_block(array $block): void
             </div>
             <?php endif; ?>
             <ul class="sh-about-features">
-                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars($t['about_script']['f1']) ?></li>
-                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars($t['about_script']['f2']) ?></li>
-                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars($t['about_script']['f3']) ?></li>
+                <?php for ($shFi = 1; $shFi <= 4; $shFi++):
+                    $shFk = 'f' . $shFi;
+                    if (empty($t['about_script'][$shFk])) {
+                        continue;
+                    }
+                ?>
+                <li><i class="fas fa-check-circle"></i> <?= htmlspecialchars((string) $t['about_script'][$shFk]) ?></li>
+                <?php endfor; ?>
             </ul>
             <div class="sh-about-actions">
                 <a href="<?= sh_url('index.php') ?>" class="sh-btn-primary"><i class="fas fa-play-circle"></i> <?= htmlspecialchars($t['about_script']['demo_btn']) ?></a>
+                <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
                 <a href="<?= sh_url('admin/login.php') ?>" class="sh-btn-outline-dark"><i class="fas fa-user-shield"></i> <?= htmlspecialchars($t['about_script']['admin_btn']) ?></a>
+                <?php endif; ?>
             </div>
+            <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
             <p class="sh-about-creds"><i class="fas fa-key"></i> <?= htmlspecialchars($t['about_script']['creds']) ?></p>
+            <?php endif; ?>
         </div>
         <div class="sh-about-script-visual">
             <div class="sh-about-mock">
@@ -226,6 +235,11 @@ function sh_render_homepage_block(array $block): void
     </div>
 </div>
             <?php
+            break;
+
+        case 'ecosystem_releases':
+            require_once __DIR__ . '/ecosystem-release-section.php';
+            sh_render_ecosystem_release_section();
             break;
 
         case 'custom':

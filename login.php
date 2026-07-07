@@ -1,8 +1,11 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/includes/sms.php';
+require_once __DIR__ . '/includes/admin-auth.php';
 
 $auth = sh_customer_auth_settings();
+$ta = $t['admin'] ?? [];
+$show_admin_demo = sh_storefront_admin_demo_visible();
 $current_page = 'login';
 $error = '';
 $success = '';
@@ -162,6 +165,40 @@ require __DIR__ . '/includes/header.php';
             <?php endif; ?>
             <?php endif; ?>
         </div>
+        <?php endif; ?>
+
+        <?php if ($show_admin_demo): ?>
+        <div class="sh-auth-divider"><span><?= htmlspecialchars($ta['title'] ?? 'Admin panel') ?></span></div>
+        <div class="sh-auth-admin-demo">
+            <p class="sh-auth-admin-demo-hint"><i class="fas fa-info-circle"></i> <?= htmlspecialchars($ta['demo_accounts_title'] ?? 'Quick demo login') ?></p>
+            <button type="button" class="sh-auth-admin-demo-acc" data-user="demo" data-pass="demo">
+                <i class="fas fa-user-shield"></i>
+                <span><strong><?= htmlspecialchars($ta['demo_role_staff'] ?? 'Demo user') ?></strong><small>demo / demo</small></span>
+            </button>
+            <form method="post" action="<?= htmlspecialchars(sh_admin_url('login.php')) ?>" class="sh-auth-admin-demo-form" id="shAdminDemoLoginForm">
+                <label for="shAdminUsername"><?= htmlspecialchars($ta['username'] ?? 'Username') ?></label>
+                <input type="text" id="shAdminUsername" name="username" required autocomplete="username" value="demo">
+                <label for="shAdminPassword"><?= htmlspecialchars($ta['password'] ?? 'Password') ?></label>
+                <input type="password" id="shAdminPassword" name="password" required autocomplete="current-password" value="demo">
+                <button type="submit" class="sh-btn-primary sh-btn-block">
+                    <i class="fas fa-sign-in-alt"></i> <?= htmlspecialchars($ta['login_btn'] ?? 'Log in') ?>
+                </button>
+            </form>
+        </div>
+        <script>
+        (function(){
+            var btn=document.querySelector('.sh-auth-admin-demo-acc');
+            if(!btn)return;
+            btn.addEventListener('click',function(){
+                var u=document.getElementById('shAdminUsername');
+                var p=document.getElementById('shAdminPassword');
+                var f=document.getElementById('shAdminDemoLoginForm');
+                if(u)u.value=btn.dataset.user||'demo';
+                if(p)p.value=btn.dataset.pass||'demo';
+                if(f)f.submit();
+            });
+        })();
+        </script>
         <?php endif; ?>
 
         <p class="sh-auth-demo-note"><i class="fas fa-info-circle"></i> <?= htmlspecialchars($t['customer_auth']['demo_note'] ?? '') ?></p>

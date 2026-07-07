@@ -184,7 +184,7 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
         function mountObject(object) {
             productGroup.clear();
             productGroup.add(object);
-            fitObject(productGroup, 1.35);
+            fitObject(productGroup, 1.05);
         }
 
         if (modelUrl) {

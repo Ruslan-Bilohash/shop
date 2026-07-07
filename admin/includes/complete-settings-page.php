@@ -8,6 +8,9 @@ require_once __DIR__ . '/admin-field-help.php';
 
 $admin_page = $admin_page ?? 'settings';
 $page_title = sh_settings_admin_label('settings_tab_' . $settings_tab, $ta);
+if (!empty($settings_tab_beta)) {
+    $page_title .= ' — ' . sh_settings_admin_label('block_builder_beta_badge', $ta);
+}
 require __DIR__ . '/settings-page-shell.php';
 $admin_flash = $flash !== '' ? $flash : null;
 require $bh_cms_layout;

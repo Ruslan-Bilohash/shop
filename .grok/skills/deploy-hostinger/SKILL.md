@@ -18,7 +18,7 @@ description: >
 
 ## One-time setup (user)
 
-1. hPanel → **SSH Access** → enable SSH, note host, port (often `65002`), user `u762384583`.
+1. hPanel → **SSH Access** → enable SSH. Production: `ssh -p 65002 u762384583@45.84.204.61`
 2. Copy `scripts/deploy.config.example.ps1` → `scripts/deploy.config.local.ps1` (gitignored).
 3. Either set `Password` in that file, or add your public key to Hostinger and leave `Password` empty.
 
@@ -26,9 +26,9 @@ Optional SSH alias in `~/.ssh/config`:
 
 ```
 Host bilohash
-    HostName 187.124.26.9
+    HostName 45.84.204.61
     User u762384583
-    Port 22
+    Port 65002
     IdentityFile ~/.ssh/id_ed25519
 ```
 

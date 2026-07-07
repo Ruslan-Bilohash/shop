@@ -21,6 +21,8 @@
         return form.querySelector('[name="' + name + '"]');
     }
 
+    var aiAsideBox = document.querySelector('.adm-product-edit-aside .adm-ai-source-box--aside');
+
     function setStatus(el, msg, type) {
         if (!el) return;
         el.textContent = msg;
@@ -31,19 +33,39 @@
         el.hidden = !msg;
     }
 
+    function setThinkingStatus(el, msg) {
+        if (!el) return;
+        var base = el.classList.contains('adm-ai-status--inline')
+            ? 'adm-ai-status adm-ai-status--inline'
+            : 'adm-ai-status adm-ai-status--block';
+        el.className = base + ' adm-ai-status--loading';
+        el.innerHTML = escapeHtml(msg || 'Thinking…')
+            + ' <span class="adm-ai-thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span>';
+        el.hidden = false;
+    }
+
+    function escapeHtml(text) {
+        var div = document.createElement('div');
+        div.textContent = String(text || '');
+        return div.innerHTML;
+    }
+
     function setLoading(btn, loading) {
         if (!btn) return;
         btn.classList.toggle('is-loading', loading);
         btn.disabled = loading;
+        if (aiAsideBox) {
+            aiAsideBox.classList.toggle('is-ai-thinking', loading);
+        }
         var icon = btn.querySelector('.adm-ai-btn-icon');
         var label = btn.querySelector('.adm-ai-btn-label');
         if (icon) {
             icon.className = loading
-                ? 'fas fa-spinner adm-ai-btn-icon'
+                ? 'fas fa-brain adm-ai-btn-icon'
                 : 'fas fa-wand-magic-sparkles adm-ai-btn-icon';
         }
         if (label && loading) {
-            label.textContent = btn.getAttribute('data-generating') || 'Generating…';
+            label.textContent = btn.getAttribute('data-thinking') || btn.getAttribute('data-generating') || 'Thinking…';
         } else if (label) {
             label.textContent = btn.getAttribute('data-label-default') || label.textContent;
         }
@@ -112,11 +134,26 @@
         if (val) setFieldValue(sourceDescField, val);
     }
 
+    if (sourceNameField) {
+        sourceNameField.addEventListener('input', function () {
+            if (!aiNameInput) return;
+            var src = sourceNameField.value.trim();
+            if (src && (!aiNameInput.value.trim() || aiNameInput.dataset.syncedFromSource === '1')) {
+                aiNameInput.value = src;
+                aiNameInput.dataset.syncedFromSource = '1';
+            }
+        });
+    }
+
     if (aiNameInput) {
         if (!aiNameInput.value && sourceNameField && sourceNameField.value) {
             aiNameInput.value = sourceNameField.value.trim();
+            aiNameInput.dataset.syncedFromSource = '1';
         }
-        aiNameInput.addEventListener('input', syncAiNameToSource);
+        aiNameInput.addEventListener('input', function () {
+            aiNameInput.dataset.syncedFromSource = '0';
+            syncAiNameToSource();
+        });
         aiNameInput.addEventListener('change', syncAiNameToSource);
     }
 
@@ -227,11 +264,25 @@
                 }
                 throw new Error(text || ('HTTP ' + r.status));
             }
-            if (!r.ok) {
+            if (!r.ok && (!res || typeof res !== 'object')) {
                 throw new Error((res && res.error) || ('HTTP ' + r.status));
             }
             return res;
         });
+    }
+
+    function hasAiPayload(data) {
+        if (!data || typeof data !== 'object') return false;
+        return !!(data.names || data.desc || data.seo);
+    }
+
+    function applyDemoFallback(productName, category, brief, statusEl, btn, reason) {
+        applyAiData({
+            ok: true,
+            demo: true,
+            data: buildClientDemoData(productName, category, brief),
+            error: reason || ''
+        }, statusEl, btn);
     }
 
     function requestAi(productName, category, brief) {
@@ -283,29 +334,42 @@
 
         syncAiNameToSource();
         syncAiBriefToSource();
+        var thinkingMsg = btn.getAttribute('data-thinking') || btn.getAttribute('data-generating') || 'Thinking…';
+        var startedAt = Date.now();
+        var minThinkingMs = 700;
+
         setLoading(btn, true);
-        setStatus(statusEl, btn.getAttribute('data-generating') || 'Generating…', 'loading');
+        setThinkingStatus(statusEl, thinkingMsg);
+
+        function finishLoading() {
+            var wait = Math.max(0, minThinkingMs - (Date.now() - startedAt));
+            window.setTimeout(function () {
+                setLoading(btn, false);
+            }, wait);
+        }
 
         requestAi(productName, category, brief)
             .then(function (res) {
+                if (!res || res.ok === false || !hasAiPayload(res.data)) {
+                    applyDemoFallback(productName, category, brief, statusEl, btn, (res && res.error) || '');
+                    return;
+                }
                 applyAiData(res, statusEl, btn);
             })
             .catch(function (err) {
                 try {
-                    applyAiData({
-                        ok: true,
-                        demo: true,
-                        data: buildClientDemoData(productName, category, brief),
-                        error: err.message || ''
-                    }, statusEl, btn);
+                    applyDemoFallback(productName, category, brief, statusEl, btn, err.message || '');
                 } catch (e2) {
                     setStatus(statusEl, err.message || (btn.getAttribute('data-failed') || 'Failed'), 'error');
                 }
             })
-            .finally(function () {
-                setLoading(btn, false);
-            });
+            .finally(finishLoading);
     }
+
+    form.addEventListener('submit', function () {
+        syncAiNameToSource();
+        syncAiBriefToSource();
+    });
 
     var btnGenerate = document.getElementById('shAiGenerateBtn');
     var statusEl = document.getElementById('shAiStatus');

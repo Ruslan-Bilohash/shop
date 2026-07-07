@@ -9,9 +9,6 @@ $admin_page = 'products-io';
 $tp = $ta['products_io_page'] ?? [];
 $page_title = $ta['products_io'] ?? ($tp['title'] ?? 'Import / Export');
 
-$flash = $_SESSION['sh_admin_flash'] ?? null;
-unset($_SESSION['sh_admin_flash']);
-
 $formats = sh_product_io_formats();
 $settings = sh_load_settings();
 $sourceLang = trim((string) ($settings['ai_source_lang'] ?? ''));
@@ -97,13 +94,6 @@ $activeCount = count(array_filter(sh_load_products_raw(), static fn(array $p): b
 
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash): ?>
-<div class="adm-alert adm-alert-<?= $flash['type'] === 'success' ? 'success' : 'error' ?>">
-    <i class="fas fa-<?= $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-    <?= htmlspecialchars($flash['msg'] ?? '') ?>
-</div>
-<?php endif; ?>
 
 <div class="adm-alert adm-alert-info">
     <i class="fas fa-info-circle"></i>

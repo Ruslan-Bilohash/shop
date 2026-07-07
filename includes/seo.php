@@ -246,6 +246,18 @@ function sh_render_public_stylesheets(): void
     <?php
 }
 
+function sh_render_product_review_assets(): void
+{
+    if (empty($GLOBALS['sh_product_reviews_enabled'])) {
+        return;
+    }
+    $v = sh_public_script_version();
+    ?>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="<?= htmlspecialchars(sh_asset('js/product-reviews.js')) ?>?v=<?= htmlspecialchars($v) ?>" defer></script>
+    <?php
+}
+
 function sh_render_product_3d_assets(): void
 {
     if (empty($GLOBALS['sh_product_3d_enabled'])) {
@@ -383,7 +395,20 @@ function sh_seo_product(array $product, string $lang, string $canonical): array
         ];
     }
 
-    if (sh_product_schema_enabled($product, 'aggregate_rating', false)
+    $agg = null;
+    if (is_file(__DIR__ . '/product-reviews-storage.php')) {
+        require_once __DIR__ . '/product-reviews-storage.php';
+        $agg = sh_product_reviews_aggregate((string) ($product['id'] ?? ''));
+    }
+    if ($agg !== null && sh_product_schema_enabled($product, 'aggregate_rating', true)) {
+        $graph['aggregateRating'] = [
+            '@type'       => 'AggregateRating',
+            'ratingValue' => (string) $agg['rating'],
+            'reviewCount' => (int) $agg['count'],
+            'bestRating'  => '5',
+            'worstRating' => '1',
+        ];
+    } elseif (sh_product_schema_enabled($product, 'aggregate_rating', false)
         && !empty($seo['rating_value'])
         && !empty($seo['rating_count'])) {
         $graph['aggregateRating'] = [

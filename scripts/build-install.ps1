@@ -13,8 +13,17 @@ $dirs = @(
     'admin', 'api', 'assets', 'includes', 'lang', 'site', 'uploads'
 )
 
+$extraIncludes = @('license-runtime.php', 'shop-license.php')
+foreach ($f in $extraIncludes) {
+    $src = Join-Path $root "includes\$f"
+    if (Test-Path $src) {
+        Copy-Item $src (Join-Path $dest "includes\$f") -Force
+    }
+}
+
+# install/index.php is a redirect stub — never copy storefront index.php into install/
 $files = @(
-    'index.php', 'init.php', 'config.php', 'cart.php', 'checkout.php',
+    'init.php', 'config.php', 'cart.php', 'checkout.php',
     'contact.php', 'login.php', 'logout.php', 'news.php', 'news-article.php',
     'page.php', 'product.php', 'search.php', 'solutions.php', 'vertical.php',
     'track.php', 'track-np.php', 'mobile-app.php', '404.php', '_health.php',

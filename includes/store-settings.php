@@ -9,6 +9,7 @@ function sh_builtin_langs(): array
         'uk' => ['label' => 'UA', 'name' => 'Українська', 'flag' => '🇺🇦', 'locale' => 'uk-UA', 'html' => 'uk'],
         'ru' => ['label' => 'RU', 'name' => 'Русский', 'flag' => '🇷🇺', 'locale' => 'ru-RU', 'html' => 'ru'],
         'sv' => ['label' => 'SV', 'name' => 'Svenska', 'flag' => '🇸🇪', 'locale' => 'sv-SE', 'html' => 'sv'],
+        'lt' => ['label' => 'LT', 'name' => 'Lietuvių', 'flag' => '🇱🇹', 'locale' => 'lt-LT', 'html' => 'lt'],
     ];
 }
 
@@ -90,6 +91,8 @@ function sh_store_settings_defaults(): array
 
         'tracking_gtag_id'        => '',
         'tracking_meta_pixel'     => '',
+        'tracking_tiktok_pixel'   => '',
+        'pagespeed_api_key'       => '',
 
         'custom_head_html'        => '',
         'custom_footer_js'        => '',
@@ -103,6 +106,7 @@ function sh_store_settings_defaults(): array
         'design_sale_color'       => '',
         'design_border_radius'    => 10,
         'design_font_family'      => '',
+        'design_theme_id'         => 'nordic',
 
         'color_btn_search'        => '',
         'color_btn_search_hover'  => '',
@@ -115,6 +119,36 @@ function sh_store_settings_defaults(): array
         'posten_api_key'          => '',
         'posten_client_id'        => '',
         'posten_demo_mode'        => true,
+
+        'shipping_norway_enabled'   => true,
+        'shipping_norway_demo_mode' => true,
+        'shipping_carrier_posten'   => true,
+        'shipping_carrier_bring'    => true,
+        'shipping_carrier_helthjem' => true,
+        'shipping_carrier_instabox' => true,
+        'shipping_carrier_porterbuddy' => false,
+
+        'sms_enabled'             => true,
+        'sms_demo_mode'           => true,
+        'sms_code_ttl'            => 300,
+        'sms_provider_no'         => 'gatewayapi',
+        'sms_api_key_no'          => '',
+        'sms_sender_no'           => 'ShopCMS',
+        'sms_provider_ua'         => 'turbosms',
+        'sms_api_key_ua'          => '',
+        'sms_sender_ua'           => 'ShopCMS',
+        'sms_provider_se'         => 'gatewayapi',
+        'sms_api_key_se'          => '',
+        'sms_sender_se'           => 'ShopCMS',
+        'sms_provider_ru'         => 'smsru',
+        'sms_api_key_ru'          => '',
+        'sms_sender_ru'           => 'ShopCMS',
+        'sms_provider_lt'         => 'gatewayapi',
+        'sms_api_key_lt'          => '',
+        'sms_sender_lt'           => 'ShopCMS',
+        'sms_provider_default'    => 'gatewayapi',
+        'sms_api_key_default'     => '',
+        'sms_sender_default'      => 'ShopCMS',
 
         'nova_poshta_enabled'              => false,
         'nova_poshta_track_enabled'        => true,
@@ -205,6 +239,7 @@ function sh_analytics_settings_apply_post(array $post, array $settings): array
     $settings = sh_google_marketing_merge_settings($settings);
     $settings['tracking_gtag_id'] = trim($post['tracking_gtag_id'] ?? '');
     $settings['tracking_meta_pixel'] = trim($post['tracking_meta_pixel'] ?? '');
+    $settings['tracking_tiktok_pixel'] = preg_replace('/\D/', '', trim($post['tracking_tiktok_pixel'] ?? ''));
 
     $settings['google_ads_enabled'] = !empty($post['google_ads_enabled']);
     $settings['google_ads_id'] = sh_normalize_google_ads_id(trim($post['google_ads_id'] ?? ''));
@@ -286,7 +321,8 @@ function sh_posten_settings_apply_post(array $post, array $settings): array
     if (trim($post['posten_api_key'] ?? '') !== '') {
         $settings['posten_api_key'] = trim($post['posten_api_key']);
     }
-    return $settings;
+    require_once __DIR__ . '/norwegian-carriers.php';
+    return sh_norwegian_shipping_apply_post($post, $settings);
 }
 
 function sh_nova_poshta_settings_apply_post(array $post, array $settings): array
@@ -510,4 +546,5 @@ function sh_render_tracking_snippets(?array $settings = null): void
     require_once __DIR__ . '/google-marketing.php';
     sh_render_google_tracking_tags($settings);
     sh_render_meta_pixel_tag($settings);
+    sh_render_tiktok_pixel_tag($settings);
 }

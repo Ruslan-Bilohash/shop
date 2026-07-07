@@ -11,7 +11,7 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($layout_title) ?> — <?= htmlspecialchars($ta['title_suffix'] ?? 'Shop CMS Admin') ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=34">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=42">
     <link rel="stylesheet" href="<?= htmlspecialchars(bh_cms_admin_settings_css_href()) ?>">
     <?php foreach (($extra_css ?? []) as $cssHref): ?>
     <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssHref) ?>">
@@ -55,6 +55,38 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
                     <i class="fas fa-<?= sh_admin_is_owner() ? 'crown' : 'user' ?>"></i>
                     <?= htmlspecialchars(sh_admin_display_name()) ?>
                 </span>
+                <?php if (function_exists('sh_admin_is_owner') && sh_admin_is_owner()): ?>
+                <?php $opTb = $ta['owner_page'] ?? []; ?>
+                <a href="<?= sh_admin_url('owner.php') ?>" class="adm-api-badge adm-api-badge--topbar adm-api-badge--owner" title="<?= htmlspecialchars($opTb['api_hint'] ?? 'Unlimited BILOHASH AI API for owner') ?>">
+                    <i class="fas fa-bolt"></i>
+                    <?= htmlspecialchars($opTb['api_topbar'] ?? 'AI: ∞') ?>
+                </a>
+                <?php elseif (function_exists('sh_admin_is_demo_user') && sh_admin_is_demo_user()): ?>
+                <?php
+                require_once dirname(__DIR__, 2) . '/includes/admin-api-usage.php';
+                $apiLimit = sh_admin_api_limit();
+                $apiRemaining = sh_admin_api_remaining();
+                $apiUsed = max(0, $apiLimit - ($apiRemaining >= 0 ? $apiRemaining : $apiLimit));
+                ?>
+                <span class="adm-api-badge adm-api-badge--topbar" title="<?= htmlspecialchars($ta['api_quota_hint'] ?? 'Demo AI API test quota') ?>">
+                    <i class="fas fa-bolt"></i>
+                    <?= htmlspecialchars(strtr($ta['api_quota'] ?? 'API: {used}/{limit}', [
+                        '{used}'  => (string) $apiUsed,
+                        '{limit}' => (string) $apiLimit,
+                    ])) ?>
+                </span>
+                <?php endif; ?>
+                <?php
+                $aiWidgetTa = is_array($ta['ai_agent_widget'] ?? null) ? $ta['ai_agent_widget'] : [];
+                if (($admin_page ?? '') !== 'ai-agent' && ($aiWidgetTa['enabled'] ?? true) !== false):
+                ?>
+                <button type="button" class="adm-topbar-ai-btn" id="shAiAgentTopbarBtn"
+                        aria-expanded="false" aria-controls="shAiAgentWidget"
+                        title="<?= htmlspecialchars($aiWidgetTa['fab_title'] ?? 'AI Advisor') ?>">
+                    <i class="fas fa-robot" aria-hidden="true"></i>
+                    <span class="adm-topbar-ai-label"><?= htmlspecialchars($aiWidgetTa['title_short'] ?? ($aiWidgetTa['title'] ?? 'AI Advisor')) ?></span>
+                </button>
+                <?php endif; ?>
                 <?php endif; ?>
                 <div class="adm-lang-dropdown" id="admLangDropdown">
                     <button type="button" class="adm-lang-dropdown-btn" id="admLangBtn" aria-haspopup="listbox" aria-expanded="false">

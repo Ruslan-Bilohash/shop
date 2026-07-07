@@ -28,15 +28,12 @@ function sh_mail_load_phpmailer(): bool
         return true;
     }
     require_once __DIR__ . '/ecosystem-load.php';
-    $bhMail = __DIR__ . '/bh-mail.php';
-    if (!is_file($bhMail)) {
-        $bhMail = dirname(__DIR__, 2) . '/includes/bh-mail.php';
-    }
-    if (is_file($bhMail)) {
-        require_once $bhMail;
+    try {
+        sh_require_ecosystem('bh-mail.php');
         return function_exists('bh_mail_load_phpmailer') && bh_mail_load_phpmailer();
+    } catch (Throwable $e) {
+        return false;
     }
-    return false;
 }
 
 function sh_mail_last_error(): string

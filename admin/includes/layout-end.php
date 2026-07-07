@@ -66,7 +66,10 @@ if (($admin_page ?? '') !== 'ai-agent' && ($aiWidget['enabled'] ?? true) !== fal
      data-placeholder="<?= htmlspecialchars($aiWidget['input_ph'] ?? 'Ask the AI advisor…') ?>">
     <div class="adm-ai-widget-head">
         <strong><i class="fas fa-robot"></i> <?= htmlspecialchars($aiWidget['title'] ?? 'AI Advisor') ?></strong>
-        <a href="<?= htmlspecialchars(sh_admin_url('ai-agent.php')) ?>" class="adm-ai-widget-expand"><?= htmlspecialchars($aiWidget['open_full'] ?? 'Open full') ?></a>
+        <div class="adm-ai-widget-head-actions">
+            <a href="<?= htmlspecialchars(sh_admin_url('ai-agent.php')) ?>" class="adm-ai-widget-expand"><?= htmlspecialchars($aiWidget['open_full'] ?? 'Open full') ?></a>
+            <button type="button" class="adm-ai-widget-close" data-sh-ai-widget-close aria-label="<?= htmlspecialchars($aiWidget['close'] ?? 'Close') ?>"><i class="fas fa-times" aria-hidden="true"></i></button>
+        </div>
     </div>
     <div class="adm-ai-messages adm-ai-messages--widget" id="shAiWidgetMessages" aria-live="polite"></div>
     <div id="shAiWidgetTips" class="adm-ai-widget-tips" hidden></div>
@@ -75,7 +78,7 @@ if (($admin_page ?? '') !== 'ai-agent' && ($aiWidget['enabled'] ?? true) !== fal
         <button type="submit" class="adm-btn adm-btn-primary adm-btn-sm"><i class="fas fa-paper-plane"></i></button>
     </form>
 </div>
-<script src="<?= htmlspecialchars(sh_asset('js/admin-ai-agent.js')) ?>?v=1" defer></script>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-ai-agent.js')) ?>?v=4" defer></script>
 <?php endif; ?>
 <script>
 (function () {

@@ -69,7 +69,9 @@ if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
                     <li><a href="https://bilohash.com/" rel="author"><?= htmlspecialchars($ft['portfolio'] ?? 'Portfolio') ?></a></li>
                     <li><a href="<?= htmlspecialchars($sh_news_url) ?>" rel="related"><?= htmlspecialchars($ft['news'] ?? 'News') ?></a></li>
                     <li><a href="https://bilohash.com/news/" rel="related"><?= htmlspecialchars($ft['news_releases'] ?? 'News & releases') ?></a></li>
+                    <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible()): ?>
                     <li><a href="<?= sh_url('admin/login.php') ?>"><?= htmlspecialchars($ft['admin_demo'] ?? 'Admin demo') ?></a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
 
@@ -134,6 +136,7 @@ sh_render_tracking_snippets(sh_site_settings());
 sh_render_custom_footer_js(sh_site_settings());
 bh_cms_render_chat_widget('Shop CMS', sh_site_settings(), $lang ?? 'no');
 require __DIR__ . '/cookie-consent.php';
+sh_render_product_review_assets();
 sh_render_product_3d_assets();
 ?>
 </body>

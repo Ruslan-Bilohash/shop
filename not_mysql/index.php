@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/includes/vertical-lib.php';
-require_once dirname(__DIR__) . '/includes/cms-contact.php';
+require_once __DIR__ . '/includes/ecosystem-load.php';
+sh_require_ecosystem('cms-contact.php');
 require_once __DIR__ . '/includes/render-homepage.php';
 $current_page = 'home';
 $search_params = sh_search_params();
@@ -9,6 +10,7 @@ $canonical     = $site_url . '/';
 $page_title    = $t['meta']['title'];
 $page_desc     = $t['meta']['description'];
 $canon_abs     = sh_absolute_url($canonical);
+require_once __DIR__ . '/includes/google-marketing.php';
 $seo_schemas   = [
     sh_seo_organization(),
     sh_seo_website($canon_abs),
@@ -16,6 +18,10 @@ $seo_schemas   = [
     sh_seo_webpage($canon_abs, $page_title, $page_desc),
     sh_seo_professional_service(),
 ];
+$gmbSchemaHome = sh_seo_local_business(sh_site_settings());
+if (is_array($gmbSchemaHome)) {
+    $seo_schemas[] = $gmbSchemaHome;
+}
 require __DIR__ . '/includes/header.php';
 ?>
 

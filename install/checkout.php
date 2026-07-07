@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/init.php';
 require_once __DIR__ . '/includes/payment-settings.php';
+require_once __DIR__ . '/includes/norwegian-carriers.php';
 
 require_once __DIR__ . '/includes/tax-settings.php';
 $lines = sh_cart_lines($lang);
@@ -51,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'city'    => trim($_POST['customer_city'] ?? ''),
             'postal'  => trim($_POST['customer_postal'] ?? ''),
             'country' => trim($_POST['customer_country'] ?? ''),
+            'shipping_carrier' => trim($_POST['shipping_carrier'] ?? ''),
         ];
 
         $invSettings = sh_invoice_merge_settings($settings);
@@ -115,6 +117,8 @@ $method_icons = [
     'revolut' => 'fas fa-credit-card',
     'cod'     => 'fas fa-truck',
 ];
+$shippingOptions = sh_norwegian_shipping_checkout_options($settings, $t);
+
 $methods = [];
 foreach ($method_icons as $key => $icon) {
     if (empty($settings[$key]['enabled'])) {
@@ -175,7 +179,10 @@ if (empty($flash)) {
 
     <div class="sh-checkout-grid">
         <section class="sh-form-card">
-            <h2><?= htmlspecialchars($t['checkout']['payment_title'] ?? 'Payment method') ?></h2>
+                <h2><?= htmlspecialchars($t['checkout']['payment_title'] ?? 'Payment method') ?></h2>
+                <?php if (!empty($settings['revolut']['enabled'])): ?>
+                <p class="sh-checkout-revolut-note"><i class="fas fa-credit-card"></i> <?= htmlspecialchars($t['checkout']['revolut_promo'] ?? '') ?></p>
+                <?php endif; ?>
             <?php if ($checkout_disabled): ?>
             <div class="sh-alert sh-alert-info sh-checkout-dev-banner">
                 <i class="fas fa-code"></i>
@@ -186,6 +193,21 @@ if (empty($flash)) {
             <p class="sh-checkout-note"><?= htmlspecialchars($t['checkout']['no_methods'] ?? 'No payment methods enabled. Configure them in admin.') ?></p>
             <?php else: ?>
             <form method="post" class="sh-checkout-form<?= $checkout_disabled ? ' is-dev-disabled' : '' ?>">
+                <?php if ($shippingOptions !== []): ?>
+                <h3><?= htmlspecialchars($t['checkout']['shipping_title'] ?? 'Shipping (Norway)') ?></h3>
+                <p class="sh-checkout-note sh-checkout-shipping-help"><?= htmlspecialchars($t['checkout']['shipping_help'] ?? '') ?></p>
+                <div class="sh-checkout-shipping-options">
+                    <?php foreach ($shippingOptions as $i => $ship): ?>
+                    <label class="sh-checkout-method">
+                        <input type="radio" name="shipping_carrier" value="<?= htmlspecialchars($ship['id']) ?>" <?= $i === 0 ? 'checked' : '' ?>>
+                        <span class="sh-checkout-method-box">
+                            <i class="<?= htmlspecialchars($ship['icon']) ?>" aria-hidden="true"></i>
+                            <span><?= htmlspecialchars($ship['label']) ?></span>
+                        </span>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
                 <h3><?= htmlspecialchars($t['checkout']['customer_title'] ?? 'Customer details') ?></h3>
                 <div class="sh-form-grid sh-checkout-customer">
                     <label class="sh-field sh-field--wide">

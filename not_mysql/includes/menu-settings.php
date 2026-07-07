@@ -4,6 +4,7 @@ function sh_menu_settings_defaults(): array
 {
     return [
         'menu_show_signin'    => true,
+        'menu_show_admin'     => false,
         'header_nav_links'    => sh_header_nav_links_defaults(),
     ];
 }
@@ -187,6 +188,7 @@ function sh_header_nav_links_apply_post(array $post, array $settings): array
     }
 
     $settings['menu_show_signin'] = !empty($post['menu_show_signin']);
+    $settings['menu_show_admin'] = !empty($post['menu_show_admin']);
 
     return $settings;
 }

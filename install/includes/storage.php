@@ -47,6 +47,40 @@ function sh_load_products_raw(): array
     }
 }
 
+/** Merge seed products by id when missing from catalog (safe for production). */
+function sh_products_merge_missing_by_ids(array $ids): int
+{
+    if ($ids === [] || !sh_is_installed()) {
+        return 0;
+    }
+    $seed = sh_default_products_from_seed();
+    if (!is_array($seed) || $seed === []) {
+        return 0;
+    }
+    $existing = sh_load_products_raw();
+    $have = [];
+    foreach ($existing as $row) {
+        $pid = (string) ($row['id'] ?? '');
+        if ($pid !== '') {
+            $have[$pid] = true;
+        }
+    }
+    $added = 0;
+    foreach ($seed as $product) {
+        $pid = (string) ($product['id'] ?? '');
+        if ($pid === '' || !in_array($pid, $ids, true) || isset($have[$pid])) {
+            continue;
+        }
+        $existing[] = $product;
+        $have[$pid] = true;
+        $added++;
+    }
+    if ($added > 0) {
+        sh_save_products($existing);
+    }
+    return $added;
+}
+
 function sh_bootstrap_data(): void
 {
     if (!sh_is_installed()) {
@@ -54,8 +88,19 @@ function sh_bootstrap_data(): void
     }
     require_once __DIR__ . '/category-storage.php';
     require_once __DIR__ . '/news-storage.php';
+    sh_products_merge_missing_by_ids([
+        'shop-cms-api-monthly',
+        'shop-cms-updates-yearly',
+        'wireless-headphones-pro',
+        'smartwatch-fitness',
+        'scandinavian-table-lamp',
+    ]);
     if (!isset($_SESSION['sh_cart']) || !is_array($_SESSION['sh_cart'])) {
         $_SESSION['sh_cart'] = [];
+    }
+    if (is_file(__DIR__ . '/product-reviews-storage.php')) {
+        require_once __DIR__ . '/product-reviews-storage.php';
+        sh_product_reviews_seed_demo();
     }
 }
 

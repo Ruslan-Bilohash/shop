@@ -20,6 +20,11 @@ $settings = sh_google_marketing_merge_settings($settings);
                     <input type="text" name="tracking_meta_pixel" value="<?= htmlspecialchars($settings['tracking_meta_pixel'] ?? '') ?>" placeholder="Meta Pixel ID">
                     <?php sh_admin_render_field_hint($tab, 'tracking_meta_pixel', $ta); ?>
                 </div>
+                <div class="adm-field adm-field--wide">
+                    <label><?= htmlspecialchars(sh_settings_admin_label('tracking_tiktok_pixel', $ta)) ?></label>
+                    <input type="text" name="tracking_tiktok_pixel" value="<?= htmlspecialchars($settings['tracking_tiktok_pixel'] ?? '') ?>" placeholder="CXXXXXXXXXXXXXXXXX" inputmode="numeric" pattern="[0-9]*">
+                    <?php sh_admin_render_field_hint($tab, 'tracking_tiktok_pixel', $ta); ?>
+                </div>
             </div>
     <?php sh_admin_section_close(); ?>
 

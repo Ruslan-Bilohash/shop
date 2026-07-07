@@ -148,4 +148,11 @@ return [
             'ru' => 'Все акции', 'sv' => 'Alla erbjudanden', 'lt' => 'Visos akcijos',
         ],
     ],
+    [
+        'slug' => 'php-scripts', 'code' => '70717071', 'icon' => 'bolt', 'active' => true, 'sort' => 22,
+        'name' => [
+            'uk' => 'PHP-скрипти', 'no' => 'PHP-skript', 'en' => 'PHP scripts',
+            'ru' => 'PHP-скрипты', 'sv' => 'PHP-skript', 'lt' => 'PHP skriptai',
+        ],
+    ],
 ];

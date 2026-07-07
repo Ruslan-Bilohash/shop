@@ -21,6 +21,26 @@ function sh_admin_sidebar_menu(): array
         ],
     ];
 
+    if (function_exists('sh_admin_is_owner') && sh_admin_is_owner()) {
+        $menu[] = [
+            'id'   => 'owner',
+            'type' => 'link',
+            'label_key' => 'owner_console',
+            'icon' => 'crown',
+            'url'  => 'owner.php',
+            'page' => 'owner',
+        ];
+    } elseif (function_exists('sh_admin_is_demo_user') && sh_admin_is_demo_user()) {
+        $menu[] = [
+            'id'   => 'my',
+            'type' => 'link',
+            'label_key' => 'demo_my_console',
+            'icon' => 'user-circle',
+            'url'  => 'my.php',
+            'page' => 'my',
+        ];
+    }
+
     $catalogItems = [
         ['label_key' => 'products', 'icon' => 'box', 'url' => 'products.php', 'page' => 'products'],
         ['label_key' => 'products_io', 'icon' => 'file-import', 'url' => 'products-io.php', 'page' => 'products-io'],
@@ -48,16 +68,6 @@ function sh_admin_sidebar_menu(): array
     ];
 
     $menu[] = [
-        'id'   => 'google-analytics',
-        'type' => 'link',
-        'label_key' => 'google_analytics_menu',
-        'icon' => 'chart-line',
-        'url'  => 'settings-analytics.php',
-        'page' => 'settings',
-        'settings_tab' => 'analytics',
-    ];
-
-    $menu[] = [
         'id'   => 'ai-agent',
         'type' => 'link',
         'label_key' => 'ai_agent_console',
@@ -73,15 +83,6 @@ function sh_admin_sidebar_menu(): array
         'icon' => 'swatchbook',
         'url'  => 'design-demos.php',
         'page' => 'design-demos',
-    ];
-
-    $menu[] = [
-        'id'   => 'billing-demo',
-        'type' => 'link',
-        'label_key' => 'billing_demo_console',
-        'icon' => 'credit-card',
-        'url'  => 'billing-demo.php',
-        'page' => 'billing-demo',
     ];
 
     $settingsOnlyGroups = ['shop', 'content', 'design', 'marketing', 'integrations', 'advanced'];
@@ -103,6 +104,14 @@ function sh_admin_sidebar_menu(): array
                 'settings_tab' => $tabKey,
             ];
         }
+        if ($gkey === 'marketing') {
+            $items[] = [
+                'label_key' => 'seo_agent_console',
+                'icon'      => 'robot',
+                'url'       => 'seo-agent-console.php',
+                'page'      => 'seo-agent-console',
+            ];
+        }
         if ($items === []) {
             continue;
         }
@@ -116,17 +125,6 @@ function sh_admin_sidebar_menu(): array
     }
 
     $menu[] = [
-        'id'        => 'view',
-        'type'      => 'group',
-        'label_key' => 'nav_group_view',
-        'icon'      => 'eye',
-        'items'     => [
-            ['label_key' => 'view_catalog', 'icon' => 'store', 'href' => 'search.php', 'external' => true],
-            ['label_key' => 'view_site', 'icon' => 'external-link-alt', 'href' => 'index.php', 'external' => true],
-        ],
-    ];
-
-    $menu[] = [
         'id'   => 'code-editor',
         'type' => 'link',
         'label_key' => 'code_editor',
@@ -138,7 +136,7 @@ function sh_admin_sidebar_menu(): array
     $mysqlConsole = dirname(__DIR__, 2) . '/includes/mysql-console.php';
     if (is_file($mysqlConsole)) {
         require_once $mysqlConsole;
-        if (function_exists('sh_mysql_storage_available') && sh_mysql_storage_available()) {
+        if (function_exists('sh_mysql_console_visible') && sh_mysql_console_visible()) {
             $menu[] = [
                 'id'   => 'mysql-console',
                 'type' => 'link',
@@ -160,12 +158,6 @@ function sh_admin_sidebar_menu(): array
             'page'      => 'health-console',
         ];
     }
-    $consoleItems[] = [
-        'label_key' => 'seo_agent_console',
-        'icon'      => 'robot',
-        'url'       => 'seo-agent-console.php',
-        'page'      => 'seo-agent-console',
-    ];
     $secConsole = dirname(__DIR__, 2) . '/includes/security-console.php';
     if (is_file($secConsole)) {
         $consoleItems[] = [
@@ -193,6 +185,30 @@ function sh_admin_sidebar_menu(): array
             'items'     => $consoleItems,
         ];
     }
+
+    if (is_file(dirname(__DIR__, 2) . '/includes/license-runtime.php')) {
+        $menu[] = [
+            'id'        => 'license',
+            'type'      => 'group',
+            'label_key' => 'nav_group_license',
+            'icon'      => 'key',
+            'items'     => [
+                ['label_key' => 'license', 'icon' => 'key', 'url' => 'license.php', 'page' => 'license'],
+                ['label_key' => 'billing_demo_console', 'icon' => 'credit-card', 'url' => 'billing-demo.php', 'page' => 'billing-demo'],
+            ],
+        ];
+    }
+
+    $menu[] = [
+        'id'        => 'view',
+        'type'      => 'group',
+        'label_key' => 'nav_group_view',
+        'icon'      => 'eye',
+        'items'     => [
+            ['label_key' => 'view_catalog', 'icon' => 'store', 'href' => 'search.php', 'external' => true],
+            ['label_key' => 'view_site', 'icon' => 'external-link-alt', 'href' => 'index.php', 'external' => true],
+        ],
+    ];
 
     return $menu;
 }

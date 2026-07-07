@@ -96,6 +96,7 @@ function sh_home_block_types(): array
         'steps'     => ['label' => 'How it works', 'icon' => 'list-ol', 'has_limit' => false],
         'why'       => ['label' => 'Why choose us', 'icon' => 'thumbs-up', 'has_limit' => false],
         'faq'       => ['label' => 'FAQ', 'icon' => 'circle-question', 'has_limit' => false],
+        'ecosystem_releases' => ['label' => 'Ecosystem releases', 'icon' => 'rocket', 'has_limit' => false],
         'custom'    => ['label' => 'Custom HTML', 'icon' => 'file-code', 'has_limit' => false],
     ];
 }
@@ -104,7 +105,7 @@ function sh_home_blocks_defaults(): array
 {
     $sort = 1;
     $blocks = [];
-    foreach (['about', 'stats', 'featured', 'categories', 'new', 'platform', 'steps', 'why', 'faq'] as $type) {
+    foreach (['about', 'stats', 'featured', 'categories', 'new', 'platform', 'steps', 'why', 'ecosystem_releases', 'faq'] as $type) {
         $blocks[] = [
             'id'      => $type,
             'type'    => $type,
@@ -121,6 +122,34 @@ function sh_home_blocks_defaults(): array
             'body'    => [],
         ];
     }
+    return $blocks;
+}
+
+function sh_home_blocks_ensure_ecosystem_releases(array $blocks): array
+{
+    foreach ($blocks as $block) {
+        if (is_array($block) && ($block['type'] ?? '') === 'ecosystem_releases') {
+            return $blocks;
+        }
+    }
+    $maxSort = 0;
+    foreach ($blocks as $block) {
+        if (!is_array($block)) {
+            continue;
+        }
+        $maxSort = max($maxSort, (int) ($block['sort'] ?? 0));
+    }
+    $blocks[] = [
+        'id'       => 'ecosystem_releases',
+        'type'     => 'ecosystem_releases',
+        'enabled'  => true,
+        'sort'     => $maxSort + 1,
+        'limit'    => 0,
+        'title'    => [],
+        'subtitle' => [],
+        'body'     => [],
+    ];
+
     return $blocks;
 }
 
@@ -161,15 +190,42 @@ function sh_home_blocks_from_settings(?array $settings = null): array
         return sh_home_blocks_defaults();
     }
     usort($blocks, fn($a, $b) => ($a['sort'] ?? 99) <=> ($b['sort'] ?? 99));
-    return sh_home_blocks_dedupe($blocks);
+    $blocks = sh_home_blocks_ensure_ecosystem_releases(sh_home_blocks_dedupe($blocks));
+
+    return $blocks;
 }
 
 function sh_home_blocks_sorted_active(?array $settings = null): array
 {
-    return array_values(array_filter(
+    $blocks = array_values(array_filter(
         sh_home_blocks_from_settings($settings),
         fn(array $b): bool => !empty($b['enabled'])
     ));
+    $hasEco = false;
+    foreach ($blocks as $block) {
+        if (($block['type'] ?? '') === 'ecosystem_releases') {
+            $hasEco = true;
+            break;
+        }
+    }
+    if (!$hasEco) {
+        $maxSort = 0;
+        foreach ($blocks as $block) {
+            $maxSort = max($maxSort, (int) ($block['sort'] ?? 0));
+        }
+        $blocks[] = [
+            'id'       => 'ecosystem_releases',
+            'type'     => 'ecosystem_releases',
+            'enabled'  => true,
+            'sort'     => $maxSort + 1,
+            'limit'    => 0,
+            'title'    => [],
+            'subtitle' => [],
+            'body'     => [],
+        ];
+        usort($blocks, fn($a, $b) => ($a['sort'] ?? 99) <=> ($b['sort'] ?? 99));
+    }
+    return $blocks;
 }
 
 function sh_home_blocks_apply_post(array $post, array $settings): array

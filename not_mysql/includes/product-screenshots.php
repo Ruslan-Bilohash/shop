@@ -38,42 +38,89 @@ function sh_product_screenshot_manifest(): array
     ];
 }
 
+function sh_product_screenshot_cdn_base(): string
+{
+    return 'https://bilohash.com/shop/screenshot/';
+}
+
+/** @return list<string> */
+function sh_product_screenshot_dirs(): array
+{
+    static $dirs = null;
+    if ($dirs !== null) {
+        return $dirs;
+    }
+
+    $pkgRoot = dirname(__DIR__);
+    $candidates = [
+        $pkgRoot . '/screenshot',
+        dirname($pkgRoot) . '/screenshot',
+        dirname($pkgRoot) . '/shop/screenshot',
+    ];
+
+    $dirs = array_values(array_unique(array_filter($candidates, 'is_dir')));
+
+    return $dirs;
+}
+
+/** @return array{ext:string}|null */
+function sh_product_screenshot_resolve(string $basename): ?array
+{
+    foreach (['webp', 'jpg', 'jpeg', 'png'] as $ext) {
+        foreach (sh_product_screenshot_dirs() as $dir) {
+            $path = $dir . '/' . $basename . '.' . $ext;
+            if (is_file($path)) {
+                return ['ext' => $ext];
+            }
+        }
+    }
+
+    return null;
+}
+
 function sh_product_screenshot_exists(string $basename): bool
 {
-    return is_file(sh_product_screenshot_path($basename . '.webp'))
-        || is_file(sh_product_screenshot_path($basename . '.jpg'))
-        || is_file(sh_product_screenshot_path($basename . '.jpeg'))
-        || is_file(sh_product_screenshot_path($basename . '.png'));
+    if (sh_product_screenshot_resolve($basename) !== null) {
+        return true;
+    }
+
+    foreach (sh_product_screenshot_manifest() as $row) {
+        if (($row['file'] ?? '') === $basename) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function sh_product_screenshot_path(string $basename): string
 {
-    return dirname(__DIR__) . '/screenshot/' . $basename;
+    $resolved = sh_product_screenshot_resolve(pathinfo($basename, PATHINFO_FILENAME));
+    $stem = pathinfo($basename, PATHINFO_FILENAME);
+    $ext = $resolved['ext'] ?? (str_contains($basename, '.') ? pathinfo($basename, PATHINFO_EXTENSION) : 'webp');
+    $dirs = sh_product_screenshot_dirs();
+
+    return ($dirs[0] ?? (dirname(__DIR__) . '/screenshot')) . '/' . $stem . '.' . $ext;
+}
+
+function sh_product_screenshot_public_file(string $basename): string
+{
+    $resolved = sh_product_screenshot_resolve($basename);
+
+    return $basename . '.' . ($resolved['ext'] ?? 'webp');
 }
 
 function sh_product_screenshot_url(string $basename): string
 {
-    $webp = sh_product_screenshot_path($basename . '.webp');
-    $jpg  = sh_product_screenshot_path($basename . '.jpg');
-    if (is_file($webp)) {
-        return sh_url('screenshot/' . $basename . '.webp');
-    }
-    if (is_file($jpg)) {
-        return sh_url('screenshot/' . $basename . '.jpg');
-    }
-    return sh_url('screenshot/' . $basename . '.webp');
+    return sh_url('screenshot/' . sh_product_screenshot_public_file($basename));
 }
 
-/** Product site — screenshots under parent /shop/ */
+/** Product site — screenshots under parent /shop/ or CDN fallback for JSON package */
 function shs_product_screenshot_url(string $basename): string
 {
-    $webp = sh_product_screenshot_path($basename . '.webp');
-    $jpg  = sh_product_screenshot_path($basename . '.jpg');
-    if (is_file($webp)) {
-        return shs_demo_url('screenshot/' . $basename . '.webp');
+    if (sh_product_screenshot_resolve($basename) !== null) {
+        return shs_demo_url('screenshot/' . sh_product_screenshot_public_file($basename));
     }
-    if (is_file($jpg)) {
-        return shs_demo_url('screenshot/' . $basename . '.jpg');
-    }
-    return shs_demo_url('screenshot/' . $basename . '.webp');
+
+    return sh_product_screenshot_cdn_base() . sh_product_screenshot_public_file($basename);
 }

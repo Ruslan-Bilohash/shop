@@ -4,8 +4,10 @@
 
     var apiUrl = form.getAttribute('data-ai-url') || '';
     var sourceLang = form.getAttribute('data-ai-source-lang') || 'en';
-    var aiBtn = document.getElementById('shAiCategorySeo');
-    var aiStatus = document.getElementById('shAiCategorySeoStatus');
+    var aiSeoBtn = document.getElementById('shAiCategorySeo');
+    var aiSeoStatus = document.getElementById('shAiCategorySeoStatus');
+    var aiNamesBtn = document.getElementById('shAiCategoryNames');
+    var aiNamesStatus = document.getElementById('shAiCategoryNamesStatus');
 
     function field(name) {
         return form.querySelector('[name="' + name + '"]');
@@ -39,41 +41,70 @@
         });
     }
 
+    function fillNames(data) {
+        if (!data || !data.names) return;
+        Object.keys(data.names).forEach(function (code) {
+            var el = field('name_' + code);
+            if (el && data.names[code]) {
+                el.value = data.names[code];
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+    }
+
     function getCategoryName() {
         var el = field('name_' + sourceLang) || field('name_en') || field('name_no');
         return el ? el.value.trim() : '';
     }
 
-    if (aiBtn && apiUrl) {
-        aiBtn.addEventListener('click', function () {
-            var name = getCategoryName();
-            var slugEl = field('slug');
-            var slug = slugEl ? slugEl.value.trim() : '';
-            if (!name) {
-                setStatus(aiStatus, aiBtn.getAttribute('data-need-name') || 'Enter category name first.', 'error');
-                (field('name_' + sourceLang) || field('name_en')) && (field('name_' + sourceLang) || field('name_en')).focus();
-                return;
-            }
-            aiBtn.disabled = true;
-            setStatus(aiStatus, aiBtn.getAttribute('data-loading') || 'Generating…', 'loading');
-            fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
-                body: JSON.stringify({ name: name, slug: slug, source_lang: sourceLang }),
-            })
-                .then(function (r) { return r.json(); })
-                .then(function (res) {
-                    if (!res.ok || !res.data) throw new Error(res.error || 'AI failed');
+    function requestAi(action, btn, statusEl) {
+        if (!apiUrl) {
+            setStatus(statusEl, 'AI endpoint not configured.', 'error');
+            return;
+        }
+        var name = getCategoryName();
+        var slugEl = field('slug');
+        var slug = slugEl ? slugEl.value.trim() : '';
+        if (!name) {
+            setStatus(statusEl, btn.getAttribute('data-need-name') || 'Enter category name first.', 'error');
+            (field('name_' + sourceLang) || field('name_en')).focus();
+            return;
+        }
+        btn.disabled = true;
+        setStatus(statusEl, btn.getAttribute('data-loading') || 'Working…', 'loading');
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+            body: JSON.stringify({ name: name, slug: slug, source_lang: sourceLang, action: action }),
+        })
+            .then(function (r) { return r.json(); })
+            .then(function (res) {
+                if (!res.ok || !res.data) throw new Error(res.error || 'AI failed');
+                if (action === 'names') {
+                    fillNames(res.data);
+                } else {
                     fillSeo(res.data);
-                    var msg = res.demo
-                        ? (aiBtn.getAttribute('data-demo-ok') || 'Demo SEO templates applied.')
-                        : (aiBtn.getAttribute('data-ok') || 'SEO generated.');
-                    setStatus(aiStatus, msg, res.demo ? 'info' : 'success');
-                })
-                .catch(function (err) {
-                    setStatus(aiStatus, err.message || 'Request failed', 'error');
-                })
-                .finally(function () { aiBtn.disabled = false; });
+                }
+                var msg = res.demo
+                    ? (btn.getAttribute('data-demo-ok') || 'Demo templates applied.')
+                    : (btn.getAttribute('data-ok') || 'Done.');
+                setStatus(statusEl, msg, res.demo ? 'info' : 'success');
+            })
+            .catch(function (err) {
+                setStatus(statusEl, err.message || 'Request failed', 'error');
+            })
+            .finally(function () { btn.disabled = false; });
+    }
+
+    if (aiSeoBtn && apiUrl) {
+        aiSeoBtn.addEventListener('click', function () {
+            requestAi('seo', aiSeoBtn, aiSeoStatus);
+        });
+    }
+
+    if (aiNamesBtn && apiUrl) {
+        aiNamesBtn.addEventListener('click', function () {
+            requestAi('names', aiNamesBtn, aiNamesStatus);
         });
     }
 })();

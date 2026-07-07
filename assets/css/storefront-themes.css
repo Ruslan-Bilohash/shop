@@ -1,0 +1,56 @@
+/* Storefront design themes — layout & surface overrides on top of style.css vars */
+
+.sh-theme-preview-banner {
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 12px;
+    padding: 8px 14px; font-size: 12px; font-weight: 600;
+    background: #fef3c7; color: #92400e; border-bottom: 1px solid #fde68a;
+}
+.sh-theme-preview-banner a { color: #b45309; font-weight: 700; text-decoration: underline; }
+
+/* Nordic — default light */
+.sh-theme--nordic .sh-hero { border-radius: var(--sh-radius); }
+.sh-theme--nordic .sh-product-card { box-shadow: var(--sh-shadow); }
+
+/* Dark premium */
+.sh-theme--dark .sh-demo-strip {
+    background: linear-gradient(90deg, #1e293b, #334155);
+    color: #fbbf24; border-color: #334155;
+}
+.sh-theme--dark .sh-header { box-shadow: 0 4px 24px rgba(0,0,0,.35); }
+.sh-theme--dark .sh-product-card { border: 1px solid var(--sh-border); }
+.sh-theme--dark .sh-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #f8fafc;
+}
+
+/* Fresh market */
+.sh-theme--fresh .sh-header { border-radius: 0 0 20px 20px; }
+.sh-theme--fresh .sh-product-card { border-radius: 16px; border: 1px solid var(--sh-border); }
+.sh-theme--fresh .sh-hero { border-radius: 20px; background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+
+/* Bold sale */
+.sh-theme--bold .sh-demo-strip {
+    background: linear-gradient(90deg, #dc2626, #f87171); color: #fff;
+}
+.sh-theme--bold .sh-product-card { border: 2px solid #fecaca; }
+.sh-theme--bold .sh-sale-badge { font-weight: 800; letter-spacing: .04em; }
+.sh-theme--bold .sh-hero { background: linear-gradient(135deg, #fef2f2, #fee2e2); }
+
+/* Ocean breeze */
+.sh-theme--ocean .sh-header { border-bottom: 2px solid #a5f3fc; }
+.sh-theme--ocean .sh-hero {
+    background: linear-gradient(135deg, #ecfeff 0%, #cffafe 50%, #a5f3fc 100%);
+    border-radius: 16px;
+}
+.sh-theme--ocean .sh-product-card { border-radius: 12px; border: 1px solid #a5f3fc; }
+
+/* Coral boutique */
+.sh-theme--coral .sh-logo-icon { border-radius: 50%; }
+.sh-theme--coral .sh-product-card {
+    border-radius: 18px; border: none;
+    box-shadow: 0 8px 24px rgba(234, 88, 12, .12);
+}
+.sh-theme--coral .sh-hero {
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    border-radius: 20px;
+}

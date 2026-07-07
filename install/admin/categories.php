@@ -10,9 +10,6 @@ $admin_page = 'categories';
 $page_title = $ta['categories'] ?? 'Categories';
 $tp = $ta['categories_page'] ?? [];
 
-$flash = $_SESSION['sh_admin_flash'] ?? null;
-unset($_SESSION['sh_admin_flash']);
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_slug'])) {
     $slug = trim($_POST['delete_slug'] ?? '');
     if ($slug === '') {
@@ -42,13 +39,6 @@ $admin_extra_js = [sh_asset('js/admin-categories.js') . '?v=2'];
 
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash): ?>
-<div class="adm-alert adm-alert-<?= $flash['type'] === 'success' ? 'success' : 'error' ?>">
-    <i class="fas fa-<?= $flash['type'] === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i>
-    <?= htmlspecialchars($flash['msg'] ?? '') ?>
-</div>
-<?php endif; ?>
 
 <div class="adm-alert adm-alert-info">
     <i class="fas fa-info-circle"></i> <?= htmlspecialchars($tp['note'] ?? 'Manage category slugs, icons and multilingual names. Products keep their category slug.') ?>

@@ -9,7 +9,7 @@ $sections = sh_admin_settings_sections($tab, $ta);
 $settings = sh_merge_store_settings($settings);
 $mode = sh_merge_shop_mode_settings($settings);
 ?>
-<form method="post" class="adm-settings-form">
+<form method="post" class="adm-settings-form" id="shAdvancedForm">
     <div class="adm-card adm-card--dense adm-settings-section" id="advanced-maintenance">
         <div class="adm-card-head adm-card-head--compact">
             <h2><i class="fas fa-hard-hat"></i> <?= htmlspecialchars($sections['advanced-maintenance'] ?? sh_settings_admin_label('store_maintenance_section', $ta)) ?></h2>
@@ -25,6 +25,8 @@ $mode = sh_merge_shop_mode_settings($settings);
             ); ?>
         </div>
     </div>
+
+    <?php require __DIR__ . '/form-advanced-code.php'; ?>
 
     <div class="adm-form-actions adm-form-actions-sticky">
         <button type="submit" class="adm-btn adm-btn-primary"><i class="fas fa-save"></i> <?= htmlspecialchars(sh_settings_admin_label('save', $ta)) ?></button>

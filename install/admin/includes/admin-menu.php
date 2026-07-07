@@ -21,11 +21,32 @@ function sh_admin_sidebar_menu(): array
         ],
     ];
 
+    if (function_exists('sh_admin_is_owner') && sh_admin_is_owner()) {
+        $menu[] = [
+            'id'   => 'owner',
+            'type' => 'link',
+            'label_key' => 'owner_console',
+            'icon' => 'crown',
+            'url'  => 'owner.php',
+            'page' => 'owner',
+        ];
+    } elseif (function_exists('sh_admin_is_demo_user') && sh_admin_is_demo_user()) {
+        $menu[] = [
+            'id'   => 'my',
+            'type' => 'link',
+            'label_key' => 'demo_my_console',
+            'icon' => 'user-circle',
+            'url'  => 'my.php',
+            'page' => 'my',
+        ];
+    }
+
     $catalogItems = [
         ['label_key' => 'products', 'icon' => 'box', 'url' => 'products.php', 'page' => 'products'],
         ['label_key' => 'products_io', 'icon' => 'file-import', 'url' => 'products-io.php', 'page' => 'products-io'],
         ['label_key' => 'categories', 'icon' => 'layer-group', 'url' => 'categories.php', 'page' => 'categories'],
         ['label_key' => 'quick_leads', 'icon' => 'bolt', 'url' => 'quick-leads.php', 'page' => 'quick-leads', 'badge' => 'leads'],
+        ['label_key' => 'orders', 'icon' => 'receipt', 'url' => 'orders.php', 'page' => 'orders', 'badge' => 'orders'],
         ['label_key' => 'subscribers', 'icon' => 'paper-plane', 'url' => 'subscribers.php', 'page' => 'subscribers'],
     ];
 
@@ -44,6 +65,24 @@ function sh_admin_sidebar_menu(): array
         'icon' => 'newspaper',
         'url'  => 'news.php',
         'page' => 'news',
+    ];
+
+    $menu[] = [
+        'id'   => 'ai-agent',
+        'type' => 'link',
+        'label_key' => 'ai_agent_console',
+        'icon' => 'robot',
+        'url'  => 'ai-agent.php',
+        'page' => 'ai-agent',
+    ];
+
+    $menu[] = [
+        'id'   => 'design-demos',
+        'type' => 'link',
+        'label_key' => 'design_demos_console',
+        'icon' => 'swatchbook',
+        'url'  => 'design-demos.php',
+        'page' => 'design-demos',
     ];
 
     $settingsOnlyGroups = ['shop', 'content', 'design', 'marketing', 'integrations', 'advanced'];
@@ -65,6 +104,14 @@ function sh_admin_sidebar_menu(): array
                 'settings_tab' => $tabKey,
             ];
         }
+        if ($gkey === 'marketing') {
+            $items[] = [
+                'label_key' => 'seo_agent_console',
+                'icon'      => 'robot',
+                'url'       => 'seo-agent-console.php',
+                'page'      => 'seo-agent-console',
+            ];
+        }
         if ($items === []) {
             continue;
         }
@@ -74,6 +121,81 @@ function sh_admin_sidebar_menu(): array
             'label_key' => $group['label_key'],
             'icon'      => $group['icon'],
             'items'     => $items,
+        ];
+    }
+
+    $menu[] = [
+        'id'   => 'code-editor',
+        'type' => 'link',
+        'label_key' => 'code_editor',
+        'icon' => 'code',
+        'url'  => 'code-editor.php',
+        'page' => 'code-editor',
+    ];
+
+    $mysqlConsole = dirname(__DIR__, 2) . '/includes/mysql-console.php';
+    if (is_file($mysqlConsole)) {
+        require_once $mysqlConsole;
+        if (function_exists('sh_mysql_console_visible') && sh_mysql_console_visible()) {
+            $menu[] = [
+                'id'   => 'mysql-console',
+                'type' => 'link',
+                'label_key' => 'mysql_console',
+                'icon' => 'database',
+                'url'  => 'mysql-console.php',
+                'page' => 'mysql-console',
+            ];
+        }
+    }
+
+    $consoleItems = [];
+    $healthInc = dirname(__DIR__, 2) . '/includes/site-health-console.php';
+    if (is_file($healthInc)) {
+        $consoleItems[] = [
+            'label_key' => 'health_console',
+            'icon'      => 'heart-pulse',
+            'url'       => 'health-console.php',
+            'page'      => 'health-console',
+        ];
+    }
+    $secConsole = dirname(__DIR__, 2) . '/includes/security-console.php';
+    if (is_file($secConsole)) {
+        $consoleItems[] = [
+            'label_key' => 'security_console',
+            'icon'      => 'shield-halved',
+            'url'       => 'security-console.php',
+            'page'      => 'security-console',
+        ];
+    }
+    $changelogInc = dirname(__DIR__, 2) . '/includes/changelog-console.php';
+    if (is_file($changelogInc)) {
+        $consoleItems[] = [
+            'label_key' => 'changelog_console',
+            'icon'      => 'clock-rotate-left',
+            'url'       => 'changelog-console.php',
+            'page'      => 'changelog-console',
+        ];
+    }
+    if ($consoleItems !== []) {
+        $menu[] = [
+            'id'        => 'consoles',
+            'type'      => 'group',
+            'label_key' => 'nav_group_consoles',
+            'icon'      => 'gauge-high',
+            'items'     => $consoleItems,
+        ];
+    }
+
+    if (is_file(dirname(__DIR__, 2) . '/includes/license-runtime.php')) {
+        $menu[] = [
+            'id'        => 'license',
+            'type'      => 'group',
+            'label_key' => 'nav_group_license',
+            'icon'      => 'key',
+            'items'     => [
+                ['label_key' => 'license', 'icon' => 'key', 'url' => 'license.php', 'page' => 'license'],
+                ['label_key' => 'billing_demo_console', 'icon' => 'credit-card', 'url' => 'billing-demo.php', 'page' => 'billing-demo'],
+            ],
         ];
     }
 
@@ -88,37 +210,17 @@ function sh_admin_sidebar_menu(): array
         ],
     ];
 
-    $menu[] = [
-        'id'   => 'code-editor',
-        'type' => 'link',
-        'label_key' => 'code_editor',
-        'icon' => 'code',
-        'url'  => 'code-editor.php',
-        'page' => 'code-editor',
-    ];
-
-    $mysqlConsole = dirname(__DIR__, 2) . '/includes/mysql-console.php';
-    if (is_file($mysqlConsole)) {
-        require_once $mysqlConsole;
-        if (function_exists('sh_mysql_storage_available') && sh_mysql_storage_available()) {
-            $menu[] = [
-                'id'   => 'mysql-console',
-                'type' => 'link',
-                'label_key' => 'mysql_console',
-                'icon' => 'database',
-                'url'  => 'mysql-console.php',
-                'page' => 'mysql-console',
-            ];
-        }
-    }
-
     return $menu;
 }
 
 function sh_admin_menu_item_active(array $item, string $adminPage, ?string $settingsTab): bool
 {
     if (!empty($item['page'])) {
-        return $adminPage === $item['page'];
+        $pageMatch = $adminPage === $item['page'];
+        if (!empty($item['settings_tab'])) {
+            return $pageMatch && ($settingsTab ?? '') === $item['settings_tab'];
+        }
+        return $pageMatch;
     }
     if (!empty($item['settings_tab'])) {
         return $adminPage === 'settings' && ($settingsTab ?? '') === $item['settings_tab'];
@@ -175,6 +277,22 @@ function sh_admin_menu_leads_badge(): int
     return $count;
 }
 
+function sh_admin_menu_orders_badge(): int
+{
+    static $count = null;
+    if ($count !== null) {
+        return $count;
+    }
+    $path = dirname(__DIR__, 2) . '/includes/orders-storage.php';
+    if (!is_file($path)) {
+        $count = 0;
+        return 0;
+    }
+    require_once $path;
+    $count = function_exists('sh_orders_count_by_status') ? sh_orders_count_by_status('pending') : 0;
+    return $count;
+}
+
 function sh_render_admin_sidebar_nav(array $ta, string $adminPage, ?string $settingsTab = null): void
 {
     foreach (sh_admin_sidebar_menu() as $entry) {
@@ -216,6 +334,9 @@ function sh_render_admin_sidebar_nav(array $ta, string $adminPage, ?string $sett
                     $badge = 0;
                     if (($item['badge'] ?? '') === 'leads') {
                         $badge = sh_admin_menu_leads_badge();
+                    }
+                    if (($item['badge'] ?? '') === 'orders') {
+                        $badge = sh_admin_menu_orders_badge();
                     }
                     ?>
                 <a href="<?= htmlspecialchars($href) ?>"

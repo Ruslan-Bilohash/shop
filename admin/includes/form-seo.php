@@ -19,16 +19,17 @@ $sitemapUrl = sh_absolute_url(sh_url('sitemap.xml'));
                         <small class="adm-field-hint"><?= htmlspecialchars(sh_settings_admin_label('seo_ai_brand_hint', $ta)) ?></small>
                     </div>
                 </div>
-                <div class="adm-ai-source-actions">
-                    <button type="button" class="adm-btn adm-btn-primary" id="shAiSeoSiteBtn"
+                <div class="adm-ai-source-actions adm-seo-ai-actions">
+                    <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate adm-btn--seo-ai" id="shAiSeoSiteBtn"
                             data-generating="<?= htmlspecialchars(sh_settings_admin_label('seo_ai_generating', $ta)) ?>"
                             data-ok="<?= htmlspecialchars(sh_settings_admin_label('seo_ai_ok', $ta)) ?>"
                             data-demo-ok="<?= htmlspecialchars(sh_settings_admin_label('seo_ai_demo_ok', $ta)) ?>"
                             data-failed="<?= htmlspecialchars(sh_settings_admin_label('seo_ai_failed', $ta)) ?>"
                             data-need-brand="<?= htmlspecialchars(sh_settings_admin_label('seo_ai_need_brand', $ta)) ?>">
-                        <i class="fas fa-wand-magic-sparkles"></i> <?= htmlspecialchars(sh_settings_admin_label('seo_ai_generate', $ta)) ?>
+                        <i class="fas fa-wand-magic-sparkles adm-ai-btn-icon" aria-hidden="true"></i>
+                        <span class="adm-ai-btn-label"><?= htmlspecialchars(sh_settings_admin_label('seo_ai_generate', $ta)) ?></span>
                     </button>
-                    <span id="shAiSeoSiteStatus" class="adm-ai-status" hidden></span>
+                    <span id="shAiSeoSiteStatus" class="adm-ai-status adm-ai-status--block" hidden></span>
                 </div>
             </div>
         </div>
@@ -128,23 +129,26 @@ $sitemapUrl = sh_absolute_url(sh_url('sitemap.xml'));
                     <strong><?= htmlspecialchars($settings['sitemap_last_generated']) ?></strong>
                 </p>
                 <?php endif; ?>
+                <div class="adm-sitemap-actions">
+                    <button type="submit" name="regenerate_sitemap" value="1" class="adm-btn adm-btn--sitemap-regen" formnovalidate>
+                        <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                        <?= htmlspecialchars(sh_settings_admin_label('sitemap_regenerate', $ta)) ?>
+                    </button>
+                    <a href="<?= htmlspecialchars($sitemapUrl) ?>" class="adm-btn adm-btn--sitemap-open" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
+                        <?= htmlspecialchars(sh_settings_admin_label('sitemap_open', $ta)) ?>
+                    </a>
+                    <button type="button" class="adm-btn adm-btn--sitemap-copy" id="shSitemapCopyBtn"
+                            data-url="<?= htmlspecialchars($sitemapUrl) ?>"
+                            data-copied="<?= htmlspecialchars(sh_settings_admin_label('sitemap_copied', $ta)) ?>">
+                        <i class="fas fa-copy" aria-hidden="true"></i>
+                        <?= htmlspecialchars(sh_settings_admin_label('sitemap_copy_url', $ta)) ?>
+                    </button>
+                </div>
             </div>
     <?php sh_admin_section_close(); ?>
 
-    <div class="adm-form-actions adm-form-actions-sticky adm-form-actions--split">
-        <div class="adm-form-actions-group">
-            <button type="submit" name="regenerate_sitemap" value="1" class="adm-btn adm-btn-outline" formnovalidate>
-                <i class="fas fa-sync-alt"></i> <?= htmlspecialchars(sh_settings_admin_label('sitemap_regenerate', $ta)) ?>
-            </button>
-            <a href="<?= htmlspecialchars($sitemapUrl) ?>" class="adm-btn adm-btn-outline" target="_blank" rel="noopener noreferrer">
-                <i class="fas fa-external-link-alt"></i> <?= htmlspecialchars(sh_settings_admin_label('sitemap_open', $ta)) ?>
-            </a>
-            <button type="button" class="adm-btn adm-btn-outline" id="shSitemapCopyBtn"
-                    data-url="<?= htmlspecialchars($sitemapUrl) ?>"
-                    data-copied="<?= htmlspecialchars(sh_settings_admin_label('sitemap_copied', $ta)) ?>">
-                <i class="fas fa-copy"></i> <?= htmlspecialchars(sh_settings_admin_label('sitemap_copy_url', $ta)) ?>
-            </button>
-        </div>
+    <div class="adm-form-actions adm-form-actions-sticky">
         <button type="submit" class="adm-btn adm-btn-primary"><i class="fas fa-save"></i> <?= htmlspecialchars(sh_settings_admin_label('save', $ta)) ?></button>
     </div>
 </form>

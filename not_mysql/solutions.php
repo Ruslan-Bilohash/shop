@@ -25,7 +25,7 @@ $langCopy = [
     'page_desc' => [
         'no' => 'PHP nettbutikk for motebutikker, elektronikk, hjem & interiør, sport, skjønnhet, mat, B2B engros og markedsplass. Flerspråklig SEO og live demo.',
         'en' => 'PHP online store for fashion boutiques, electronics, home & interior, sports, beauty, food, B2B wholesale and marketplace. Multilingual SEO and live demo.',
-        'uk' => 'PHP інтернет-магазин для бутиків моди, електроніки, дому, спорту, краси, їжі, B2B опту та маркетплейсу. Багатомовне SEO та live demo.',
+        'uk' => 'PHP інтернет-магазин для крамниць моди, електроніки, дому, спорту, краси, їжі, B2B опту та маркетплейсу. Багатомовне SEO та live demo.',
         'ru' => 'PHP интернет-магазин для бутиков моды, электроники, дома, спорта, красоты, еды, B2B опта и маркетплейса. Многоязычное SEO и live demo.',
     ],
     'breadcrumb' => [

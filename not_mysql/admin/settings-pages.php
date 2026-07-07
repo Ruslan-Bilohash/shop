@@ -5,6 +5,11 @@ require_once dirname(__DIR__) . '/includes/payment-settings.php';
 require_once dirname(__DIR__) . '/includes/service-pages.php';
 
 $settings_tab = 'pages';
+$admin_extra_js = [];
+$page_slug_early = strtolower(trim($_GET['page'] ?? 'delivery'));
+if (in_array($page_slug_early, ['privacy', 'cookies'], true)) {
+    $admin_extra_js[] = sh_asset('js/admin-page-advisor.js') . '?v=1';
+}
 $settings = sh_load_settings();
 $settings = sh_merge_service_settings($settings);
 

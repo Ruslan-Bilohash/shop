@@ -22,9 +22,14 @@ $sh_menu_cfg  = sh_menu_settings(sh_site_settings());
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php sh_render_public_stylesheets(); ?>
+    <?php foreach (($extra_css ?? []) as $cssHref): ?>
+    <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssHref) ?>">
+    <?php endforeach; ?>
     <?php
     require_once __DIR__ . '/store-settings.php';
+    require_once __DIR__ . '/theme-runtime.php';
     sh_render_shop_theme_styles(sh_site_settings());
+    sh_render_storefront_theme_stylesheet();
     sh_render_custom_head_html(sh_site_settings());
     ?>
     <?php sh_render_seo_head($page_title, $page_desc, $canonical, $seo_schemas, $seo_og_image, $seo_og_type, !empty($seo_noindex), $seo_keywords); ?>
@@ -33,9 +38,14 @@ $sh_menu_cfg  = sh_menu_settings(sh_site_settings());
     <?php endif; ?>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23ffffff' width='100' height='100' rx='12'/><text x='50' y='62' font-size='40' text-anchor='middle' fill='%232563eb' font-family='sans-serif' font-weight='bold'>S</text></svg>">
 </head>
-<body class="<?= htmlspecialchars($body_class) ?>">
+<body class="<?= htmlspecialchars(sh_theme_body_classes(sh_site_settings(), $body_class)) ?>">
 
 <div class="sh-top-bar">
+    <?php sh_render_theme_preview_banner($t); ?>
+    <?php
+    require_once __DIR__ . '/billing-pricing.php';
+    sh_billing_render_shop_banner($t, $lang);
+    ?>
     <div class="sh-demo-strip" role="status">
         <i class="fas fa-store" aria-hidden="true"></i>
         <span><?= htmlspecialchars($t['demo_strip']['text']) ?></span>
@@ -101,7 +111,9 @@ $sh_menu_cfg  = sh_menu_settings(sh_site_settings());
                         <span class="sh-cart-badge" id="shCartBadge"<?= $cart_count > 0 ? '' : ' hidden' ?>><?= (int)$cart_count ?></span>
                     </a>
 
+                    <?php if (function_exists('sh_admin_public_link_visible') && sh_admin_public_link_visible($sh_menu_cfg)): ?>
                     <a href="<?= sh_url('admin/login.php') ?>" class="sh-btn-outline sh-btn-compact" title="<?= htmlspecialchars($t['nav']['admin'] ?? 'Admin') ?>"><i class="fas fa-user-shield"></i></a>
+                    <?php endif; ?>
                     <?php $lang_dropdown_variant = 'header'; require __DIR__ . '/lang-dropdown.php'; unset($lang_dropdown_variant); ?>
                 </div>
             </div>

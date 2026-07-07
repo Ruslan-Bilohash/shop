@@ -192,19 +192,21 @@
 
     function bindShowMore(btn, list, openClass) {
         if (!btn || !list) return;
+        var openCls = openClass || 'is-open';
         btn.addEventListener('click', function () {
-            var open = list.hasAttribute('hidden');
-            if (open) {
+            var willOpen = list.hasAttribute('hidden') || !list.classList.contains(openCls);
+            if (willOpen) {
                 list.removeAttribute('hidden');
+                list.removeAttribute('aria-hidden');
+                list.classList.add(openCls);
                 list.style.removeProperty('display');
             } else {
                 list.setAttribute('hidden', '');
-                list.style.display = 'none';
+                list.setAttribute('aria-hidden', 'true');
+                list.classList.remove(openCls);
             }
-            list.setAttribute('aria-hidden', open ? 'false' : 'true');
-            if (openClass) list.classList.toggle(openClass, open);
-            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-            btn.textContent = open
+            btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+            btn.textContent = willOpen
                 ? (btn.getAttribute('data-label-less') || 'Show less')
                 : (btn.getAttribute('data-label-more') || 'Show more');
         });
@@ -218,5 +220,10 @@
     document.querySelectorAll('[data-cat-more-btn]').forEach(function (btn) {
         var listId = btn.getAttribute('aria-controls');
         bindShowMore(btn, listId ? document.getElementById(listId) : null, null);
+    });
+
+    document.querySelectorAll('[data-news-more-btn]').forEach(function (btn) {
+        var listId = btn.getAttribute('aria-controls');
+        bindShowMore(btn, listId ? document.getElementById(listId) : null, 'is-open');
     });
 })();

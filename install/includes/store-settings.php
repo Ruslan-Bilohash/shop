@@ -9,6 +9,7 @@ function sh_builtin_langs(): array
         'uk' => ['label' => 'UA', 'name' => 'Українська', 'flag' => '🇺🇦', 'locale' => 'uk-UA', 'html' => 'uk'],
         'ru' => ['label' => 'RU', 'name' => 'Русский', 'flag' => '🇷🇺', 'locale' => 'ru-RU', 'html' => 'ru'],
         'sv' => ['label' => 'SV', 'name' => 'Svenska', 'flag' => '🇸🇪', 'locale' => 'sv-SE', 'html' => 'sv'],
+        'lt' => ['label' => 'LT', 'name' => 'Lietuvių', 'flag' => '🇱🇹', 'locale' => 'lt-LT', 'html' => 'lt'],
     ];
 }
 
@@ -90,6 +91,8 @@ function sh_store_settings_defaults(): array
 
         'tracking_gtag_id'        => '',
         'tracking_meta_pixel'     => '',
+        'tracking_tiktok_pixel'   => '',
+        'pagespeed_api_key'       => '',
 
         'custom_head_html'        => '',
         'custom_footer_js'        => '',
@@ -103,6 +106,7 @@ function sh_store_settings_defaults(): array
         'design_sale_color'       => '',
         'design_border_radius'    => 10,
         'design_font_family'      => '',
+        'design_theme_id'         => 'nordic',
 
         'color_btn_search'        => '',
         'color_btn_search_hover'  => '',
@@ -115,6 +119,36 @@ function sh_store_settings_defaults(): array
         'posten_api_key'          => '',
         'posten_client_id'        => '',
         'posten_demo_mode'        => true,
+
+        'shipping_norway_enabled'   => true,
+        'shipping_norway_demo_mode' => true,
+        'shipping_carrier_posten'   => true,
+        'shipping_carrier_bring'    => true,
+        'shipping_carrier_helthjem' => true,
+        'shipping_carrier_instabox' => true,
+        'shipping_carrier_porterbuddy' => false,
+
+        'sms_enabled'             => true,
+        'sms_demo_mode'           => true,
+        'sms_code_ttl'            => 300,
+        'sms_provider_no'         => 'gatewayapi',
+        'sms_api_key_no'          => '',
+        'sms_sender_no'           => 'ShopCMS',
+        'sms_provider_ua'         => 'turbosms',
+        'sms_api_key_ua'          => '',
+        'sms_sender_ua'           => 'ShopCMS',
+        'sms_provider_se'         => 'gatewayapi',
+        'sms_api_key_se'          => '',
+        'sms_sender_se'           => 'ShopCMS',
+        'sms_provider_ru'         => 'smsru',
+        'sms_api_key_ru'          => '',
+        'sms_sender_ru'           => 'ShopCMS',
+        'sms_provider_lt'         => 'gatewayapi',
+        'sms_api_key_lt'          => '',
+        'sms_sender_lt'           => 'ShopCMS',
+        'sms_provider_default'    => 'gatewayapi',
+        'sms_api_key_default'     => '',
+        'sms_sender_default'      => 'ShopCMS',
 
         'nova_poshta_enabled'              => false,
         'nova_poshta_track_enabled'        => true,
@@ -157,6 +191,10 @@ function sh_store_settings_keys(): array
 function sh_merge_store_settings(array $settings): array
 {
     $defaults = sh_store_settings_defaults();
+    if (is_file(__DIR__ . '/google-marketing.php')) {
+        require_once __DIR__ . '/google-marketing.php';
+        $defaults = array_merge($defaults, sh_google_marketing_defaults());
+    }
     foreach ($defaults as $key => $val) {
         if (!array_key_exists($key, $settings)) {
             $settings[$key] = $val;
@@ -197,9 +235,32 @@ function sh_site_default_lang(?array $settings = null): string
 
 function sh_analytics_settings_apply_post(array $post, array $settings): array
 {
-    $settings = sh_merge_store_settings($settings);
+    require_once __DIR__ . '/google-marketing.php';
+    $settings = sh_google_marketing_merge_settings($settings);
     $settings['tracking_gtag_id'] = trim($post['tracking_gtag_id'] ?? '');
     $settings['tracking_meta_pixel'] = trim($post['tracking_meta_pixel'] ?? '');
+    $settings['tracking_tiktok_pixel'] = preg_replace('/\D/', '', trim($post['tracking_tiktok_pixel'] ?? ''));
+
+    $settings['google_ads_enabled'] = !empty($post['google_ads_enabled']);
+    $settings['google_ads_id'] = sh_normalize_google_ads_id(trim($post['google_ads_id'] ?? ''));
+    $settings['google_ads_conversion_label'] = preg_replace('/[^A-Za-z0-9_\-]/', '', trim($post['google_ads_conversion_label'] ?? ''));
+    $settings['google_ads_remarketing'] = !empty($post['google_ads_remarketing']);
+    $settings['google_ads_track_purchase'] = !empty($post['google_ads_track_purchase']);
+    $settings['google_ads_track_begin_checkout'] = !empty($post['google_ads_track_begin_checkout']);
+
+    $settings['gmb_enabled'] = !empty($post['gmb_enabled']);
+    $settings['gmb_schema'] = !empty($post['gmb_schema']);
+    $settings['gmb_show_contact'] = !empty($post['gmb_show_contact']);
+    $settings['gmb_show_footer'] = !empty($post['gmb_show_footer']);
+    $settings['gmb_show_map'] = !empty($post['gmb_show_map']);
+    foreach ([
+        'gmb_place_id', 'gmb_business_name', 'gmb_address', 'gmb_city', 'gmb_postal',
+        'gmb_country', 'gmb_phone', 'gmb_latitude', 'gmb_longitude',
+        'gmb_profile_url', 'gmb_reviews_url', 'gmb_opening_hours', 'gmb_map_embed',
+    ] as $key) {
+        $settings[$key] = trim($post[$key] ?? ($settings[$key] ?? ''));
+    }
+
     return $settings;
 }
 
@@ -260,7 +321,8 @@ function sh_posten_settings_apply_post(array $post, array $settings): array
     if (trim($post['posten_api_key'] ?? '') !== '') {
         $settings['posten_api_key'] = trim($post['posten_api_key']);
     }
-    return $settings;
+    require_once __DIR__ . '/norwegian-carriers.php';
+    return sh_norwegian_shipping_apply_post($post, $settings);
 }
 
 function sh_nova_poshta_settings_apply_post(array $post, array $settings): array
@@ -481,17 +543,8 @@ function sh_render_shop_theme_styles(?array $settings = null): void
 
 function sh_render_tracking_snippets(?array $settings = null): void
 {
-    if ($settings === null && function_exists('sh_site_settings')) {
-        $settings = sh_site_settings();
-    }
-    $s = sh_merge_store_settings(is_array($settings) ? $settings : []);
-    $gtag = trim((string) ($s['tracking_gtag_id'] ?? ''));
-    $pixel = trim((string) ($s['tracking_meta_pixel'] ?? ''));
-    if ($gtag !== ''): ?>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=<?= htmlspecialchars($gtag) ?>"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','<?= htmlspecialchars($gtag) ?>');</script>
-    <?php endif;
-    if ($pixel !== ''): ?>
-    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','<?= htmlspecialchars($pixel) ?>');fbq('track','PageView');</script>
-    <?php endif;
+    require_once __DIR__ . '/google-marketing.php';
+    sh_render_google_tracking_tags($settings);
+    sh_render_meta_pixel_tag($settings);
+    sh_render_tiktok_pixel_tag($settings);
 }

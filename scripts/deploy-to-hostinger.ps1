@@ -21,7 +21,14 @@ if (-not (Test-Path $configPath)) {
     exit 1
 }
 
-. $configPath
+$cfg = & { . $configPath; if ($RemoteRoot) { return @{ Host = $DeployHost; Port = $Port; User = $User; Password = $Password; RemoteRoot = $RemoteRoot } } }
+if ($cfg -is [hashtable]) {
+    $DeployHost = $cfg.Host
+    $Port = $cfg.Port
+    $User = $cfg.User
+    $Password = $cfg.Password
+    $RemoteRoot = $cfg.RemoteRoot
+}
 if (-not $RemoteRoot) { throw 'RemoteRoot not set in deploy.config.local.ps1' }
 
 if ($LangOnly) {
@@ -51,15 +58,23 @@ if (-not (Get-Module -ListAvailable -Name Posh-SSH)) {
 }
 Import-Module Posh-SSH -ErrorAction Stop
 
-$secPass = $null
+$keyFile = Join-Path $env:USERPROFILE '.ssh\id_ed25519'
 if ($Password) {
     $secPass = ConvertTo-SecureString $Password -AsPlainText -Force
     $cred = New-Object System.Management.Automation.PSCredential ($User, $secPass)
-    $session = New-SSHSession -ComputerName $Host -Port $Port -Credential $cred -AcceptKey -ErrorAction Stop
 } else {
-    $session = New-SSHSession -ComputerName $Host -Port $Port -Username $User -KeyFile "$env:USERPROFILE\.ssh\id_ed25519" -AcceptKey -ErrorAction Stop
+    $cred = New-Object System.Management.Automation.PSCredential ($User, (New-Object System.Security.SecureString))
 }
 
+$scpParams = @{
+    ComputerName = $DeployHost
+    Port         = $Port
+    Credential   = $cred
+    AcceptKey    = $true
+}
+if (-not $Password) { $scpParams.KeyFile = $keyFile }
+
+$session = New-SSHSession @scpParams -ErrorAction Stop
 $sessionId = $session.SessionId
 $ok = 0
 $fail = 0
@@ -74,8 +89,9 @@ foreach ($rel in $Files) {
     }
     $remote = ($RemoteRoot.TrimEnd('/')) + '/' + $rel
     $remoteDir = ($remote -replace '/[^/]+$', '')
+    $remoteName = Split-Path $remote -Leaf
     Invoke-SSHCommand -SessionId $sessionId -Command "mkdir -p '$remoteDir'" | Out-Null
-    Set-SCPItem -SessionId $sessionId -Path $src -Destination $remote -AcceptKey
+    Set-SCPItem @scpParams -Path $src -Destination $remoteDir -NewName $remoteName
     Write-Host "OK $rel → $remote"
     $ok++
 }

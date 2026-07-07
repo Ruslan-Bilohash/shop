@@ -15,6 +15,9 @@
     function initMirror(textarea) {
         if (!textarea || textarea.dataset.cmInit === '1') return textarea.cmEditor || null;
         var mode = textarea.getAttribute('data-mode') || 'htmlmixed';
+        if (mode === 'text/plain') {
+            mode = null;
+        }
         var editor = CodeMirror.fromTextArea(textarea, {
             mode: mode,
             theme: cmTheme(),
@@ -27,7 +30,8 @@
         });
         textarea.dataset.cmInit = '1';
         textarea.cmEditor = editor;
-        editor.setSize('100%', Math.max(180, textarea.rows * 22));
+        var minH = textarea.classList.contains('adm-code-mirror--file') ? 420 : 180;
+        editor.setSize('100%', Math.max(minH, textarea.rows * 22));
         return editor;
     }
 
@@ -62,6 +66,8 @@
 
     document.querySelectorAll('.adm-code-mirror').forEach(initMirror);
     bindForm(document.getElementById('shCodeEditorForm'));
+    bindForm(document.getElementById('shCodeFilesForm'));
+    bindForm(document.getElementById('shAdvancedForm'));
     bindForm(document.getElementById('shHomepageForm'));
     bindForm(document.getElementById('shBlockBuilderForm'));
 

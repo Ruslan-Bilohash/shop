@@ -21,7 +21,7 @@ $tabs = sh_settings_tabs();
 require __DIR__ . '/includes/layout.php';
 ?>
 
-<?php if (defined('SH_DEMO_MODE') && SH_DEMO_MODE): ?>
+<?php if (function_exists('sh_admin_is_demo_user') && sh_admin_is_demo_user()): ?>
 <div class="adm-alert adm-alert-info">
     <i class="fas fa-flask"></i> <?= htmlspecialchars($ta['add_note'] ?? 'Demo data — products loaded from JSON seed.') ?>
 </div>

@@ -58,6 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+    $names = sh_product_normalize_lang_map($names, $aiSourceLang);
+    $descs = sh_product_normalize_lang_map($descs, $aiSourceLang);
     foreach (sh_langs() as $code => $_info) {
         if ($names[$code] === '' || $descs[$code] === '') {
             $errors[] = $tp['names_required'] ?? 'Fill product name and description for all languages.';
@@ -126,6 +128,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $flash = 'error';
 }
 
+if ($record !== null) {
+    $record = sh_product_normalize_record($record, $aiSourceLang);
+}
+
 $productImagesList = $record !== null ? sh_product_images($record) : [];
 
 $seo_record = $record ?? ['seo' => []];
@@ -155,7 +161,7 @@ if ($aiSeoTips === [] && !empty($tp['seo_checklist'])) {
 }
 
 $admin_extra_js = [
-    sh_asset('js/admin-product.js') . '?v=9',
+    sh_asset('js/admin-product.js') . '?v=11',
     sh_asset('js/admin-product-images.js') . '?v=2',
     sh_asset('js/admin-seo-checklist.js') . '?v=2',
 ];
@@ -320,19 +326,21 @@ require __DIR__ . '/includes/layout.php';
             <div class="adm-ai-source-fields adm-form-grid">
                 <div class="adm-field adm-field--wide">
                     <label for="shAiProductName"><?= htmlspecialchars($tp['ai_product_name_label'] ?? 'Product name for AI') ?> *</label>
-                    <input type="text" id="shAiProductName" class="adm-input-lg"
+                    <input type="text" id="shAiProductName" name="ai_product_name" form="shProductForm" class="adm-input-lg" required
                            value="<?= htmlspecialchars($record !== null ? ($record['name'][$aiSourceLang] ?? '') : '') ?>"
-                           placeholder="<?= htmlspecialchars($tp['ai_product_name_ph'] ?? 'e.g. Wireless Headphones Pro') ?>">
+                           placeholder="<?= htmlspecialchars($tp['ai_product_name_ph'] ?? 'e.g. Wireless Headphones Pro') ?>"
+                           autocomplete="off">
                 </div>
                 <div class="adm-field adm-field--wide">
                     <label for="shAiProductBrief"><?= htmlspecialchars($tp['ai_product_brief_label'] ?? 'Brief description for AI') ?></label>
-                    <textarea id="shAiProductBrief" rows="3" class="adm-textarea"
+                    <textarea id="shAiProductBrief" name="ai_product_brief" form="shProductForm" rows="3" class="adm-textarea"
                               placeholder="<?= htmlspecialchars($tp['ai_product_brief_ph'] ?? 'e.g. Wireless ANC headphones, 40h battery, USB-C, for gym and travel') ?>"><?= htmlspecialchars($record !== null ? ($record['desc'][$aiSourceLang] ?? '') : '') ?></textarea>
                 </div>
             </div>
             <p class="adm-help adm-help-compact adm-ai-source-hint"><?= htmlspecialchars($tp['ai_product_name_hint'] ?? 'Enter name and a short brief — AI fills names, descriptions, meta title, meta description (OG) and keywords for all languages.') ?></p>
             <div class="adm-ai-source-actions adm-ai-source-actions--aside">
                 <button type="button" class="adm-btn adm-btn-primary adm-btn-ai-generate" id="shAiGenerateBtn"
+                        data-thinking="<?= htmlspecialchars($tp['ai_thinking'] ?? 'Thinking…') ?>"
                         data-generating="<?= htmlspecialchars($tp['ai_generating'] ?? 'Generating…') ?>"
                         data-ok="<?= htmlspecialchars($tp['ai_ok'] ?? 'Generated and translated for all languages.') ?>"
                         data-demo-ok="<?= htmlspecialchars($tp['ai_demo_ok'] ?? 'Demo templates applied — add API key in Settings → AI.') ?>"

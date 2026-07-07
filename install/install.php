@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/mysql-migrate.php';
 
-const SH_INSTALL_VERSION = '1.6.0';
+const SH_INSTALL_VERSION = '1.7.4';
 
 $appRoot = __DIR__;
 $dataDir = $appRoot . '/data';

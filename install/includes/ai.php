@@ -24,10 +24,21 @@ function sh_ai_model_catalog(): array
     ];
 }
 
+/** Image generation models (separate API — /images/generations). */
+function sh_ai_image_model_catalog(): array
+{
+    return [
+        'grok-2-image-1212' => ['hint' => 'ai_model_hint_grok_2_image', 'provider' => 'grok'],
+        'grok-2-image'      => ['hint' => 'ai_model_hint_grok_2_image_latest', 'provider' => 'grok'],
+        'dall-e-3'          => ['hint' => 'ai_model_hint_dall_e_3', 'provider' => 'openai'],
+        'gpt-image-1'       => ['hint' => 'ai_model_hint_gpt_image_1', 'provider' => 'openai'],
+    ];
+}
+
 /** @return list<string> */
 function sh_ai_contexts(): array
 {
-    return ['default', 'product', 'chat', 'news', 'seo'];
+    return ['default', 'product', 'chat', 'news', 'seo', 'image'];
 }
 
 /** @return array<string, string> */
@@ -39,6 +50,7 @@ function sh_ai_context_advice_keys(): array
         'chat'    => 'ai_context_advice_chat',
         'news'    => 'ai_context_advice_news',
         'seo'     => 'ai_context_advice_seo',
+        'image'   => 'ai_context_advice_image',
     ];
 }
 
@@ -110,6 +122,7 @@ function sh_ai_defaults(): array
         'ai_model_chat'           => '',
         'ai_model_news'           => '',
         'ai_model_seo'            => '',
+        'ai_model_image'          => 'grok-2-image-1212',
         'ai_prompt_product'       => 'You are an e-commerce copywriter for a Norway/EU online shop. Product: {product_name}. Category: {category}. Source language hint: {source_lang}. Return ONLY valid JSON (no markdown) with keys: names, desc, seo. names and desc are objects with every active language key (no, en, uk, ru, sv, lt). desc: 80-200 chars per language — benefits, specs, use cases. seo has meta_title, meta_description, meta_keywords — each an object with the same language keys. meta_description is also used as Open Graph og:description. Include seo.brand (single string, product brand). Meta title 30-60 chars. meta_description MUST be 120-160 characters (inclusive) in EVERY language — compelling Google snippet with keyword, benefit and call-to-action. Count characters carefully. Professional, SEO-friendly, demo-safe tone.',
         'ai_prompt_news'          => 'You are a senior technical editor for Shop CMS — a PHP e-commerce demo from Norway. Topic: {topic}. Source language: {source_lang}. Return ONLY valid JSON (no markdown) with keys: name, excerpt, body, seo — each an object with every active language key (no, en, uk, ru, sv, lt). excerpt: 2–3 sentences (max 280 chars). body: rich HTML with <p>, <h2>, <h3>, <ul>/<li>, <strong>, <a> only — MINIMUM 5 paragraphs and 3 section headings per language; write a full release article (not a short note), ~500–900 words equivalent with concrete features, admin paths and storefront impact. seo has meta_title, meta_description, meta_keywords per language. meta_title max 60 chars. meta_description MUST be 120–160 characters in EVERY language. Professional release-note tone.',
         'ai_prompt_seo'           => 'You are an SEO specialist for Norway/EU e-commerce. Task: {task_type}. Target name: "{target_name}". Slug: {slug}. Country ISO: {country_code}. Source language: {source_lang}. Return ONLY valid JSON (no markdown). For site task use keys: seo_site_name, seo_org_name, seo_geo_region (2-8 chars), seo_geo_placename, seo_default_country_code (2 letters), seo_twitter_site (optional @handle). For category task use key "seo" with meta_title, meta_description, meta_keywords, intro — each an object with every active language key. meta_title max 60 chars, meta_description max 155 chars, intro 2-3 sentences. Professional, Schema.org-friendly tone.',
@@ -132,7 +145,7 @@ function sh_ai_resolve_config(array $ai, string $context = 'default'): array
     }
 
     $context = strtolower(trim($context));
-    $contextKey = in_array($context, ['product', 'chat', 'news', 'seo'], true) ? 'ai_model_' . $context : '';
+    $contextKey = in_array($context, ['product', 'chat', 'news', 'seo', 'image'], true) ? 'ai_model_' . $context : '';
     $model = '';
     if ($contextKey !== '') {
         $model = trim((string) ($ai[$contextKey] ?? ''));
@@ -185,6 +198,74 @@ function sh_ai_enabled(?array $settings = null): bool
 }
 
 /**
+ * Gate admin AI calls: owner needs real API (no demo data); demo user consumes quota (30).
+ *
+ * @return array{ok:bool,demo:bool,data:array,error:string}|null null = proceed
+ */
+function sh_ai_admin_request_gate(?array $settings = null, string $needApiMsg = 'Configure AI in Settings → AI and add your API key.'): ?array
+{
+    if (!function_exists('sh_admin_allows_ai_demo_data')) {
+        return null;
+    }
+    if (!sh_admin_allows_ai_demo_data()) {
+        if (!sh_ai_enabled($settings)) {
+            return ['ok' => false, 'demo' => false, 'data' => [], 'error' => $needApiMsg];
+        }
+        return null;
+    }
+    $q = sh_admin_api_try_consume();
+    if (!$q['ok']) {
+        return ['ok' => false, 'demo' => false, 'data' => [], 'error' => $q['error']];
+    }
+    return null;
+}
+
+/** @param array<string, mixed> $errShape */
+function sh_ai_admin_fail_or_demo(array $errShape, callable $fallback): array
+{
+    if (function_exists('sh_admin_allows_ai_demo_data') && !sh_admin_allows_ai_demo_data()) {
+        return array_merge($errShape, ['ok' => false, 'demo' => false, 'error' => $errShape['error'] ?? 'AI request failed']);
+    }
+    return $fallback();
+}
+
+/** @return array{provider:string,api_base:string,model:string} */
+function sh_ai_resolve_image_config(?array $settings = null): array
+{
+    $ai = sh_ai_settings($settings);
+    $catalog = sh_ai_image_model_catalog();
+    $model = trim((string) ($ai['ai_model_image'] ?? ''));
+    if ($model === '' || !isset($catalog[$model])) {
+        $model = 'grok-2-image-1212';
+    }
+    $provider = $catalog[$model]['provider'] ?? 'grok';
+    $textCfg = sh_ai_resolve_config($ai, 'default');
+    $apiBase = $textCfg['api_base'];
+    if ($provider === 'openai' && str_contains($apiBase, 'api.x.ai')) {
+        $apiBase = 'https://api.openai.com/v1';
+    }
+    return ['provider' => $provider, 'api_base' => $apiBase, 'model' => $model];
+}
+
+/**
+ * @param array<string, string> $ta
+ * @return array<string, string>
+ */
+function sh_ai_image_model_options_for_admin(array $ta): array
+{
+    $out = [];
+    foreach (sh_ai_image_model_catalog() as $model => $meta) {
+        $hintKey = $meta['hint'] ?? '';
+        $hint = $hintKey !== '' ? sh_settings_admin_label($hintKey, $ta) : '';
+        if ($hint === $hintKey) {
+            $hint = '';
+        }
+        $out[$model] = $hint !== '' ? $model . ' — ' . $hint : $model;
+    }
+    return $out;
+}
+
+/**
  * @return array{ok:bool,demo:bool,data:array,error:string}
  */
 function sh_ai_generate_product(array $settings, string $productName, string $categorySlug = '', string $sourceLang = 'en', string $briefDescription = ''): array
@@ -204,6 +285,21 @@ function sh_ai_generate_product(array $settings, string $productName, string $ca
         if ($cat) {
             $categoryLabel = sh_localized($cat, 'name', $sourceLang) ?: $categorySlug;
         }
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return sh_ai_admin_fail_or_demo(
+            $gate,
+            static function () use ($productName, $categoryLabel, $sourceLang, $briefDescription, $gate): array {
+                return [
+                    'ok'    => true,
+                    'demo'  => true,
+                    'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
+                    'error' => (string) ($gate['error'] ?? ''),
+                ];
+            }
+        );
     }
 
     if (!sh_ai_enabled($settings)) {
@@ -229,22 +325,26 @@ function sh_ai_generate_product(array $settings, string $productName, string $ca
 
     $result = sh_ai_call_chat($ai, $prompt, 1800, 'product');
     if (!$result['ok']) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
-            'error' => $result['error'],
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['data' => [], 'error' => $result['error']],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
+                'error' => $result['error'],
+            ]
+        );
     }
 
     $parsed = sh_ai_parse_product_json($result['text']);
     if ($parsed === null) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
-            'error' => 'Invalid JSON from AI',
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['data' => [], 'error' => 'Invalid JSON from AI'],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => sh_ai_product_fallback($productName, $categoryLabel, $sourceLang, $briefDescription),
+                'error' => 'Invalid JSON from AI',
+            ]
+        );
     }
 
     if (!empty($parsed['seo']['brand'])) {
@@ -262,6 +362,11 @@ function sh_ai_generate_news(array $settings, string $title, string $slug = '', 
     $title = trim($title);
     if ($title === '') {
         return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Article title required'];
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
     }
 
     $slug = trim($slug);
@@ -294,22 +399,26 @@ function sh_ai_generate_news(array $settings, string $title, string $slug = '', 
 
     $result = sh_ai_call_chat($ai, $prompt, 7000, 'news');
     if (!$result['ok']) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
-            'error' => $result['error'],
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['data' => [], 'error' => $result['error']],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
+                'error' => $result['error'],
+            ]
+        );
     }
 
     $parsed = sh_ai_parse_news_json($result['text']);
     if ($parsed === null) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
-            'error' => 'Invalid JSON from AI',
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['data' => [], 'error' => 'Invalid JSON from AI'],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => sh_ai_news_fallback($title, $slug, $sourceLang, $brief),
+                'error' => 'Invalid JSON from AI',
+            ]
+        );
     }
 
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
@@ -334,6 +443,11 @@ function sh_ai_generate_site_seo(array $settings, string $brandName, string $cou
         'DE' => ['region' => 'DE', 'place' => 'Germany'],
     ];
     $geo = $geoNames[$countryCode] ?? ['region' => $countryCode, 'place' => $countryCode];
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
+    }
 
     if (!sh_ai_enabled($settings)) {
         $handle = strtolower(preg_replace('/[^a-z0-9]/', '', $brandName));
@@ -371,7 +485,10 @@ function sh_ai_generate_site_seo(array $settings, string $brandName, string $cou
 
     $result = sh_ai_call_chat($ai, $prompt, 800, 'seo');
     if (!$result['ok']) {
-        return sh_ai_generate_site_seo(array_merge($settings, ['ai_enabled' => false]), $brandName, $countryCode);
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => $result['error']],
+            static fn(): array => sh_ai_generate_site_seo(array_merge($settings, ['ai_enabled' => false]), $brandName, $countryCode)
+        );
     }
 
     $raw = $result['text'];
@@ -380,7 +497,10 @@ function sh_ai_generate_site_seo(array $settings, string $brandName, string $cou
     }
     $data = json_decode($raw, true);
     if (!is_array($data)) {
-        return sh_ai_generate_site_seo(array_merge($settings, ['ai_enabled' => false]), $brandName, $countryCode);
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Invalid JSON from AI'],
+            static fn(): array => sh_ai_generate_site_seo(array_merge($settings, ['ai_enabled' => false]), $brandName, $countryCode)
+        );
     }
 
     return [
@@ -716,8 +836,13 @@ function sh_ai_product_fallback(string $productName, string $category, string $s
         $metaKw[$code] = strtolower(str_replace(' ', ', ', $productName)) . ', ' . strtolower($category ?: 'ecommerce');
     }
 
-    if ($sourceLang !== 'en' && isset($names[$sourceLang])) {
+    if ($sourceLang !== '' && isset($names[$sourceLang])) {
         $names[$sourceLang] = $productName;
+    }
+    if ($briefDescription !== '' && isset($desc[$sourceLang])) {
+        $desc[$sourceLang] = mb_strlen($briefDescription) > 40
+            ? $productName . ' — ' . $briefDescription
+            : $desc[$sourceLang];
     }
 
     return [
@@ -736,11 +861,105 @@ function sh_ai_product_fallback(string $productName, string $category, string $s
 /**
  * @return array{ok:bool,demo:bool,data:array,error:string}
  */
+function sh_ai_translate_category_names(array $settings, string $categoryName, string $sourceLang = 'en'): array
+{
+    $categoryName = trim($categoryName);
+    if ($categoryName === '') {
+        return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Category name required'];
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
+    }
+
+    $langs = array_keys(sh_langs());
+    $langList = implode(', ', $langs);
+    $ai = sh_ai_settings($settings);
+    $srcLabel = sh_ai_lang_names()[$sourceLang] ?? $sourceLang;
+
+    if (!sh_ai_enabled($settings)) {
+        $names = [];
+        foreach ($langs as $code) {
+            $names[$code] = $categoryName;
+        }
+        return [
+            'ok'    => true,
+            'demo'  => true,
+            'data'  => ['names' => $names],
+            'error' => '',
+        ];
+    }
+
+    $prompt = 'Translate this e-commerce shop category label into every listed language. '
+        . 'Source language ' . $srcLabel . ' (' . $sourceLang . '): "' . $categoryName . '". '
+        . 'Return ONLY valid JSON (no markdown) object {"names":{lang_code: translated_label}} '
+        . 'with exactly these language keys: ' . $langList . '. '
+        . 'Keep names short (1–4 words), natural for storefront navigation.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 1200, 'seo');
+    if (!$result['ok']) {
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => $result['error']],
+            static function () use ($langs, $categoryName): array {
+                $names = [];
+                foreach ($langs as $code) {
+                    $names[$code] = $categoryName;
+                }
+                return ['ok' => true, 'demo' => true, 'data' => ['names' => $names], 'error' => ''];
+            }
+        );
+    }
+
+    $raw = trim($result['text']);
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    $names = is_array($parsed['names'] ?? null) ? $parsed['names'] : (is_array($parsed) ? $parsed : []);
+    $out = [];
+    $has = false;
+    foreach ($langs as $code) {
+        $val = trim((string) ($names[$code] ?? ''));
+        if ($val !== '') {
+            $out[$code] = $val;
+            $has = true;
+        }
+    }
+    if (!$has) {
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Invalid JSON from AI'],
+            static function () use ($langs, $categoryName): array {
+                $names = [];
+                foreach ($langs as $code) {
+                    $names[$code] = $categoryName;
+                }
+                return ['ok' => true, 'demo' => true, 'data' => ['names' => $names], 'error' => ''];
+            }
+        );
+    }
+    foreach ($langs as $code) {
+        if (!isset($out[$code]) || $out[$code] === '') {
+            $out[$code] = $out[$sourceLang] ?? $categoryName;
+        }
+    }
+
+    return ['ok' => true, 'demo' => false, 'data' => ['names' => $out], 'error' => ''];
+}
+
+/**
+ * @return array{ok:bool,demo:bool,data:array,error:string}
+ */
 function sh_ai_generate_category(array $settings, string $categoryName, string $slug = '', string $sourceLang = 'en'): array
 {
     $categoryName = trim($categoryName);
     if ($categoryName === '') {
         return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Category name required'];
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
     }
 
     $langs = array_keys(sh_langs());
@@ -776,22 +995,26 @@ function sh_ai_generate_category(array $settings, string $categoryName, string $
 
     $result = sh_ai_call_chat($ai, $prompt, 2000, 'seo');
     if (!$result['ok']) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => sh_ai_category_fallback($categoryName, $slug, $sourceLang),
-            'error' => $result['error'],
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => $result['error']],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => sh_ai_category_fallback($categoryName, $slug, $sourceLang),
+                'error' => $result['error'],
+            ]
+        );
     }
 
     $parsed = sh_ai_parse_category_seo_json($result['text']);
     if ($parsed === null) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => sh_ai_category_fallback($categoryName, $slug, $sourceLang),
-            'error' => 'Invalid JSON from AI',
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Invalid JSON from AI'],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => sh_ai_category_fallback($categoryName, $slug, $sourceLang),
+                'error' => 'Invalid JSON from AI',
+            ]
+        );
     }
 
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
@@ -1006,6 +1229,11 @@ function sh_ai_generate_block_template(array $settings, string $prompt = ''): ar
         return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Prompt required'];
     }
 
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
+    }
+
     $ai = sh_ai_settings($settings);
     $sourceLang = (string) ($ai['ai_source_lang'] ?? 'en');
 
@@ -1027,12 +1255,14 @@ function sh_ai_generate_block_template(array $settings, string $prompt = ''): ar
 
     $resp = sh_ai_call_chat($ai, "System: Output valid JSON only.\n\n" . $aiPrompt, 5000);
     if (!$resp['ok']) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => ['template' => sh_ai_block_template_fallback($prompt, $sourceLang)],
-            'error' => $resp['error'],
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => $resp['error']],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => ['template' => sh_ai_block_template_fallback($prompt, $sourceLang)],
+                'error' => $resp['error'],
+            ]
+        );
     }
     $raw = $resp['text'];
     if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
@@ -1040,12 +1270,14 @@ function sh_ai_generate_block_template(array $settings, string $prompt = ''): ar
     }
     $parsed = json_decode($raw, true);
     if (!is_array($parsed) || !is_array($parsed['template'] ?? null)) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => ['template' => sh_ai_block_template_fallback($prompt, $sourceLang)],
-            'error' => 'Invalid AI JSON',
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Invalid AI JSON'],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => ['template' => sh_ai_block_template_fallback($prompt, $sourceLang)],
+                'error' => 'Invalid AI JSON',
+            ]
+        );
     }
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
 }
@@ -1056,6 +1288,11 @@ function sh_ai_generate_homepage_block(array $settings, string $type = 'custom',
     $types = sh_home_block_types();
     if (!isset($types[$type])) {
         return ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Unknown block type'];
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
     }
 
     $ai = sh_ai_settings($settings);
@@ -1081,7 +1318,10 @@ function sh_ai_generate_homepage_block(array $settings, string $type = 'custom',
     $resp = sh_ai_call_chat($ai, "System: Output valid JSON only.\n\n" . $prompt, 3000);
     if (!$resp['ok']) {
         $fallback = $type === 'custom' ? sh_ai_homepage_custom_fallback($sourceLang) : [];
-        return ['ok' => true, 'demo' => true, 'data' => ['block' => $fallback], 'error' => $resp['error']];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => $resp['error']],
+            static fn(): array => ['ok' => true, 'demo' => true, 'data' => ['block' => $fallback], 'error' => $resp['error']]
+        );
     }
     $raw = $resp['text'];
     if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
@@ -1090,7 +1330,10 @@ function sh_ai_generate_homepage_block(array $settings, string $type = 'custom',
     $parsed = json_decode($raw, true);
     if (!is_array($parsed) || !is_array($parsed['block'] ?? null)) {
         $fallback = $type === 'custom' ? sh_ai_homepage_custom_fallback($sourceLang) : [];
-        return ['ok' => true, 'demo' => true, 'data' => ['block' => $fallback], 'error' => 'Invalid AI JSON'];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Invalid AI JSON'],
+            static fn(): array => ['ok' => true, 'demo' => true, 'data' => ['block' => $fallback], 'error' => 'Invalid AI JSON']
+        );
     }
     $parsed['block']['type'] = $type;
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
@@ -1099,6 +1342,12 @@ function sh_ai_generate_homepage_block(array $settings, string $type = 'custom',
 function sh_ai_generate_homepage_blocks(array $settings): array
 {
     require_once __DIR__ . '/homepage-blocks.php';
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return $gate;
+    }
+
     $ai = sh_ai_settings($settings);
     $sourceLang = (string) ($ai['ai_source_lang'] ?? 'en');
 
@@ -1118,12 +1367,14 @@ function sh_ai_generate_homepage_blocks(array $settings): array
 
     $resp = sh_ai_call_chat($ai, "System: Output valid JSON only.\n\n" . $prompt, 4000);
     if (!$resp['ok']) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => ['blocks' => sh_ai_homepage_fallback($sourceLang)],
-            'error' => $resp['error'],
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => $resp['error']],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => ['blocks' => sh_ai_homepage_fallback($sourceLang)],
+                'error' => $resp['error'],
+            ]
+        );
     }
     $raw = $resp['text'];
     if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
@@ -1131,14 +1382,454 @@ function sh_ai_generate_homepage_blocks(array $settings): array
     }
     $parsed = json_decode($raw, true);
     if (!is_array($parsed) || !is_array($parsed['blocks'] ?? null)) {
-        return [
-            'ok'    => true,
-            'demo'  => true,
-            'data'  => ['blocks' => sh_ai_homepage_fallback($sourceLang)],
-            'error' => 'Invalid AI JSON',
-        ];
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'data' => [], 'error' => 'Invalid AI JSON'],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'data' => ['blocks' => sh_ai_homepage_fallback($sourceLang)],
+                'error' => 'Invalid AI JSON',
+            ]
+        );
     }
     return ['ok' => true, 'demo' => false, 'data' => $parsed, 'error' => ''];
+}
+
+/**
+ * Per-page SEO suggestions for AI SEO Agent console.
+ *
+ * @param array{key:string,type:string,label:string,score:int,issues:list<string>,edit_url?:string,public_url?:string} $page
+ * @return array{ok:bool,demo:bool,suggestions:list<array{priority:string,title:string,detail:string,action?:string}>,summary:string,error:string}
+ */
+function sh_ai_seo_page_suggestions(array $settings, array $page, string $lang = 'en'): array
+{
+    $lang = trim($lang) ?: 'en';
+    $label = trim((string) ($page['label'] ?? 'Page'));
+    $score = (int) ($page['score'] ?? 0);
+    $issues = is_array($page['issues'] ?? null) ? $page['issues'] : [];
+    $type = (string) ($page['type'] ?? 'page');
+
+    $issueHints = [
+        'missing_title'      => 'Add a unique meta title (30–60 chars) with primary keyword near the start.',
+        'title_length'       => 'Adjust meta title length — aim for 30–60 characters.',
+        'missing_desc'       => 'Write a compelling meta description (120–160 chars) with a clear benefit.',
+        'desc_length'        => 'Tune meta description to 120–160 characters for rich snippets.',
+        'missing_keywords'     => 'Add 3–5 focus keywords aligned with search intent.',
+        'missing_og'         => 'Set an OG image (1200×630) for social sharing.',
+        'missing_brand'        => 'Fill brand name for Product schema trust signals.',
+        'missing_identifiers'  => 'Add GTIN or MPN for Google Shopping eligibility.',
+        'missing_schema'       => 'Enable Product + Offer JSON-LD schema.',
+        'missing_sitemap'      => 'Turn on XML sitemap in SEO settings.',
+        'missing_global'       => 'Complete global site name and Organization schema.',
+        'missing_intro'        => 'Add category intro copy — helps rankings and conversions.',
+        'intro_length'         => 'Expand category intro to 80–300 characters.',
+    ];
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return [
+            'ok'          => false,
+            'demo'        => false,
+            'suggestions' => [],
+            'summary'     => '',
+            'error'       => (string) ($gate['error'] ?? ''),
+        ];
+    }
+
+    if (!sh_ai_enabled($settings)) {
+        $suggestions = [];
+        foreach ($issues as $tag) {
+            $suggestions[] = [
+                'priority' => str_contains((string) $tag, 'missing') ? 'high' : 'medium',
+                'title'    => str_replace('_', ' ', ucfirst((string) $tag)),
+                'detail'   => $issueHints[$tag] ?? 'Review and fix this SEO signal.',
+                'action'   => 'edit',
+            ];
+        }
+        if ($suggestions === []) {
+            $suggestions[] = [
+                'priority' => 'low',
+                'title'    => 'Maintain momentum',
+                'detail'   => 'Score is ' . $score . '/100 — refresh copy quarterly and monitor Search Console.',
+                'action'   => 'monitor',
+            ];
+        }
+        return [
+            'ok'          => true,
+            'demo'        => true,
+            'suggestions' => array_slice($suggestions, 0, 8),
+            'summary'     => 'Rule-based audit for "' . $label . '" (enable AI in Settings → AI for deeper copy suggestions).',
+            'error'       => '',
+        ];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $issuesText = $issues !== [] ? implode(', ', $issues) : 'none detected';
+    $prompt = 'You are an e-commerce SEO consultant. Analyze this page and return ONLY valid JSON: '
+        . '{"summary":"one sentence","suggestions":[{"priority":"high|medium|low","title":"short","detail":"actionable 1-2 sentences","action":"edit|schema|content|monitor"}]}. '
+        . 'Page: "' . $label . '". Type: ' . $type . '. Language: ' . $lang . '. Current SEO score: ' . $score . '/100. '
+        . 'Issues: ' . $issuesText . '. '
+        . 'Focus on psychologically selling copy, CTR, and technical SEO. Max 6 suggestions.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 900, 'seo');
+    if (!$result['ok']) {
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'suggestions' => [], 'summary' => '', 'error' => $result['error']],
+            static fn(): array => sh_ai_seo_page_suggestions(array_merge($settings, ['ai_enabled' => false]), $page, $lang)
+        );
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'suggestions' => [], 'summary' => '', 'error' => 'Invalid AI response'],
+            static fn(): array => sh_ai_seo_page_suggestions(array_merge($settings, ['ai_enabled' => false]), $page, $lang)
+        );
+    }
+
+    $suggestions = [];
+    foreach (is_array($parsed['suggestions'] ?? null) ? $parsed['suggestions'] : [] as $s) {
+        if (!is_array($s)) {
+            continue;
+        }
+        $suggestions[] = [
+            'priority' => in_array($s['priority'] ?? '', ['high', 'medium', 'low'], true) ? $s['priority'] : 'medium',
+            'title'    => trim((string) ($s['title'] ?? '')),
+            'detail'   => trim((string) ($s['detail'] ?? '')),
+            'action'   => trim((string) ($s['action'] ?? 'edit')),
+        ];
+    }
+
+    return [
+        'ok'          => true,
+        'demo'        => false,
+        'suggestions' => array_slice(array_filter($suggestions, static fn($s) => $s['title'] !== ''), 0, 8),
+        'summary'     => trim((string) ($parsed['summary'] ?? '')),
+        'error'       => '',
+    ];
+}
+
+/**
+ * Rule-based security recommendations (no API key).
+ *
+ * @param list<array{id:string,severity:string,ok:bool,label:string,detail:string}> $checks
+ * @return array{ok:bool,demo:bool,recommendations:list<array{priority:string,title:string,detail:string}>,summary:string,error:string}
+ */
+function sh_ai_security_recommendations_rule_based(array $checks, int $score): array
+{
+    $failed = array_values(array_filter($checks, static fn($c) => empty($c['ok'])));
+    $recs = [];
+    foreach ($failed as $c) {
+        $recs[] = [
+            'priority' => (string) ($c['severity'] ?? 'medium'),
+            'title'    => (string) ($c['label'] ?? 'Issue'),
+            'detail'   => (string) ($c['detail'] ?? 'Review in Security console.'),
+        ];
+    }
+    if ($recs === []) {
+        $recs[] = [
+            'priority' => 'low',
+            'title'    => 'Security posture looks good',
+            'detail'   => 'Score ' . $score . '/100 — schedule monthly rescans and keep PHP updated.',
+        ];
+    }
+    return [
+        'ok'              => true,
+        'demo'            => true,
+        'recommendations' => array_slice($recs, 0, 10),
+        'summary'         => 'Rule-based security review (enable AI for prioritized remediation plan).',
+        'error'           => '',
+    ];
+}
+
+/**
+ * AI security scan recommendations for Security console.
+ *
+ * @param list<array{id:string,severity:string,ok:bool,label:string,detail:string}> $checks
+ * @return array{ok:bool,demo:bool,recommendations:list<array{priority:string,title:string,detail:string}>,summary:string,error:string}
+ */
+function sh_ai_security_recommendations(array $settings, array $checks, int $score): array
+{
+    $ruleBased = static fn(): array => sh_ai_security_recommendations_rule_based($checks, $score);
+    $failed = array_values(array_filter($checks, static fn($c) => empty($c['ok'])));
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null || !sh_ai_enabled($settings)) {
+        return $ruleBased();
+    }
+
+    $ai = sh_ai_settings($settings);
+    $failedLines = [];
+    foreach (array_slice($failed, 0, 12) as $c) {
+        $failedLines[] = ($c['label'] ?? '') . ' [' . ($c['severity'] ?? '') . ']: ' . ($c['detail'] ?? '');
+    }
+    $prompt = 'You are a PHP e-commerce security auditor. Security score: ' . $score . '/100. '
+        . 'Failed checks: ' . ($failedLines !== [] ? implode('; ', $failedLines) : 'none') . '. '
+        . 'Return ONLY valid JSON: {"summary":"one sentence","recommendations":[{"priority":"critical|high|medium|low","title":"short","detail":"action steps"}]}. '
+        . 'Max 8 items, ordered by risk. Be specific for shared hosting (Hostinger).';
+
+    $result = sh_ai_call_chat($ai, $prompt, 900, 'seo');
+    if (!$result['ok']) {
+        return $ruleBased();
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return $ruleBased();
+    }
+
+    $recs = [];
+    foreach (is_array($parsed['recommendations'] ?? null) ? $parsed['recommendations'] : [] as $r) {
+        if (!is_array($r)) {
+            continue;
+        }
+        $recs[] = [
+            'priority' => trim((string) ($r['priority'] ?? 'medium')),
+            'title'    => trim((string) ($r['title'] ?? '')),
+            'detail'   => trim((string) ($r['detail'] ?? '')),
+        ];
+    }
+
+    return [
+        'ok'              => true,
+        'demo'            => false,
+        'recommendations' => array_slice(array_filter($recs, static fn($r) => $r['title'] !== ''), 0, 10),
+        'summary'         => trim((string) ($parsed['summary'] ?? '')),
+        'error'           => '',
+    ];
+}
+
+/**
+ * Admin AI assistant — chat for shop owners and demo visitors.
+ *
+ * @param list<array{role:string,content:string}> $history
+ * @return array{ok:bool,demo:bool,reply:string,tips:list<array{title:string,detail:string}>,error:string}
+ */
+function sh_ai_admin_agent_reply(array $settings, string $message, array $history = [], string $lang = 'en'): array
+{
+    $message = trim($message);
+    if ($message === '') {
+        return ['ok' => false, 'demo' => false, 'reply' => '', 'tips' => [], 'error' => 'Message required'];
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return ['ok' => false, 'demo' => false, 'reply' => '', 'tips' => [], 'error' => (string) ($gate['error'] ?? '')];
+    }
+
+    $lang = trim($lang) ?: 'en';
+    $demoTips = [
+        ['title' => 'Try AI SEO Agent', 'detail' => 'Open Consoles → AI SEO Agent to audit meta on every page.'],
+        ['title' => 'Privacy policy advisor', 'detail' => 'Edit Settings → Service pages → Privacy — click «Scan & advise» for GDPR tips.'],
+        ['title' => 'Enable live AI', 'detail' => 'Settings → AI — add Grok or OpenAI key for real responses instead of demo templates.'],
+    ];
+
+    if (!sh_ai_enabled($settings)) {
+        $replies = [
+            'no' => 'Demo-assistent: Jeg hjelper deg med Shop CMS. Spør om SEO, personvern, betalinger eller design. Aktiver AI-nøkkel i Innstillinger → AI for live svar.',
+            'uk' => 'Демо-радник: допомагаю з Shop CMS — SEO, політика конфіденційності, оплата, дизайн. Увімкніть AI у Налаштування → AI для живих відповідей.',
+            'ru' => 'Демо-советник: помогаю с Shop CMS — SEO, политика конфиденциальности, оплата, дизайн. Включите AI в Настройки → AI.',
+            'sv' => 'Demo-rådgivare: jag hjälper med Shop CMS — SEO, integritet, betalning, design. Aktivera AI under Inställningar → AI.',
+            'en' => 'Demo advisor: I help with Shop CMS — SEO, privacy policy, payments, design. Enable AI in Settings → AI for live answers.',
+        ];
+        $reply = $replies[$lang] ?? $replies['en'];
+        if (mb_strlen($message) > 20) {
+            $reply .= ' You asked: «' . mb_substr($message, 0, 120) . '» — in production the AI agent answers with shop-specific steps.';
+        }
+        return ['ok' => true, 'demo' => true, 'reply' => $reply, 'tips' => $demoTips, 'error' => ''];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $histLines = [];
+    foreach (array_slice($history, -6) as $h) {
+        if (!is_array($h)) {
+            continue;
+        }
+        $role = ($h['role'] ?? '') === 'assistant' ? 'Assistant' : 'User';
+        $histLines[] = $role . ': ' . mb_substr(trim((string) ($h['content'] ?? '')), 0, 400);
+    }
+    $histBlock = $histLines !== [] ? "Conversation:\n" . implode("\n", $histLines) . "\n\n" : '';
+
+    $prompt = $histBlock
+        . 'You are BILOHASH Shop CMS admin assistant. Reply in language "' . $lang . '". '
+        . 'Help shop owners and demo users: products, orders, SEO, privacy/GDPR pages, payments, design, AI API (€49/mo or €249/yr). '
+        . 'Be concise, actionable, friendly. User message: "' . mb_substr($message, 0, 600) . '". '
+        . 'Return ONLY valid JSON: {"reply":"…","tips":[{"title":"…","detail":"…"}]} — up to 3 tips.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 900, 'chat');
+    if (!$result['ok']) {
+        if (function_exists('sh_admin_allows_ai_demo_data') && !sh_admin_allows_ai_demo_data()) {
+            return ['ok' => false, 'demo' => false, 'reply' => '', 'tips' => [], 'error' => $result['error']];
+        }
+        $replies = [
+            'no' => 'Demo-assistent (API utilgjengelig): Jeg hjelper deg med Shop CMS. Aktiver AI-nøkkel i Innstillinger → AI.',
+            'uk' => 'Демо-радник (API недоступний): допомагаю з Shop CMS. Увімкніть AI у Налаштування → AI.',
+            'ru' => 'Демо-советник (API недоступен): помогаю с Shop CMS. Включите AI в Настройки → AI.',
+            'sv' => 'Demo-rådgivare (API otillgänglig): hjälper med Shop CMS. Aktivera AI under Inställningar → AI.',
+            'en' => 'Demo advisor (API unavailable): I help with Shop CMS. Enable AI in Settings → AI.',
+        ];
+        $reply = $replies[$lang] ?? $replies['en'];
+        return ['ok' => true, 'demo' => true, 'reply' => $reply, 'tips' => $demoTips, 'error' => $result['error']];
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        if (function_exists('sh_admin_allows_ai_demo_data') && !sh_admin_allows_ai_demo_data()) {
+            return ['ok' => false, 'demo' => false, 'reply' => '', 'tips' => [], 'error' => 'Invalid AI response'];
+        }
+        return sh_ai_admin_agent_reply(array_merge($settings, ['ai_enabled' => false]), $message, $history, $lang);
+    }
+
+    $tips = [];
+    foreach (is_array($parsed['tips'] ?? null) ? $parsed['tips'] : [] as $tip) {
+        if (!is_array($tip)) {
+            continue;
+        }
+        $tips[] = [
+            'title'  => trim((string) ($tip['title'] ?? '')),
+            'detail' => trim((string) ($tip['detail'] ?? '')),
+        ];
+    }
+
+    return [
+        'ok'    => true,
+        'demo'  => false,
+        'reply' => trim((string) ($parsed['reply'] ?? '')),
+        'tips'  => array_slice(array_filter($tips, static fn($t) => $t['title'] !== ''), 0, 3),
+        'error' => '',
+    ];
+}
+
+/**
+ * Scan service page content (privacy, etc.) and suggest improvements.
+ *
+ * @return array{ok:bool,demo:bool,summary:string,suggestions:list<array{priority:string,title:string,detail:string}>,error:string}
+ */
+function sh_ai_page_advisor(array $settings, string $pageSlug, array $pageData, string $lang = 'en'): array
+{
+    $lang = trim($lang) ?: 'en';
+    $slug = strtolower(trim($pageSlug));
+    $title = trim((string) ($pageData['title'][$lang] ?? $pageData['title']['en'] ?? ''));
+    $content = trim(strip_tags((string) ($pageData['content'][$lang] ?? $pageData['content']['en'] ?? '')));
+    $metaTitle = trim((string) ($pageData['meta_title'][$lang] ?? ''));
+    $metaDesc = trim((string) ($pageData['meta_description'][$lang] ?? ''));
+
+    $ruleSuggestions = [];
+    if ($content === '') {
+        $ruleSuggestions[] = ['priority' => 'high', 'title' => 'Empty body', 'detail' => 'Add full policy text — data controller, purposes, legal basis, retention, rights.'];
+    }
+    if (mb_strlen($content) < 400) {
+        $ruleSuggestions[] = ['priority' => 'high', 'title' => 'Content too short', 'detail' => 'GDPR privacy policies typically need 600+ words covering collection, cookies, third parties and contact.'];
+    }
+    if ($metaTitle === '') {
+        $ruleSuggestions[] = ['priority' => 'medium', 'title' => 'Missing meta title', 'detail' => 'Add SEO title e.g. «Privacy policy — [Shop name]».'];
+    }
+    if ($metaDesc === '' || mb_strlen($metaDesc) < 80) {
+        $ruleSuggestions[] = ['priority' => 'medium', 'title' => 'Weak meta description', 'detail' => 'Write 120–160 chars summarizing data practices and user rights.'];
+    }
+    if ($slug === 'privacy') {
+        foreach (['controller', 'gdpr', 'cookie', 'retention', 'rights', 'contact'] as $kw) {
+            if (!preg_match('/' . preg_quote($kw, '/') . '/iu', $content)) {
+                $ruleSuggestions[] = [
+                    'priority' => 'medium',
+                    'title'    => 'Missing: ' . $kw,
+                    'detail'   => 'Privacy policy should mention ' . $kw . ' (or equivalent in ' . $lang . ').',
+                ];
+            }
+        }
+    }
+
+    $gate = sh_ai_admin_request_gate($settings);
+    if ($gate !== null) {
+        return [
+            'ok'          => false,
+            'demo'        => false,
+            'summary'     => '',
+            'suggestions' => [],
+            'error'       => (string) ($gate['error'] ?? ''),
+        ];
+    }
+
+    if (!sh_ai_enabled($settings)) {
+        return [
+            'ok'          => true,
+            'demo'        => true,
+            'summary'     => 'Rule-based scan (' . count($ruleSuggestions) . ' findings). Enable AI in Settings → AI for deeper legal copy suggestions.',
+            'suggestions' => array_slice($ruleSuggestions, 0, 10),
+            'error'       => '',
+        ];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $prompt = 'You are a GDPR/ePrivacy advisor for e-commerce. Page slug: ' . $slug . '. Language: ' . $lang . ". "
+        . 'Title: "' . mb_substr($title, 0, 120) . '". Meta title: "' . mb_substr($metaTitle, 0, 80) . '". '
+        . 'Meta description: "' . mb_substr($metaDesc, 0, 200) . '". '
+        . 'Body excerpt: "' . mb_substr($content, 0, 2500) . '". '
+        . 'Return ONLY JSON: {"summary":"…","suggestions":[{"priority":"high|medium|low","title":"…","detail":"…"}]} — max 8 items, advise in ' . $lang . '.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 1200, 'seo');
+    if (!$result['ok']) {
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'summary' => '', 'suggestions' => [], 'error' => $result['error']],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'summary' => 'AI unavailable — showing rule-based scan.',
+                'suggestions' => array_slice($ruleSuggestions, 0, 10),
+                'error' => $result['error'],
+            ]
+        );
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return sh_ai_admin_fail_or_demo(
+            ['ok' => false, 'demo' => false, 'summary' => '', 'suggestions' => [], 'error' => 'Invalid AI response'],
+            static fn(): array => [
+                'ok' => true, 'demo' => true,
+                'summary' => 'Could not parse AI — rule-based scan shown.',
+                'suggestions' => array_slice($ruleSuggestions, 0, 10),
+                'error' => '',
+            ]
+        );
+    }
+
+    $suggestions = [];
+    foreach (is_array($parsed['suggestions'] ?? null) ? $parsed['suggestions'] : [] as $s) {
+        if (!is_array($s)) {
+            continue;
+        }
+        $suggestions[] = [
+            'priority' => in_array($s['priority'] ?? '', ['high', 'medium', 'low'], true) ? $s['priority'] : 'medium',
+            'title'    => trim((string) ($s['title'] ?? '')),
+            'detail'   => trim((string) ($s['detail'] ?? '')),
+        ];
+    }
+    if ($suggestions === []) {
+        $suggestions = $ruleSuggestions;
+    }
+
+    return [
+        'ok'          => true,
+        'demo'        => false,
+        'summary'     => trim((string) ($parsed['summary'] ?? '')),
+        'suggestions' => array_slice(array_filter($suggestions, static fn($s) => $s['title'] !== ''), 0, 10),
+        'error'       => '',
+    ];
 }
 
 function sh_json_response(array $data, int $code = 200): void

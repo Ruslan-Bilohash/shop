@@ -14,6 +14,11 @@ if (!sh_mysql_storage_available()) {
     exit('Database not connected. Run install.php or check data/db.config.php.');
 }
 
+if (!sh_mysql_console_visible()) {
+    header('Location: ' . sh_admin_url('index.php'), true, 302);
+    exit;
+}
+
 $admin_page = 'mysql-console';
 $ta = $t['admin'] ?? [];
 $mp = $ta['mysql_console_page'] ?? [];

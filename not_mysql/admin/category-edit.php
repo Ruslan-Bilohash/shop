@@ -115,18 +115,15 @@ require_once dirname(__DIR__) . '/includes/payment-settings.php';
 $sh_ai_settings = sh_ai_settings(sh_load_settings());
 $admin_extra_js = [
     sh_asset('js/admin-icon-picker.js') . '?v=2',
-    sh_asset('js/admin-category.js') . '?v=1',
+    sh_asset('js/admin-category.js') . '?v=2',
 ];
+
+if ($flash === 'error' && $errors !== []) {
+    $admin_flash = ['type' => 'error', 'msg' => implode(' ', $errors)];
+}
 
 require __DIR__ . '/includes/layout.php';
 ?>
-
-<?php if ($flash === 'error' && $errors !== []): ?>
-<div class="adm-alert adm-alert-error">
-    <i class="fas fa-exclamation-circle"></i>
-    <?= htmlspecialchars(implode(' ', $errors)) ?>
-</div>
-<?php endif; ?>
 
 <?php if (!$is_new): ?>
 <?php require __DIR__ . '/includes/edit-tabs.php'; ?>
@@ -186,7 +183,19 @@ require __DIR__ . '/includes/layout.php';
         </div>
 
         <div class="adm-card">
-            <div class="adm-card-head"><h2><?= htmlspecialchars($tp['names_title'] ?? 'Names') ?> (<?= count(sh_langs()) ?>)</h2></div>
+            <div class="adm-card-head adm-card-head--stack">
+                <h2><?= htmlspecialchars($tp['names_title'] ?? 'Names') ?> (<?= count(sh_langs()) ?>)</h2>
+                <div class="adm-ai-toolbar">
+                    <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="shAiCategoryNames"
+                            data-need-name="<?= htmlspecialchars($tp['ai_need_name'] ?? 'Enter category name on General tab first.') ?>"
+                            data-loading="<?= htmlspecialchars($tp['ai_names_loading'] ?? 'Translating names…') ?>"
+                            data-ok="<?= htmlspecialchars($tp['ai_names_ok'] ?? 'Category names translated.') ?>"
+                            data-demo-ok="<?= htmlspecialchars($tp['ai_names_demo'] ?? 'Demo name templates applied.') ?>">
+                        <i class="fas fa-language"></i> <?= htmlspecialchars($tp['ai_names_btn'] ?? 'AI: Translate names') ?>
+                    </button>
+                    <span id="shAiCategoryNamesStatus" class="adm-ai-status" hidden></span>
+                </div>
+            </div>
             <div class="adm-card-body padded">
                 <div class="adm-form-grid adm-cat-names-grid">
                     <?php foreach (sh_langs() as $code => $info): ?>

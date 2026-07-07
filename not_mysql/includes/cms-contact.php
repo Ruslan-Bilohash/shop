@@ -7,7 +7,14 @@
 define('CMS_CONTACT_EMAIL', 'email@bilohash.com');
 define('CMS_CONTACT_FROM', 'no-reply@bilohash.com');
 
-require_once __DIR__ . '/bh-mail.php';
+if (!function_exists('bh_send_mail')) {
+    if (is_file(__DIR__ . '/ecosystem-load.php')) {
+        require_once __DIR__ . '/ecosystem-load.php';
+        sh_require_ecosystem('bh-mail.php');
+    } else {
+        require_once __DIR__ . '/bh-mail.php';
+    }
+}
 
 function cms_recaptcha_site_key(): string
 {
@@ -384,5 +391,6 @@ function cms_contact_ensure_csrf(): string
 
 function cms_contact_stylesheet_href(): string
 {
-    return '/includes/cms-contact.css?v=4';
+    $path = 'includes/cms-contact.css?v=4';
+    return function_exists('sh_url') ? sh_url($path) : '/' . $path;
 }

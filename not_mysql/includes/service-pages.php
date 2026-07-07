@@ -399,6 +399,9 @@ function sh_footer_links(?array $settings = null): array
             if (!is_array($link) || empty($link['active'])) {
                 continue;
             }
+            if (($link['id'] ?? '') === 'admin' && function_exists('sh_admin_public_link_visible') && !sh_admin_public_link_visible($settings)) {
+                continue;
+            }
             $out[$col][] = $link;
         }
     }

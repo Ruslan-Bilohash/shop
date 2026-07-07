@@ -19,13 +19,16 @@ if (!is_array($payload)) {
 $name = trim((string) ($payload['name'] ?? ''));
 $slug = trim((string) ($payload['slug'] ?? ''));
 $sourceLang = strtolower(trim((string) ($payload['source_lang'] ?? 'en'))) ?: 'en';
+$action = strtolower(trim((string) ($payload['action'] ?? 'seo')));
 
 if ($name === '') {
     sh_json_response(['ok' => false, 'error' => 'Category name required'], 400);
 }
 
 $settings = sh_load_settings();
-$result = sh_ai_generate_category($settings, $name, $slug, $sourceLang);
+$result = $action === 'names'
+    ? sh_ai_translate_category_names($settings, $name, $sourceLang)
+    : sh_ai_generate_category($settings, $name, $slug, $sourceLang);
 
 sh_json_response([
     'ok'    => $result['ok'],

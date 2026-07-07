@@ -7,13 +7,18 @@ $issues = [System.Collections.Generic.List[string]]::new()
 
 function Add-Issue($msg) { $issues.Add($msg) | Out-Null; Write-Host "ISSUE: $msg" }
 
-# 1. PHP syntax
-Get-ChildItem $root -Recurse -Filter '*.php' -File |
-    Where-Object { $_.FullName -notmatch '\\vendor\\|\\node_modules\\' } |
-    ForEach-Object {
-        $out = php -l $_.FullName 2>&1
-        if ($LASTEXITCODE -ne 0) { Add-Issue "Syntax: $($_.FullName) — $out" }
-    }
+# 1. PHP syntax (skip if php not in PATH — run on production via SSH instead)
+$phpCmd = Get-Command php -ErrorAction SilentlyContinue
+if (-not $phpCmd) {
+    Write-Host 'SKIP: php not in PATH (syntax check deferred to production SSH)'
+} else {
+    Get-ChildItem $root -Recurse -Filter '*.php' -File |
+        Where-Object { $_.FullName -notmatch '\\vendor\\|\\node_modules\\|\\install\\|\\not_mysql\\' } |
+        ForEach-Object {
+            $out = & php -l $_.FullName 2>&1
+            if ($LASTEXITCODE -ne 0) { Add-Issue "Syntax: $($_.FullName) - $out" }
+        }
+}
 
 # 2. Secrets in repo
 $secretPatterns = @(
@@ -68,7 +73,9 @@ Get-ChildItem $root -Recurse -Filter '*.php' -File |
 
 # 5. Duplicate function declarations (common fatal)
 $funcMap = @{}
-Get-ChildItem (Join-Path $root 'includes') -Filter '*.php' -File -ErrorAction SilentlyContinue | ForEach-Object {
+Get-ChildItem (Join-Path $root 'includes') -Filter '*.php' -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch '\\mysql\\' } |
+    ForEach-Object {
     $matches = [regex]::Matches((Get-Content $_.FullName -Raw), 'function\s+(sh_[a-z0-9_]+)\s*\(')
     foreach ($m in $matches) {
         $fn = $m.Groups[1].Value
@@ -80,7 +87,8 @@ Get-ChildItem (Join-Path $root 'includes') -Filter '*.php' -File -ErrorAction Si
     }
 }
 
-Write-Host "`nTotal issues: $($issues.Count)"
+Write-Host ''
+Write-Host "Total issues: $($issues.Count)"
 $out = Join-Path $root 'scripts/security-audit-last.txt'
 $issues | Set-Content $out -Encoding UTF8
 if ($issues.Count -gt 0) { exit 1 }

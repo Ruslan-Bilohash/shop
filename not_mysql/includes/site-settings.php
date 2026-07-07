@@ -57,6 +57,8 @@ function sh_merge_site_settings(array $settings): array
     require_once __DIR__ . '/menu-settings.php';
     require_once __DIR__ . '/tax-settings.php';
     require_once __DIR__ . '/smtp-settings.php';
+    require_once __DIR__ . '/invoice-settings.php';
+    require_once __DIR__ . '/telegram-notify.php';
     $merged = array_merge(
         sh_default_payment_settings(),
         bh_cms_site_settings_defaults(bh_cms_product_accent('shop')),
@@ -66,6 +68,8 @@ function sh_merge_site_settings(array $settings): array
         sh_store_settings_defaults(),
         sh_tax_settings_defaults(),
         sh_smtp_settings_defaults(),
+        sh_invoice_settings_defaults(),
+        sh_telegram_settings_defaults(),
         sh_menu_settings_defaults(),
         $settings
     );
@@ -136,6 +140,7 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
         $settings['ai_prompt_product'] = trim($post['ai_prompt_product'] ?? '');
         $settings['ai_prompt_news'] = trim($post['ai_prompt_news'] ?? '');
         $settings['ai_prompt_seo'] = trim($post['ai_prompt_seo'] ?? '');
+        $settings['ai_model_image'] = trim($post['ai_model_image'] ?? ($settings['ai_model_image'] ?? ''));
         foreach (['product', 'chat', 'news', 'seo'] as $ctx) {
             $key = 'ai_model_' . $ctx;
             $model = trim($post[$key] ?? '');
@@ -191,6 +196,16 @@ function sh_settings_apply_post(string $section, array $post, array $settings): 
     if ($section === 'taxes') {
         require_once __DIR__ . '/tax-settings.php';
         $settings = sh_tax_settings_apply_post($post, $settings);
+    }
+
+    if ($section === 'invoice') {
+        require_once __DIR__ . '/invoice-settings.php';
+        $settings = sh_invoice_settings_apply_post($post, $settings);
+    }
+
+    if ($section === 'telegram') {
+        require_once __DIR__ . '/telegram-notify.php';
+        $settings = sh_telegram_settings_apply_post($post, $settings);
     }
 
     if ($section === 'smtp') {
@@ -267,6 +282,7 @@ function sh_settings_tabs(): array
     return [
         'store'      => ['file' => 'settings-store.php',      'icon' => 'store', 'group' => 'shop'],
         'taxes'      => ['file' => 'settings-taxes.php',      'icon' => 'percent', 'group' => 'shop'],
+        'invoice'    => ['file' => 'settings-invoice.php',    'icon' => 'file-invoice', 'group' => 'shop'],
         'languages'  => ['file' => 'settings-languages.php',  'icon' => 'language', 'group' => 'advanced'],
         'payments'   => ['file' => 'payments.php',            'icon' => 'credit-card', 'group' => 'integrations'],
         'homepage'      => ['file' => 'settings-homepage.php',      'icon' => 'house', 'group' => 'content'],
@@ -277,6 +293,7 @@ function sh_settings_tabs(): array
         'posten'      => ['file' => 'settings-posten.php',      'icon' => 'truck', 'group' => 'integrations'],
         'nova_poshta' => ['file' => 'settings-nova-poshta.php', 'icon' => 'warehouse', 'group' => 'integrations'],
         'smtp'        => ['file' => 'settings-smtp.php',        'icon' => 'envelope', 'group' => 'integrations'],
+        'telegram'    => ['file' => 'settings-telegram.php',    'icon' => 'paper-plane', 'group' => 'integrations'],
         'appearance' => ['file' => 'settings-appearance.php', 'icon' => 'palette', 'group' => 'design'],
         'seo'           => ['file' => 'settings-seo.php',           'icon' => 'chart-line', 'group' => 'marketing'],
         'seo_analysis'  => ['file' => 'settings-seo-analysis.php',  'icon' => 'magnifying-glass-chart', 'group' => 'marketing'],
@@ -296,7 +313,7 @@ function sh_settings_tab_groups(): array
         'shop' => [
             'label_key' => 'settings_group_shop',
             'icon'      => 'store',
-            'tabs'      => ['store', 'taxes'],
+            'tabs'      => ['store', 'taxes', 'invoice'],
         ],
         'content' => [
             'label_key' => 'settings_group_content',
@@ -316,7 +333,7 @@ function sh_settings_tab_groups(): array
         'integrations' => [
             'label_key' => 'settings_group_integrations',
             'icon'      => 'plug',
-            'tabs'      => ['chat', 'ai', 'recaptcha', 'customer_auth', 'payments', 'posten', 'nova_poshta', 'smtp'],
+            'tabs'      => ['chat', 'ai', 'recaptcha', 'customer_auth', 'payments', 'posten', 'nova_poshta', 'smtp', 'telegram'],
         ],
         'advanced' => [
             'label_key' => 'settings_group_advanced',

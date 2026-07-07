@@ -39,6 +39,10 @@ FRESH INSTALL
 =============
 Open install.php — demo seed is imported into MySQL.
 
-LICENSE
-=======
-See LICENSE.txt — commercial use requires written permission from Ruslan Bilohash.
+LICENSE (30-DAY DEMO)
+=====================
+- Full demo for 30 days after first install (automatic trial in data/license.state.json).
+- After trial: activate a license key in Admin → License.
+- Generate / verify keys: https://bilohash.com/license.php
+- Purchase or custom deployment: rbilohash@gmail.com — https://bilohash.com/shop/site/
+See LICENSE.txt for full terms.

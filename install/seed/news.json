@@ -1,5 +1,125 @@
 [
     {
+        "id": "shop-cms-v1-5-1-release",
+        "slug": "shop-cms-v1-5-1-release",
+        "active": true,
+        "featured": true,
+        "published_at": "2026-07-07T10:00:00Z",
+        "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=630&fit=crop",
+        "name": {
+            "en": "Shop CMS v1.5.1 — Full changelog i18n for all 16 versions",
+            "uk": "Shop CMS v1.5.1 — повний changelog i18n для усіх 16 версій"
+        },
+        "excerpt": {
+            "en": "Version history on /shop/site/versions.php is now fully translated into six languages — 16 releases with localized highlights.",
+            "uk": "Історія версій на /shop/site/versions.php повністю перекладена шістьма мовами — 16 релізів із локалізованими пунктами."
+        },
+        "body": {
+            "en": "<p>Shop CMS <strong>v1.5.1</strong> completes multilingual coverage for the public changelog. Older releases moved from a homepage spoiler to a dedicated <a href=\"https://bilohash.com/shop/site/versions.php\">versions page</a> with full i18n.</p><h2>16 versions × 6 languages</h2><p>Every release from v1.0.0 through v1.5.1 ships localized title, date label and bullet highlights in English, Norwegian, Ukrainian, Russian, Swedish and Lithuanian.</p><h2>Lighter homepage</h2><p>The marketing site homepage links to the versions page instead of embedding a long <code>&lt;details&gt;</code> block — faster first paint and cleaner layout.</p><p>Version badge reads <code>includes/version.php</code> automatically — currently <strong>v1.5.1</strong>.</p>",
+            "uk": "<p>Shop CMS <strong>v1.5.1</strong> завершує багатомовне покриття публічного changelog. Старі релізи перенесено зі спойлера на головній на окрему <a href=\"https://bilohash.com/shop/site/versions.php\">сторінку версій</a> з повним i18n.</p><h2>16 версій × 6 мов</h2><p>Кожен реліз від v1.0.0 до v1.5.1 має локалізовані заголовок, дату та пункти в EN, NO, UK, RU, SV і LT.</p><h2>Легша головна</h2><p>Маркетинговий сайт посилається на сторінку версій замість довгого блоку <code>&lt;details&gt;</code> — швидший перший рендер і чистіший макет.</p><p>Бейдж версії читає <code>includes/version.php</code> автоматично — зараз <strong>v1.5.1</strong>.</p>"
+        },
+        "seo": {
+            "meta_title": {
+                "en": "Shop CMS v1.5.1 — Multilingual changelog for 16 releases",
+                "uk": "Shop CMS v1.5.1 — багатомовний changelog для 16 релізів"
+            },
+            "meta_description": {
+                "en": "Shop CMS v1.5.1 adds full i18n for version history across six languages, a dedicated versions page and a lighter marketing homepage.",
+                "uk": "Shop CMS v1.5.1: повний i18n історії версій шістьма мовами, окрема сторінка versions.php та легша головна маркетингового сайту."
+            },
+            "meta_keywords": {
+                "en": "Shop CMS, v1.5.1, changelog i18n, versions page, PHP e-commerce",
+                "uk": "Shop CMS, v1.5.1, changelog i18n, сторінка версій, PHP інтернет-магазин"
+            },
+            "og_image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&h=630&fit=crop",
+            "canonical_override": "",
+            "schema": {
+                "news_article": true,
+                "breadcrumb": true
+            }
+        }
+    },
+    {
+        "id": "shop-cms-v1-5-0-3d-products",
+        "slug": "shop-cms-v1-5-0-3d-products",
+        "active": true,
+        "featured": true,
+        "published_at": "2026-07-07T08:00:00Z",
+        "image": "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=1200&h=630&fit=crop",
+        "name": {
+            "en": "Shop CMS v1.5.0 — Rotatable 3D featured products on homepage",
+            "uk": "Shop CMS v1.5.0 — обертові 3D товари на головній"
+        },
+        "excerpt": {
+            "en": "The first three featured products render as interactive Three.js cards — drag to rotate, scroll to zoom, with preset shapes per category.",
+            "uk": "Перші три рекомендовані товари відображаються як інтерактивні Three.js картки — обертання мишею, масштаб коліщатком, пресети за категоріями."
+        },
+        "body": {
+            "en": "<p>Shop CMS <strong>v1.5.0</strong> adds a lightweight 3D product showcase on the storefront homepage. Featured items load via <code>product-3d.js</code> and Three.js CDN only when the block is visible.</p><h2>Orbit controls</h2><p>Customers drag to rotate each product card and use the mouse wheel to zoom — a polished demo for electronics, fashion and homeware merchants.</p><h2>Category presets</h2><p>Headphones, watches, apparel, bags, mugs and mats ship with built-in geometry presets. Optional <code>model_3d</code> field accepts a custom GLB URL.</p><p>Try it on the <a href=\"https://bilohash.com/shop/\">live demo homepage</a> — first three featured products in the 3D grid.</p>",
+            "uk": "<p>Shop CMS <strong>v1.5.0</strong> додає легкий 3D-вітринний блок на головній вітрини. Рекомендовані товари завантажують <code>product-3d.js</code> і Three.js з CDN лише коли блок у зоні видимості.</p><h2>Orbit controls</h2><p>Покупці обертають картку товару мишею та масштабують коліщатком — ефектна демонстрація для електроніки, моди та товарів для дому.</p><h2>Пресети категорій</h2><p>Навушники, годинники, одяг, сумки, кружки та килимки мають вбудовану геометрію. Поле <code>model_3d</code> приймає власний GLB URL.</p><p>Спробуйте на <a href=\"https://bilohash.com/shop/\">live demo</a> — перші три featured товари в 3D-сітці.</p>"
+        },
+        "seo": {
+            "meta_title": {
+                "en": "Shop CMS v1.5.0 — 3D featured products with Three.js",
+                "uk": "Shop CMS v1.5.0 — 3D товари на головній з Three.js"
+            },
+            "meta_description": {
+                "en": "Shop CMS v1.5.0 adds interactive Three.js product cards on the homepage — rotate, zoom and category presets for featured items.",
+                "uk": "Shop CMS v1.5.0: інтерактивні Three.js картки товарів на головній — обертання, масштаб і пресети для featured товарів."
+            },
+            "meta_keywords": {
+                "en": "Shop CMS, v1.5.0, Three.js, 3D products, e-commerce demo",
+                "uk": "Shop CMS, v1.5.0, Three.js, 3D товари, демо інтернет-магазину"
+            },
+            "og_image": "https://images.unsplash.com/photo-1617802690992-15d93263d3a9?w=1200&h=630&fit=crop",
+            "canonical_override": "",
+            "schema": {
+                "news_article": true,
+                "breadcrumb": true
+            }
+        }
+    },
+    {
+        "id": "shop-cms-v1-4-0-screenshots",
+        "slug": "shop-cms-v1-4-0-screenshots",
+        "active": true,
+        "featured": false,
+        "published_at": "2026-07-06T20:00:00Z",
+        "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop",
+        "name": {
+            "en": "Shop CMS v1.4.0 — Lazy-loaded screenshots carousel on product site",
+            "uk": "Shop CMS v1.4.0 — карусель скріншотів з lazy-load на product site"
+        },
+        "excerpt": {
+            "en": "Marketing homepage stays light: screenshot gallery loads via IntersectionObserver into a separate carousel endpoint.",
+            "uk": "Головна маркетингового сайту залишається легкою: галерея скріншотів завантажується через IntersectionObserver з окремого endpoint."
+        },
+        "body": {
+            "en": "<p>Shop CMS <strong>v1.4.0</strong> optimizes the <code>/shop/site/</code> marketing page. The screenshots section is now a lightweight shell that fetches carousel markup only when scrolled into view.</p><h2>Separate carousel file</h2><p><code>screenshots-carousel.php</code> serves the heavy HTML; <code>site.js</code> uses IntersectionObserver and delegates lightbox clicks — better PageSpeed scores on first load.</p><h2>Lightbox preserved</h2><p>Full-size preview on click still works via event delegation after lazy injection.</p><p>See the section on <a href=\"https://bilohash.com/shop/site/#screenshots\">/shop/site/#screenshots</a>.</p>",
+            "uk": "<p>Shop CMS <strong>v1.4.0</strong> оптимізує маркетингову сторінку <code>/shop/site/</code>. Секція скріншотів — легка оболонка, що підвантажує розмітку каруселі лише при прокрутці до неї.</p><h2>Окремий файл каруселі</h2><p><code>screenshots-carousel.php</code> віддає важкий HTML; <code>site.js</code> використовує IntersectionObserver і делегування lightbox — кращі показники PageSpeed при першому завантаженні.</p><h2>Lightbox збережено</h2><p>Перегляд у повному розмірі по кліку працює через делегування подій після lazy-ін'єкції.</p><p>Дивіться секцію на <a href=\"https://bilohash.com/shop/site/#screenshots\">/shop/site/#screenshots</a>.</p>"
+        },
+        "seo": {
+            "meta_title": {
+                "en": "Shop CMS v1.4.0 — Lazy screenshots carousel",
+                "uk": "Shop CMS v1.4.0 — lazy-load карусель скріншотів"
+            },
+            "meta_description": {
+                "en": "Shop CMS v1.4.0 lazy-loads the marketing screenshots carousel via IntersectionObserver — lighter homepage, preserved lightbox.",
+                "uk": "Shop CMS v1.4.0: lazy-load каруселі скріншотів через IntersectionObserver — легша головна, lightbox збережено."
+            },
+            "meta_keywords": {
+                "en": "Shop CMS, v1.4.0, lazy load, screenshots, PageSpeed",
+                "uk": "Shop CMS, v1.4.0, lazy load, скріншоти, PageSpeed"
+            },
+            "og_image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=630&fit=crop",
+            "canonical_override": "",
+            "schema": {
+                "news_article": true,
+                "breadcrumb": true
+            }
+        }
+    },
+    {
         "id": "shop-cms-v1-3-6-release",
         "slug": "shop-cms-v1-3-6-release",
         "active": true,

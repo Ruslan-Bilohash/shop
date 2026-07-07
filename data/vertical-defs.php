@@ -8,7 +8,7 @@ return [
         'demo_param'  => 'category=fashion',
         'no'          => 'Motebutikker',
         'en'          => 'Fashion boutiques',
-        'uk'          => 'Бутики моди',
+        'uk'          => 'Крамниці моди',
         'ru'          => 'Бутики моды',
     ],
     'electronics' => [
