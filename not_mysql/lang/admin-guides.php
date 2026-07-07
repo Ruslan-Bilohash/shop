@@ -20,6 +20,38 @@ return [
             ],
             'note' => 'Store secrets only on the server. Never expose Client Secret in frontend JavaScript.',
         ],
+        'paysera' => [
+            'title' => 'Paysera setup',
+            'intro' => 'Paysera WebToPay redirects customers to paysera.com for cards and online banking (popular in Lithuania, Latvia, Estonia and EU).',
+            'steps' => [
+                'Create a Paysera account and open Projects → your checkout project.',
+                'Copy Project ID and Sign password from project settings.',
+                'Set callback URL to https://yourdomain.com/shop/api/paysera-callback.php',
+                'Use test mode (sandbox.paysera.com) until checkout flow is verified.',
+                'Enable Paysera here, save, and test with a small amount in sandbox.',
+            ],
+            'links' => [
+                ['label' => 'Paysera Checkout', 'url' => 'https://www.paysera.com/en/checkout/'],
+                ['label' => 'Paysera Developers', 'url' => 'https://developers.paysera.com/'],
+            ],
+            'note' => 'Amount is sent in cents (×100). Currency must match your Paysera project (EUR typical for Baltics).',
+        ],
+        'revolut' => [
+            'title' => 'Revolut Merchant setup',
+            'intro' => 'Revolut Merchant API creates a hosted checkout for cards and Revolut Pay. Ideal for EU / UK merchants.',
+            'steps' => [
+                'Open Revolut Business → Merchant and enable Merchant API.',
+                'Generate Sandbox secret key (and optional public key).',
+                'Add webhook https://yourdomain.com/shop/api/revolut-webhook.php with ORDER_COMPLETED event.',
+                'Paste secret key and webhook signing secret here, enable Revolut.',
+                'Run a sandbox payment, then switch mode to Production for go-live.',
+            ],
+            'links' => [
+                ['label' => 'Revolut Merchant API docs', 'url' => 'https://developer.revolut.com/docs/merchant/merchant-api/'],
+                ['label' => 'Revolut Business', 'url' => 'https://business.revolut.com/merchant'],
+            ],
+            'note' => 'Checkout redirects to Revolut hosted page. Set SH_DEMO_MODE to false to enable live payments.',
+        ],
         'stripe' => [
             'title' => 'Stripe setup',
             'intro' => 'Stripe handles cards, Klarna and wallets. Google Pay and Apple Pay are enabled through Stripe when configured.',
@@ -103,6 +135,38 @@ return [
             ],
             'note' => 'Lagre hemmeligheter kun på serveren. Aldri eksponer Client Secret i frontend.',
         ],
+        'paysera' => [
+            'title' => 'Paysera-oppsett',
+            'intro' => 'Paysera WebToPay sender kunden til paysera.com for kort og nettbank (Baltikum og EU).',
+            'steps' => [
+                'Opprett Paysera-konto og åpne Prosjekter → checkout-prosjektet.',
+                'Kopier Project ID og Sign password fra prosjektinnstillinger.',
+                'Sett callback URL til https://dittdomene.no/shop/api/paysera-callback.php',
+                'Bruk testmodus (sandbox.paysera.com) til checkout er verifisert.',
+                'Aktiver Paysera her, lagre og test med lite beløp i sandbox.',
+            ],
+            'links' => [
+                ['label' => 'Paysera Checkout', 'url' => 'https://www.paysera.com/en/checkout/'],
+                ['label' => 'Paysera Developers', 'url' => 'https://developers.paysera.com/'],
+            ],
+            'note' => 'Beløp sendes i øre/cent (×100). Valuta må matche Paysera-prosjektet (ofte EUR).',
+        ],
+        'revolut' => [
+            'title' => 'Revolut Merchant-oppsett',
+            'intro' => 'Revolut Merchant API oppretter hosted checkout for kort og Revolut Pay. Passer for EU / UK.',
+            'steps' => [
+                'Åpne Revolut Business → Merchant og aktiver Merchant API.',
+                'Generer Sandbox secret key (og valgfri public key).',
+                'Legg til webhook https://dittdomene.no/shop/api/revolut-webhook.php med ORDER_COMPLETED.',
+                'Lim inn secret key og webhook secret her, aktiver Revolut.',
+                'Kjør sandbox-betaling, bytt til Production ved lansering.',
+            ],
+            'links' => [
+                ['label' => 'Revolut Merchant API', 'url' => 'https://developer.revolut.com/docs/merchant/merchant-api/'],
+                ['label' => 'Revolut Business', 'url' => 'https://business.revolut.com/merchant'],
+            ],
+            'note' => 'Checkout omdirigerer til Revolut. Sett SH_DEMO_MODE til false for live betaling.',
+        ],
         'stripe' => [
             'title' => 'Stripe-oppsett',
             'intro' => 'Stripe håndterer kort, Klarna og lommebøker. Google Pay og Apple Pay aktiveres via Stripe.',
@@ -118,7 +182,7 @@ return [
                 ['label' => 'API-nøkler', 'url' => 'https://dashboard.stripe.com/apikeys'],
                 ['label' => 'Webhooks', 'url' => 'https://dashboard.stripe.com/webhooks'],
             ],
-            'note' => 'Bruk Test-nøkler til checkout er verifisert. NOK støttes for norske butikker.',
+            'note' => 'Bruk Test-nøkler til checkout er verifisert. NOK støttes for norske butiker.',
         ],
         'vipps' => [
             'title' => 'Vipps MobilePay-oppsett',
@@ -157,7 +221,7 @@ return [
             'intro' => 'Apple Pay på web krever domeneverifisering, Merchant ID og betalingsprocessor (vanligvis Stripe).',
             'steps' => [
                 'Opprett Merchant ID i Apple Developer (Certificates, Identifiers & Profiles).',
-                'Verifiser butikkdomene i Stripe Dashboard → Apple Pay (fil i /.well-known/).',
+                'Verifiser butikdomene i Stripe Dashboard → Apple Pay (fil i /.well-known/).',
                 'Generer Apple Pay-sertifikat og last opp til Stripe.',
                 'Skriv inn Merchant ID (merchant.com.merke) og domene her.',
                 'Test i Safari (macOS/iOS) med kort i Wallet — ikke på Windows/Android.',
@@ -186,6 +250,38 @@ return [
             ],
             'note' => 'Секрети зберігайте лише на сервері. Ніколи не показуйте Client Secret у frontend.',
         ],
+        'paysera' => [
+            'title' => 'Налаштування Paysera',
+            'intro' => 'Paysera WebToPay перенаправляє клієнта на paysera.com для карток та інтернет-банкінгу (Балтія та ЄС).',
+            'steps' => [
+                'Створіть акаунт Paysera і відкрийте Проєкти → checkout-проєкт.',
+                'Скопіюйте Project ID та Sign password з налаштувань проєкту.',
+                'Вкажіть callback URL: https://вашдомен/shop/api/paysera-callback.php',
+                'Використовуйте тестовий режим (sandbox.paysera.com) до перевірки checkout.',
+                'Увімкніть Paysera тут, збережіть і протестуйте в sandbox.',
+            ],
+            'links' => [
+                ['label' => 'Paysera Checkout', 'url' => 'https://www.paysera.com/en/checkout/'],
+                ['label' => 'Paysera Developers', 'url' => 'https://developers.paysera.com/'],
+            ],
+            'note' => 'Сума передається в копійках (×100). Валюта має збігатися з проєктом Paysera (зазвичай EUR).',
+        ],
+        'revolut' => [
+            'title' => 'Налаштування Revolut Merchant',
+            'intro' => 'Revolut Merchant API створює hosted checkout для карток і Revolut Pay. Підходить для ЄС / UK.',
+            'steps' => [
+                'Відкрийте Revolut Business → Merchant і увімкніть Merchant API.',
+                'Згенеруйте Sandbox secret key (і опційно public key).',
+                'Додайте webhook https://вашдомен/shop/api/revolut-webhook.php з подією ORDER_COMPLETED.',
+                'Вставте secret key і webhook secret тут, увімкніть Revolut.',
+                'Проведіть sandbox-платіж, потім перемкніть на Production.',
+            ],
+            'links' => [
+                ['label' => 'Revolut Merchant API', 'url' => 'https://developer.revolut.com/docs/merchant/merchant-api/'],
+                ['label' => 'Revolut Business', 'url' => 'https://business.revolut.com/merchant'],
+            ],
+            'note' => 'Checkout перенаправляє на сторінку Revolut. Вимкніть SH_DEMO_MODE для живої оплати.',
+        ],
         'stripe' => [
             'title' => 'Налаштування Stripe',
             'intro' => 'Stripe обробляє картки, Klarna та гаманці. Google Pay і Apple Pay підключаються через Stripe.',
@@ -201,7 +297,7 @@ return [
                 ['label' => 'API-ключі', 'url' => 'https://dashboard.stripe.com/apikeys'],
                 ['label' => 'Webhooks', 'url' => 'https://dashboard.stripe.com/webhooks'],
             ],
-            'note' => 'Використовуйте Test-ключі до перевірки checkout. NOK підтримується для норвезьких магазинів.',
+            'note' => 'Використовуйте Test-ключі до перевірки checkout. NOK підтримується для норвезьких крамниць.',
         ],
         'vipps' => [
             'title' => 'Налаштування Vipps MobilePay',
@@ -268,6 +364,38 @@ return [
                 ['label' => 'Документация REST API', 'url' => 'https://developer.paypal.com/api/rest/'],
             ],
             'note' => 'Секреты храните только на сервере. Никогда не показывайте Client Secret во frontend.',
+        ],
+        'paysera' => [
+            'title' => 'Настройка Paysera',
+            'intro' => 'Paysera WebToPay перенаправляет клиента на paysera.com для карт и интернет-банкинга (Балтия и ЕС).',
+            'steps' => [
+                'Создайте аккаунт Paysera и откройте Проекты → checkout-проект.',
+                'Скопируйте Project ID и Sign password из настроек проекта.',
+                'Укажите callback URL: https://вашдомен/shop/api/paysera-callback.php',
+                'Используйте тестовый режим (sandbox.paysera.com) до проверки checkout.',
+                'Включите Paysera здесь, сохраните и протестируйте в sandbox.',
+            ],
+            'links' => [
+                ['label' => 'Paysera Checkout', 'url' => 'https://www.paysera.com/en/checkout/'],
+                ['label' => 'Paysera Developers', 'url' => 'https://developers.paysera.com/'],
+            ],
+            'note' => 'Сумма передаётся в копейках (×100). Валюта должна совпадать с проектом Paysera (обычно EUR).',
+        ],
+        'revolut' => [
+            'title' => 'Настройка Revolut Merchant',
+            'intro' => 'Revolut Merchant API создаёт hosted checkout для карт и Revolut Pay. Подходит для ЕС / UK.',
+            'steps' => [
+                'Откройте Revolut Business → Merchant и включите Merchant API.',
+                'Сгенерируйте Sandbox secret key (и опционально public key).',
+                'Добавьте webhook https://вашдомен/shop/api/revolut-webhook.php с событием ORDER_COMPLETED.',
+                'Вставьте secret key и webhook secret здесь, включите Revolut.',
+                'Проведите sandbox-платёж, затем переключите на Production.',
+            ],
+            'links' => [
+                ['label' => 'Revolut Merchant API', 'url' => 'https://developer.revolut.com/docs/merchant/merchant-api/'],
+                ['label' => 'Revolut Business', 'url' => 'https://business.revolut.com/merchant'],
+            ],
+            'note' => 'Checkout перенаправляет на страницу Revolut. Отключите SH_DEMO_MODE для живой оплаты.',
         ],
         'stripe' => [
             'title' => 'Настройка Stripe',

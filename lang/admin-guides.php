@@ -182,7 +182,7 @@ return [
                 ['label' => 'API-nøkler', 'url' => 'https://dashboard.stripe.com/apikeys'],
                 ['label' => 'Webhooks', 'url' => 'https://dashboard.stripe.com/webhooks'],
             ],
-            'note' => 'Bruk Test-nøkler til checkout er verifisert. NOK støttes for norske butikker.',
+            'note' => 'Bruk Test-nøkler til checkout er verifisert. NOK støttes for norske butiker.',
         ],
         'vipps' => [
             'title' => 'Vipps MobilePay-oppsett',
@@ -221,7 +221,7 @@ return [
             'intro' => 'Apple Pay på web krever domeneverifisering, Merchant ID og betalingsprocessor (vanligvis Stripe).',
             'steps' => [
                 'Opprett Merchant ID i Apple Developer (Certificates, Identifiers & Profiles).',
-                'Verifiser butikkdomene i Stripe Dashboard → Apple Pay (fil i /.well-known/).',
+                'Verifiser butikdomene i Stripe Dashboard → Apple Pay (fil i /.well-known/).',
                 'Generer Apple Pay-sertifikat og last opp til Stripe.',
                 'Skriv inn Merchant ID (merchant.com.merke) og domene her.',
                 'Test i Safari (macOS/iOS) med kort i Wallet — ikke på Windows/Android.',
@@ -297,7 +297,7 @@ return [
                 ['label' => 'API-ключі', 'url' => 'https://dashboard.stripe.com/apikeys'],
                 ['label' => 'Webhooks', 'url' => 'https://dashboard.stripe.com/webhooks'],
             ],
-            'note' => 'Використовуйте Test-ключі до перевірки checkout. NOK підтримується для норвезьких магазинів.',
+            'note' => 'Використовуйте Test-ключі до перевірки checkout. NOK підтримується для норвезьких крамниць.',
         ],
         'vipps' => [
             'title' => 'Налаштування Vipps MobilePay',

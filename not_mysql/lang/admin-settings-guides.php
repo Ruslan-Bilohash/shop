@@ -54,6 +54,30 @@ $en = [
             'newsletter_notify_email' => 'You receive an email when someone clicks Subscribe in the footer.',
         ],
     ],
+    'invoice' => [
+        'intro' => 'Company block, 12 invoice designs, A4/A5/Letter/Legal print sizes and email delivery.',
+        'guide' => [
+            'title' => 'Invoice setup guide',
+            'intro' => 'Fill company details, pick a print design and configure SMTP for sending invoices.',
+            'steps' => [
+                'Enter legal name, address, org/VAT number and bank details (IBAN).',
+                'Choose one of 12 print designs and paper size (A4 recommended for PDF).',
+                'Set invoice prefix and next number — incremented on each demo order.',
+                'Enable auto-send and configure SMTP under Integrations → SMTP.',
+            ],
+            'links' => [],
+            'note' => 'PDF export uses browser Print → Save as PDF. No server-side PDF library required.',
+        ],
+        'sections' => [
+            'invoice-enable' => 'Invoices',
+            'invoice-company' => 'Company',
+            'invoice-numbering' => 'Numbering',
+            'invoice-print' => 'Print layout',
+        ],
+        'hints' => [
+            'invoice_auto_send' => 'Requires valid customer email at checkout and working SMTP settings.',
+        ],
+    ],
     'taxes' => [
         'intro' => 'VAT and sales tax for Norway, Lithuania, Ukraine, Sweden, Poland and UK.',
         'guide' => [
@@ -93,14 +117,25 @@ $en = [
             ],
             'links' => [
                 ['label' => 'Google Analytics', 'url' => 'https://analytics.google.com/'],
+                ['label' => 'Google Ads', 'url' => 'https://ads.google.com/'],
+                ['label' => 'Google Business Profile', 'url' => 'https://business.google.com/'],
                 ['label' => 'Meta Business Suite', 'url' => 'https://business.facebook.com/'],
             ],
             'note' => 'Tracking loads only on the public storefront — not in the admin panel.',
         ],
-        'sections' => ['analytics-tracking' => 'Analytics & pixels'],
+        'sections' => [
+            'analytics-tracking' => 'Analytics & pixels',
+            'analytics-google-ads' => 'Google Ads (paid)',
+            'analytics-gmb' => 'Google Business Profile',
+        ],
         'hints' => [
             'tracking_gtag_id' => 'Paste G-XXXXXXXX from Google Analytics 4 property.',
             'tracking_meta_pixel' => 'Numeric Pixel ID from Meta Events Manager.',
+            'google_ads_id' => 'AW-XXXXXXXXX from Google Ads → Tools → Conversions → Tag setup.',
+            'google_ads_conversion_label' => 'Conversion label after the slash in send_to (AW-XXX/label).',
+            'gmb_place_id' => 'Optional — find via Google Place ID Finder or Maps share link.',
+            'gmb_reviews_url' => 'Short review link from Google Business Profile → Ask for reviews.',
+            'gmb_map_embed' => 'Leave empty to auto-generate map from address or coordinates.',
         ],
     ],
     'advanced' => [
@@ -111,13 +146,15 @@ $en = [
             'steps' => [
                 'Keep cookie consent enabled for EU/Norway GDPR compliance.',
                 'Use Developer → Show PHP errors only during development.',
-                'Custom HTML/JS editing is available in the Code editor menu item.',
+                'Edit custom <head> HTML and footer JS in the section below (syntax highlighting).',
+                'Edit llms.txt, robots.txt and data/custom.php in Admin → Code editor.',
             ],
             'links' => [],
             'note' => 'Maintenance mode shows a “under development” page — admin stays available when allowed.',
         ],
         'sections' => [
             'advanced-maintenance' => 'Development & GDPR',
+            'advanced-custom-code' => 'Custom HTML & JavaScript',
         ],
         'hints' => [],
     ],
@@ -281,6 +318,32 @@ $en = [
             'chat_widget_icon' => 'Font Awesome icon name without fa- prefix: comments, headset, robot, message.',
         ],
     ],
+    'telegram' => [
+        'intro' => 'Telegram bot alerts when customers place demo orders or submit quick-buy phone leads.',
+        'guide' => [
+            'title' => 'Telegram notifications setup',
+            'intro' => 'Get instant mobile alerts — no SMTP required.',
+            'steps' => [
+                'Open Telegram → @BotFather → /newbot → copy the bot token.',
+                'Send /start to your new bot in Telegram.',
+                'Visit https://api.telegram.org/bot<TOKEN>/getUpdates and find "chat":{"id":…}.',
+                'Paste token and chat ID here, enable notifications, save.',
+                'Click «Send test message» to verify.',
+            ],
+            'links' => [
+                ['label' => 'BotFather', 'url' => 'https://t.me/BotFather'],
+            ],
+            'note' => 'Order alerts include invoice number, total, customer contact and line items. Quick-buy sends phone + product.',
+        ],
+        'sections' => [
+            'telegram-enable' => 'What to notify',
+            'telegram-bot' => 'Credentials',
+        ],
+        'hints' => [
+            'telegram_bot_token' => 'Format: 123456789:AAH…. Keep secret — leave blank to keep saved token.',
+            'telegram_chat_id' => 'Numeric ID for you or a group (often starts with -100 for supergroups).',
+        ],
+    ],
     'ai' => [
         'intro' => 'AI assistant for shop owners: per-context models and prompts for products, chat, news, SEO and UI translation.',
         'guide' => [
@@ -288,9 +351,9 @@ $en = [
             'steps' => [
                 'Enable AI and select provider (OpenAI or xAI Grok).',
                 'Paste API key and set the default model.',
-                'Optionally assign models per context: product, chat, news, SEO.',
+                'Assign models per context: product (mini), chat (fast), news (4o/4.1/grok-3), SEO, image (grok-2-image).',
                 'Customize prompts for product, news and site/category SEO.',
-                'Products → Edit → «Generate with AI»; Languages → «Translate UI with AI».',
+                'Products → Edit → «Generate with AI»; News → «Generate with AI»; Languages → «Translate UI with AI».',
             ],
             'links' => [
                 ['label' => 'xAI Docs', 'url' => 'https://docs.x.ai/'],
@@ -306,6 +369,8 @@ $en = [
         'hints' => [
             'ai_api_key' => 'Stored server-side. Leave empty to keep the current key.',
             'ai_source_lang' => 'Language of the product name you type before clicking Generate.',
+            'ai_model_news' => 'Long HTML articles with sections. Prefer gpt-4o, gpt-4.1 or grok-3.',
+            'ai_model_image' => 'Image generation only — grok-2-image-1212 (xAI) or dall-e-3 (OpenAI).',
             'ai_prompt_product' => 'Optional custom prompt. Placeholders: {product_name}, {category}, {source_lang}.',
             'ai_prompt_news' => 'News/article JSON prompt. Placeholders: {topic}, {source_lang}.',
             'ai_prompt_seo' => 'Site or category SEO prompt. Placeholders: {task_type}, {target_name}, {slug}, {country_code}, {source_lang}.',
@@ -499,21 +564,21 @@ $en = [
 
 $uk = [
     'store' => [
-        'intro' => 'Основні налаштування вітрини: відкрити/закрити магазин та валюта.',
+        'intro' => 'Основні налаштування вітрини: відкрити/закрити крамниця та валюта.',
         'guide' => [
-            'title' => 'Налаштування магазину',
-            'intro' => 'Доступність магазину та формат цін.',
+            'title' => 'Налаштування крамниці',
+            'intro' => 'Доступність крамниці та формат цін.',
             'steps' => [
-                'Увімкніть «Магазин увімкнено», коли каталог готовий для відвідувачів.',
+                'Увімкніть «Крамниця увімкнено», коли каталог готовий для відвідувачів.',
                 'Оберіть основну валюту (NOK, UAH, EUR тощо).',
                 'Картка товару та швидка покупка — у Дизайн → Оформлення.',
                 'Відстеження посилок — у Інтеграції → Відстеження.',
             ],
             'links' => [],
-            'note' => 'Поки магазин закритий, відвідувачі бачать сторінку «на розробці».',
+            'note' => 'Поки крамниця закритий, відвідувачі бачать сторінку «на розробці».',
         ],
         'sections' => [
-            'store-status' => 'Доступність магазину',
+            'store-status' => 'Доступність крамниці',
             'store-locale' => 'Головна мова',
             'store-developer' => 'Режим розробника',
             'store-currency' => 'Валюта та ціни',
@@ -588,36 +653,49 @@ $uk = [
             ],
             'links' => [
                 ['label' => 'Google Analytics', 'url' => 'https://analytics.google.com/'],
+                ['label' => 'Google Ads', 'url' => 'https://ads.google.com/'],
+                ['label' => 'Google Business Profile', 'url' => 'https://business.google.com/'],
                 ['label' => 'Meta Business Suite', 'url' => 'https://business.facebook.com/'],
             ],
             'note' => 'Аналітика працює лише на публічній вітрині — не в адмін-панелі.',
         ],
-        'sections' => ['analytics-tracking' => 'Аналітика та пікселі'],
+        'sections' => [
+            'analytics-tracking' => 'Аналітика та пікселі',
+            'analytics-google-ads' => 'Google Ads (платна реклама)',
+            'analytics-gmb' => 'Google Business Profile',
+        ],
         'hints' => [
             'tracking_gtag_id' => 'G-XXXXXXXX з Google Analytics 4.',
             'tracking_meta_pixel' => 'ID пікселя з Meta Events Manager.',
+            'google_ads_id' => 'AW-XXXXXXXXX з Google Ads → Інструменти → Конверсії → Тег.',
+            'google_ads_conversion_label' => 'Мітка конверсії після слеша в send_to (AW-XXX/label).',
+            'gmb_place_id' => 'Необовʼязково — Place ID Finder або посилання з Google Maps.',
+            'gmb_reviews_url' => 'Коротке посилання «Залишити відгук» з Google Business Profile.',
+            'gmb_map_embed' => 'Залиште порожнім — карта згенерується з адреси або координат.',
         ],
     ],
     'advanced' => [
-        'intro' => 'Режим розробки та GDPR cookies для вітрини.',
+        'intro' => 'Режим розробки, GDPR cookies та власний HTML/JS для вітрини.',
         'guide' => [
-            'title' => 'Розширені налаштування',
-            'intro' => 'Тонке налаштування доступності магазину.',
+            'title' => 'Загальні налаштування',
+            'intro' => 'Тонке налаштування доступності крамниці та вставки коду.',
             'steps' => [
                 'Залиште банер cookies увімкненим для GDPR.',
                 'Увімкніть показ PHP-помилок лише під час розробки.',
-                'Редагування HTML/JS — у пункті меню «Редактор коду».',
+                'HTML у <head> та JS у футері — у секції нижче з підсвіткою синтаксису.',
+                'llms.txt, robots.txt та data/custom.php — у меню «Редактор коду».',
             ],
             'links' => [],
             'note' => 'Режим «на розробці» показує заглушку — адмінка доступна за потреби.',
         ],
         'sections' => [
             'advanced-maintenance' => 'Розробка та GDPR',
+            'advanced-custom-code' => 'Власний HTML та JavaScript',
         ],
         'hints' => [],
     ],
     'seo' => [
-        'intro' => 'Допоможіть Google і соцмережам зрозуміти ваш магазин: глобальні meta-теги, OG-зображення та Schema.org для товарів.',
+        'intro' => 'Допоможіть Google і соцмережам зрозуміти ваш крамниця: глобальні meta-теги, OG-зображення та Schema.org для товарів.',
         'guide' => [
             'title' => 'SEO та Schema',
             'intro' => 'SEO приносить органічний трафік. Для кожного товару — окрема вкладка SEO в редакторі.',
@@ -773,16 +851,42 @@ $uk = [
             'chat_widget_icon' => 'Назва іконки Font Awesome без префікса fa-: comments, headset, robot, message.',
         ],
     ],
+    'telegram' => [
+        'intro' => 'Сповіщення в Telegram при демо-замовленнях і швидкій покупці (телефон на картці товару).',
+        'guide' => [
+            'title' => 'Налаштування Telegram',
+            'intro' => 'Миттєві push-повідомлення на телефон — без SMTP.',
+            'steps' => [
+                'Telegram → @BotFather → /newbot → скопіюйте токен бота.',
+                'Надішліть боту /start.',
+                'Відкрийте https://api.telegram.org/bot<TOKEN>/getUpdates і знайдіть chat id.',
+                'Вставте токен і chat ID, увімкніть сповіщення, збережіть.',
+                'Натисніть «Надіслати тест» для перевірки.',
+            ],
+            'links' => [
+                ['label' => 'BotFather', 'url' => 'https://t.me/BotFather'],
+            ],
+            'note' => 'Замовлення: номер фактури, сума, контакти, товари. Швидка покупка: телефон і товар.',
+        ],
+        'sections' => [
+            'telegram-enable' => 'Що сповіщати',
+            'telegram-bot' => 'Доступ',
+        ],
+        'hints' => [
+            'telegram_bot_token' => 'Формат: 123456789:AAH…. Залиште порожнім, щоб зберегти поточний токен.',
+            'telegram_chat_id' => 'Числовий ID вас або групи (для супергруп часто -100…).',
+        ],
+    ],
     'ai' => [
-        'intro' => 'AI-асистент для власника магазину: моделі за контекстом і промпти для товарів, чату, новин, SEO та перекладу UI.',
+        'intro' => 'AI-асистент для власника крамниці: моделі за контекстом і промпти для товарів, чату, новин, SEO та перекладу UI.',
         'guide' => [
             'title' => 'AI-асистент адмінки',
             'steps' => [
                 'Увімкніть AI та оберіть провайдера (OpenAI або xAI Grok).',
                 'Вставте API-ключ і задайте модель за замовчуванням.',
-                'За потреби оберіть окрему модель для контекстів: товар, чат, новини, SEO.',
+                'Моделі за контекстом: товар (mini), чат (швидка), новини (4o/4.1/grok-3), SEO, зображення (grok-2-image).',
                 'Налаштуйте промпти для товарів, новин і SEO сайту/категорій.',
-                'Товари → Редагувати → «Згенерувати з AI»; Мультимовність → «Перекласти UI через AI».',
+                'Товари → «Згенерувати з AI»; Новини → «Згенерувати з AI»; Мови → «Перекласти UI».',
             ],
             'links' => [
                 ['label' => 'xAI Docs', 'url' => 'https://docs.x.ai/'],
@@ -797,13 +901,15 @@ $uk = [
         ],
         'hints' => [
             'ai_source_lang' => 'Мова, якою ви вводите назву товару перед генерацією.',
+            'ai_model_news' => 'Довгі HTML-статті з розділами. Краще gpt-4o, gpt-4.1 або grok-3.',
+            'ai_model_image' => 'Лише генерація зображень — grok-2-image-1212 (xAI) або dall-e-3 (OpenAI).',
             'ai_prompt_product' => 'Промпт товару. Плейсхолдери: {product_name}, {category}, {source_lang}.',
             'ai_prompt_news' => 'Промпт новин. Плейсхолдери: {topic}, {source_lang}.',
             'ai_prompt_seo' => 'Промпт SEO сайту/категорії. Плейсхолдери: {task_type}, {target_name}, {slug}, {country_code}, {source_lang}.',
         ],
     ],
     'news_page' => [
-        'intro' => 'Новини та релізи магазину — багатомовні статті з SEO, обкладинкою та NewsArticle schema на вітрині.',
+        'intro' => 'Новини та релізи крамниці — багатомовні статті з SEO, обкладинкою та NewsArticle schema на вітрині.',
         'guide' => [
             'title' => 'Інструкція з новин',
             'steps' => [
@@ -830,7 +936,7 @@ $uk = [
         ],
     ],
     'footer' => [
-        'intro' => 'Колонки футера «Магазин» та «Правове» — доставка, оплата, конфіденційність, cookies.',
+        'intro' => 'Колонки футера «Крамниця» та «Правове» — доставка, оплата, конфіденційність, cookies.',
         'guide' => [
             'title' => 'Посилання у футері',
             'steps' => [
@@ -843,7 +949,7 @@ $uk = [
             'note' => 'Рекомендовано: Доставка, Оплата, Політика конфіденційності, Cookies.',
         ],
         'sections' => [
-            'footer-shop' => 'Колонка «Магазин»',
+            'footer-shop' => 'Колонка «Крамниця»',
             'footer-legal' => 'Колонка «Правове»',
         ],
         'hints' => [
@@ -913,7 +1019,7 @@ $uk = [
                 'Збережіть і перевірте шапку на вітрині.',
             ],
             'links' => [],
-            'note' => '«Магазин» і «Категорії» завжди на місці. Кошик і мови — у панелі дій шапки.',
+            'note' => '«Крамниця» і «Категорії» завжди на місці. Кошик і мови — у панелі дій шапки.',
         ],
         'sections' => ['header-nav' => 'Пункти меню', 'header-actions' => 'Дії в шапці'],
         'hints' => [],
