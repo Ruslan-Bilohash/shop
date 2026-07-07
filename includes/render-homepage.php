@@ -65,9 +65,14 @@ function sh_render_homepage_block(array $block): void
             break;
 
         case 'featured':
+            require_once __DIR__ . '/product-3d-lib.php';
             $featured = sh_featured_products($limit);
-            $featured_3d = array_slice($featured, 0, 3);
-            $featured_rest = array_slice($featured, 3);
+            $featured_3d = sh_homepage_3d_products();
+            $ids3d = array_flip(array_map(static fn($p) => (string) ($p['id'] ?? ''), $featured_3d));
+            $featured_rest = array_values(array_filter(
+                $featured,
+                static fn($p) => !isset($ids3d[(string) ($p['id'] ?? '')])
+            ));
             ?>
 <div class="sh-container">
     <div class="sh-section-head">

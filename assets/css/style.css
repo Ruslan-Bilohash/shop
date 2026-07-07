@@ -293,7 +293,34 @@ a.sh-about-usecase:hover { border-color: var(--sh-primary); background: var(--sh
     position: relative;
     background: radial-gradient(ellipse at 50% 35%, #fff 0%, var(--sh-cream) 70%);
 }
+.sh-product-3d-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    transition: opacity .35s ease;
+}
+.sh-product-3d-poster--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(145deg, #e2e8f0 0%, var(--sh-cream) 100%);
+    color: #94a3b8;
+    font-size: 2.5rem;
+}
+.sh-product-3d-viewer.is-ready .sh-product-3d-poster,
+.sh-product-3d-viewer.sh-3d-fallback .sh-product-3d-poster {
+    opacity: 1;
+}
+.sh-product-3d-viewer.is-ready:not(.sh-3d-fallback) .sh-product-3d-poster {
+    opacity: 0;
+    pointer-events: none;
+}
 .sh-product-3d-viewer canvas {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 100% !important;
     height: 100% !important;

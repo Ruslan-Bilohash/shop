@@ -88,7 +88,13 @@ function sh_bootstrap_data(): void
     }
     require_once __DIR__ . '/category-storage.php';
     require_once __DIR__ . '/news-storage.php';
-    sh_products_merge_missing_by_ids(['shop-cms-api-monthly', 'shop-cms-updates-yearly']);
+    sh_products_merge_missing_by_ids([
+        'shop-cms-api-monthly',
+        'shop-cms-updates-yearly',
+        'wireless-headphones-pro',
+        'smartwatch-fitness',
+        'scandinavian-table-lamp',
+    ]);
     if (!isset($_SESSION['sh_cart']) || !is_array($_SESSION['sh_cart'])) {
         $_SESSION['sh_cart'] = [];
     }
