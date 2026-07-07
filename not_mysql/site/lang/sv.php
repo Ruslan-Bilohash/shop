@@ -112,7 +112,7 @@ return array_replace_recursive($en, [
             ['q' => 'Hur beställer jag webbutik {in_country}?', 'a' => 'Öppna beställningssidan eller kontaktformuläret med nisch, språk och betalningslösningar. Vi svarar med offert, tidsplan och valfritt MySQL / fraktomfång.'],
             ['q' => 'Är Shop CMS bara för Norge?', 'a' => 'Skriptet byggdes i Norge med NOK-demo och Vipps — men vi deployer för Sverige, Ukraina och Europa med lokal valuta och SEO.'],
             ['q' => 'Kan jag börja från live demo?', 'a' => 'Ja. Demon på /shop/ visar katalog, varukorg, admin och checkout. Vi anpassar denna kodbas — inte SaaS-lås.'],
-            ['q' => 'Vilken version är i produktion?', 'a' => 'Aktuell produktionsversion är v1.7.5 — samma version i admin, produktsida och demo-paket.'],
+            ['q' => 'Vilken version är i produktion?', 'a' => 'Aktuell produktionsversion är v1.7.6 — samma version i admin, produktsida och demo-paket.'],
         ],
     ],
     'features_showcase' => [
@@ -194,7 +194,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Redo att beställa webbutik?',
-        'text' => 'Berätta om din nisch {in_country} — mode, elektronik, mat, B2B eller marknadsplats. Vi anpassar Shop CMS v1.7.5 och lanserar på din domän.',
+        'text' => 'Berätta om din nisch {in_country} — mode, elektronik, mat, B2B eller marknadsplats. Vi anpassar Shop CMS v1.7.6 och lanserar på din domän.',
         'btn' => 'Beställ utveckling',
     ],
     'crosslinks' => [
@@ -297,6 +297,12 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Ändringslogg',
     ],
     'changelog_items' => [
+        '1.7.6' => [
+            'BILOHASH-ekosystem i butikskatalogen — 12 CMS-skript som demoprodukter',
+            'Full produktdata på 6 språk: SEO, highlights, long_desc med demo-URL:er',
+            'Kategori php-scripts — 14 listningar (ekosystem + 49/249 kr abonnemang)',
+            'CLI seed-ecosystem-products.php för MySQL-import',
+        ],
         '1.7.5' => [
             'Import/export — migreringshub för WooCommerce, Shopify, OpenCart, PrestaShop, Rozetka, Prom.ua, Magento',
             'Nya exportformat: Shopify, PrestaShop, Magento, Prom.ua, Google Merchant, Meta Catalog',

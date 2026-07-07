@@ -4,6 +4,19 @@ All notable changes to the Shop CMS demo repository are documented here.
 
 **Production version:** `includes/version.php` · **Full release history:** [bilohash.com/shop/site/#version](https://bilohash.com/shop/site/#version)
 
+## [1.7.6] — 2026-07-07
+
+### Added
+- **BILOHASH ecosystem in storefront catalog** — 12 CMS scripts as demo products in category `php-scripts` (Booking, Auction, Pizza, Freelance, 3D, AI, WordPress, Today, GameHub, Bilen, Faktura, News)
+- `includes/products-ecosystem-seed.php` — multilingual product data (NO, EN, UK, RU, SV, LT): name, desc, long_desc, highlights, SEO
+- `scripts/seed-ecosystem-products.php` — upsert ecosystem products into MySQL/JSON catalog
+- `data/products-ecosystem-cms.php` merged into `data/products.php` seed
+
+### Changed
+- Category **PHP scripts** — 14 listings (12 ecosystem + Shop API monthly + all-scripts bundle)
+- `sh_bootstrap_data()` auto-merges ecosystem product IDs on first load
+- Version badge **v1.7.6** — admin, product site, install packages
+
 ## [1.7.5] — 2026-07-07
 
 ### Added

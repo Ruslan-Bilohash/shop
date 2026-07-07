@@ -1,8 +1,8 @@
 <?php
 /**
- * Demo shop products — Norway / Europe
+ * Demo shop products — Norway / Europe + BILOHASH ecosystem CMS licenses.
  */
-return [
+$products = [
     [
         'id' => 'wireless-headphones-pro',
         'category' => 'smartphones-tv-electronics',
@@ -293,14 +293,32 @@ return [
             'no' => 'Shop CMS API — månedlig (demo, ikke ekte)',
             'uk' => 'Shop CMS API — щомісячно (демо, не реальна покупка)',
             'ru' => 'Shop CMS API — ежемесячно (демо, не реальная покупка)',
+            'sv' => 'Shop CMS API — månadsvis (demo, inte riktig)',
         ],
         'desc' => [
             'en' => 'Test listing: 49 kr/month for REST API access. Demo only — no real subscription. API keys billed separately.',
             'no' => 'Testoppføring: 49 kr/mnd for API-tilgang. Kun demo — ingen ekte abonnement. API-nøkler faktureres separat.',
             'uk' => 'Тестовий товар: 49 кр/місяць за доступ до API. Лише демо — не справжня підписка. Ключі API окремо.',
             'ru' => 'Тестовый товар: 49 кр/месяц за доступ к API. Только демо — не реальная подписка. Ключи API отдельно.',
+            'sv' => 'Testannons: 49 kr/månad för REST API-åtkomst. Endast demo — inget riktigt abonnemang. API-nycklar faktureras separat.',
         ],
         'image' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80',
+        'seo' => [
+            'meta_title' => [
+                'en' => 'Shop CMS API monthly — demo 49 kr',
+                'no' => 'Shop CMS API månedlig — demo 49 kr',
+                'uk' => 'Shop CMS API щомісячно — демо 49 кр',
+                'ru' => 'Shop CMS API ежемесячно — демо 49 кр',
+                'sv' => 'Shop CMS API månadsvis — demo 49 kr',
+            ],
+            'meta_description' => [
+                'en' => 'Demo subscription for Shop CMS API access at 49 kr/month. Not a real charge — showcase for software licensing in the storefront.',
+                'no' => 'Demo-abonnement for Shop CMS API-tilgang til 49 kr/mnd. Ikke ekte betaling — viser programvarelisensiering i butikken.',
+                'uk' => 'Демо-підписка на API Shop CMS за 49 кр/місяць. Не справжня оплата — зразок ліцензування в магазині.',
+                'ru' => 'Демо-подписка на API Shop CMS за 49 кр/месяц. Не реальная оплата — пример лицензирования в магазине.',
+                'sv' => 'Demo-prenumeration för Shop CMS API-åtkomst till 49 kr/månad. Ingen riktig debitering — visar programvarulicensiering i butiken.',
+            ],
+        ],
     ],
     [
         'id' => 'shop-cms-updates-yearly',
@@ -309,20 +327,48 @@ return [
         'active' => true,
         'price' => 349,
         'sale_price' => 249,
-        'sku' => 'SH-LIC-UPD-Y',
+        'sku' => 'SH-LIC-FULL-M',
         'stock' => 999,
         'name' => [
-            'en' => 'Shop CMS updates — 1 year (demo, not real)',
-            'no' => 'Shop CMS oppdateringer — 1 år (demo, ikke ekte)',
-            'uk' => 'Shop CMS оновлення — 1 рік (демо, не реальна покупка)',
-            'ru' => 'Shop CMS обновления — 1 год (демо, не реальная покупка)',
+            'en' => 'All BILOHASH CMS scripts — monthly (demo, not real)',
+            'no' => 'Alle BILOHASH CMS-skript — månedlig (demo, ikke ekte)',
+            'uk' => 'Усі CMS-скрипти BILOHASH — щомісячно (демо, не реальна покупка)',
+            'ru' => 'Все CMS-скрипты BILOHASH — ежемесячно (демо, не реальная покупка)',
+            'sv' => 'Alla BILOHASH CMS-skript — månadsvis (demo, inte riktig)',
         ],
         'desc' => [
-            'en' => 'Test listing: 249 kr for all version updates for 12 months. Demo only — includes security patches and minor releases.',
-            'no' => 'Testoppføring: 249 kr for alle oppdateringer i 12 måneder. Kun demo — sikkerhetsoppdateringer og mindre releaser.',
-            'uk' => 'Тестовий товар: 249 кр за всі оновлення протягом року. Лише демо — патчі безпеки та мінорні релізи.',
-            'ru' => 'Тестовый товар: 249 кр за все обновления в течение года. Только демо — патчи безопасности и минорные релизы.',
+            'en' => 'Test listing: 249 kr/month for all BILOHASH CMS scripts on 1 domain. Demo only — updates, releases and support.',
+            'no' => 'Testoppføring: 249 kr/mnd for alle BILOHASH CMS-skript på 1 domene. Kun demo — oppdateringer, releaser og støtte.',
+            'uk' => 'Тестовий товар: 249 кр/місяць за всі CMS-скрипти BILOHASH на 1 домен. Лише демо — оновлення, релізи та підтримка.',
+            'ru' => 'Тестовый товар: 249 кр/месяц за все CMS-скрипты BILOHASH на 1 домен. Только демо — обновления, релизы и поддержка.',
+            'sv' => 'Testannons: 249 kr/månad för alla BILOHASH CMS-skript på 1 domän. Endast demo — uppdateringar, releaser och support.',
         ],
         'image' => 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
+        'seo' => [
+            'meta_title' => [
+                'en' => 'Shop CMS yearly updates — demo 249 kr',
+                'no' => 'Shop CMS årlige oppdateringer — demo 249 kr',
+                'uk' => 'Shop CMS оновлення на рік — демо 249 кр',
+                'ru' => 'Shop CMS обновления на год — демо 249 кр',
+                'sv' => 'Shop CMS årliga uppdateringar — demo 249 kr',
+            ],
+            'meta_description' => [
+                'en' => 'Demo annual update plan for Shop CMS at 249 kr/year. Not a real purchase — showcases software maintenance pricing.',
+                'no' => 'Demo årsplan for Shop CMS-oppdateringer til 249 kr/år. Ikke ekte kjøp — viser prising for programvarevedlikehold.',
+                'uk' => 'Демо-тариф оновлень Shop CMS на рік за 249 кр. Не справжня покупка — зразок ціни на підтримку ПЗ.',
+                'ru' => 'Демо-тариф обновлений Shop CMS на год за 249 кр. Не реальная покупка — пример цены на поддержку ПО.',
+                'sv' => 'Demo årsplan för Shop CMS-uppdateringar till 249 kr/år. Inget riktigt köp — visar prissättning för programvaruunderhåll.',
+            ],
+        ],
     ],
 ];
+
+$ecoFile = __DIR__ . '/products-ecosystem-cms.php';
+if (is_readable($ecoFile)) {
+    $eco = require $ecoFile;
+    if (is_array($eco)) {
+        $products = array_merge($products, $eco);
+    }
+}
+
+return $products;

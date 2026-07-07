@@ -2,10 +2,10 @@
 
 Універсальний **PHP e-commerce скрипт** для будь-якого інтернет-магазину — мода, електроніка, їжа, B2B-каталоги, маркетплейси та інше. Багатомовна вітрина, кошик на сесії, Schema.org SEO, **AI-автоматизація з коробки** та повна адмін-панель. Портфоліо-проєкт [Ruslan Bilohash](https://bilohash.com/).
 
-**Версія (цей repo):** 1.3.6 · **Мови readme:** [English](README.md) · [Norsk](README-no.md) · [Svenska](README-sv.md) · [Lietuvių](README-lt.md) · [Українська](README-uk.md)
+**Версія (цей repo):** 1.7.6 · **Мови readme:** [English](README.md) · [Norsk](README-no.md) · [Svenska](README-sv.md) · [Lietuvių](README-lt.md) · [Українська](README-uk.md)
 
 ![PHP](https://img.shields.io/badge/PHP-8%2B-777BB4?logo=php&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.3.6-blue)
+![Version](https://img.shields.io/badge/version-1.7.6-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-red)
 ![i18n](https://img.shields.io/badge/languages-NO%20%7C%20EN%20%7C%20UA%20%7C%20RU%20%7C%20SV%20%7C%20LT-green)
 ![AI](https://img.shields.io/badge/AI-з%20коробки-purple)

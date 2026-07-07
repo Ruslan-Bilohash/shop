@@ -9,7 +9,10 @@ function sh_data_path(string $file): string
 
 function sh_default_products_from_seed(): ?array
 {
-    $seedFile = __DIR__ . '/../seed/products.php';
+    $seedFile = __DIR__ . '/../data/products.php';
+    if (!is_readable($seedFile)) {
+        $seedFile = __DIR__ . '/../seed/products.php';
+    }
     if (!is_readable($seedFile)) {
         $seedFile = __DIR__ . '/../install/seed/products.php';
     }
@@ -88,13 +91,18 @@ function sh_bootstrap_data(): void
     }
     require_once __DIR__ . '/category-storage.php';
     require_once __DIR__ . '/news-storage.php';
-    sh_products_merge_missing_by_ids([
-        'shop-cms-api-monthly',
-        'shop-cms-updates-yearly',
-        'wireless-headphones-pro',
-        'smartwatch-fitness',
-        'scandinavian-table-lamp',
-    ]);
+    require_once __DIR__ . '/products-ecosystem-seed.php';
+    $bootstrapIds = array_merge(
+        [
+            'shop-cms-api-monthly',
+            'shop-cms-updates-yearly',
+            'wireless-headphones-pro',
+            'smartwatch-fitness',
+            'scandinavian-table-lamp',
+        ],
+        sh_ecosystem_cms_product_ids()
+    );
+    sh_products_merge_missing_by_ids($bootstrapIds);
     if (!isset($_SESSION['sh_cart']) || !is_array($_SESSION['sh_cart'])) {
         $_SESSION['sh_cart'] = [];
     }

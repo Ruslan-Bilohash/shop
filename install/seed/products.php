@@ -1,8 +1,8 @@
 <?php
 /**
- * Demo shop products — Norway / Europe
+ * Demo shop products — Norway / Europe + BILOHASH ecosystem CMS licenses.
  */
-return [
+$products = [
     [
         'id' => 'wireless-headphones-pro',
         'category' => 'smartphones-tv-electronics',
@@ -362,3 +362,16 @@ return [
         ],
     ],
 ];
+
+$ecoFile = dirname(__DIR__) . '/data/products-ecosystem-cms.php';
+if (!is_readable($ecoFile)) {
+    $ecoFile = dirname(__DIR__, 2) . '/data/products-ecosystem-cms.php';
+}
+if (is_readable($ecoFile)) {
+    $eco = require $ecoFile;
+    if (is_array($eco)) {
+        $products = array_merge($products, $eco);
+    }
+}
+
+return $products;

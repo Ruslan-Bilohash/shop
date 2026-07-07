@@ -112,7 +112,7 @@ return array_replace_recursive($en, [
             ['q' => 'Kaip užsakyti parduotuvę {in_country}?', 'a' => 'Atidarykite užsakymo puslapį arba kontaktų formą su niša, kalbomis ir mokėjimais. Atsakysime su pasiūlymu, terminais ir pasirenkamu MySQL / pristatymu.'],
             ['q' => 'Ar Shop CMS tik Norvegijai?', 'a' => 'Skriptas sukurtas Norvegijoje su NOK demo ir Vipps — bet diegiame Lietuvai, Ukrainai ir Europai su vietine valiuta ir SEO.'],
             ['q' => 'Ar galiu pradėti nuo live demo?', 'a' => 'Taip. Demo /shop/ rodo katalogą, krepšelį, admin ir checkout. Pritaikome šią kodo bazę — be SaaS užrakto.'],
-            ['q' => 'Kokia versija produkcijoje?', 'a' => 'Dabartinė v1.7.5 — ta pati admin, produkto svetainėje ir demo pakete.'],
+            ['q' => 'Kokia versija produkcijoje?', 'a' => 'Dabartinė v1.7.6 — ta pati admin, produkto svetainėje ir demo pakete.'],
         ],
     ],
     'features_showcase' => [
@@ -194,7 +194,7 @@ return array_replace_recursive($en, [
     ],
     'cta' => [
         'title' => 'Pasiruošę užsakyti parduotuvę?',
-        'text' => 'Aprašykite nišą {in_country} — mada, elektronika, maistas, B2B ar rinka. Pritaikysime Shop CMS v1.7.5 ir paleisime jūsų domene.',
+        'text' => 'Aprašykite nišą {in_country} — mada, elektronika, maistas, B2B ar rinka. Pritaikysime Shop CMS v1.7.6 ir paleisime jūsų domene.',
         'btn' => 'Užsakyti kūrimą',
     ],
     'crosslinks' => [
@@ -297,6 +297,12 @@ return array_replace_recursive($en, [
         'changelog_title' => 'Pakeitimų žurnalas',
     ],
     'changelog_items' => [
+        '1.7.6' => [
+            'BILOHASH ekosistema kataloge — 12 CMS skriptų kaip demo prekės',
+            'Pilni produkto duomenys 6 kalbomis: SEO, highlights, long_desc su demo URL',
+            'Kategorija php-scripts — 14 pozicijų (ekosistema + 49/249 kr prenumeratos)',
+            'CLI seed-ecosystem-products.php MySQL importui',
+        ],
         '1.7.5' => [
             'Produktų importas/eksportas — migracijos centras iš WooCommerce, Shopify, OpenCart, PrestaShop, Rozetka, Prom.ua, Magento',
             'Nauji eksportai: Shopify, PrestaShop, Magento, Prom.ua, Google Merchant, Meta Catalog',
