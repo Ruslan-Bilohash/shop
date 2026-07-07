@@ -115,6 +115,15 @@ if (empty($sh_skip_ecosystem) && is_file(__DIR__ . '/ecosystem-strip.php')) {
             <div class="sh-footer-bottom-links">
                 <a href="<?= sh_url('sitemap.php') ?>"><?= htmlspecialchars($ft['sitemap'] ?? 'Sitemap') ?></a>
                 <a href="<?= sh_url('contact.php') ?>"><?= htmlspecialchars($sh_discuss) ?></a>
+                <?php
+                require_once __DIR__ . '/google-marketing.php';
+                $gmbFooter = sh_google_marketing_merge_settings($sh_site_settings);
+                if (sh_gmb_active($gmbFooter) && !empty($gmbFooter['gmb_show_footer']) && trim((string) ($gmbFooter['gmb_profile_url'] ?? '')) !== ''):
+                ?>
+                <a href="<?= htmlspecialchars($gmbFooter['gmb_profile_url']) ?>" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-google" aria-hidden="true"></i> <?= htmlspecialchars(sh_gmb_footer_link_label($gmbFooter)) ?>
+                </a>
+                <?php endif; ?>
             </div>
         </div>
     </div>

@@ -117,14 +117,25 @@ $en = [
             ],
             'links' => [
                 ['label' => 'Google Analytics', 'url' => 'https://analytics.google.com/'],
+                ['label' => 'Google Ads', 'url' => 'https://ads.google.com/'],
+                ['label' => 'Google Business Profile', 'url' => 'https://business.google.com/'],
                 ['label' => 'Meta Business Suite', 'url' => 'https://business.facebook.com/'],
             ],
             'note' => 'Tracking loads only on the public storefront — not in the admin panel.',
         ],
-        'sections' => ['analytics-tracking' => 'Analytics & pixels'],
+        'sections' => [
+            'analytics-tracking' => 'Analytics & pixels',
+            'analytics-google-ads' => 'Google Ads (paid)',
+            'analytics-gmb' => 'Google Business Profile',
+        ],
         'hints' => [
             'tracking_gtag_id' => 'Paste G-XXXXXXXX from Google Analytics 4 property.',
             'tracking_meta_pixel' => 'Numeric Pixel ID from Meta Events Manager.',
+            'google_ads_id' => 'AW-XXXXXXXXX from Google Ads → Tools → Conversions → Tag setup.',
+            'google_ads_conversion_label' => 'Conversion label after the slash in send_to (AW-XXX/label).',
+            'gmb_place_id' => 'Optional — find via Google Place ID Finder or Maps share link.',
+            'gmb_reviews_url' => 'Short review link from Google Business Profile → Ask for reviews.',
+            'gmb_map_embed' => 'Leave empty to auto-generate map from address or coordinates.',
         ],
     ],
     'advanced' => [
@@ -642,14 +653,25 @@ $uk = [
             ],
             'links' => [
                 ['label' => 'Google Analytics', 'url' => 'https://analytics.google.com/'],
+                ['label' => 'Google Ads', 'url' => 'https://ads.google.com/'],
+                ['label' => 'Google Business Profile', 'url' => 'https://business.google.com/'],
                 ['label' => 'Meta Business Suite', 'url' => 'https://business.facebook.com/'],
             ],
             'note' => 'Аналітика працює лише на публічній вітрині — не в адмін-панелі.',
         ],
-        'sections' => ['analytics-tracking' => 'Аналітика та пікселі'],
+        'sections' => [
+            'analytics-tracking' => 'Аналітика та пікселі',
+            'analytics-google-ads' => 'Google Ads (платна реклама)',
+            'analytics-gmb' => 'Google Business Profile',
+        ],
         'hints' => [
             'tracking_gtag_id' => 'G-XXXXXXXX з Google Analytics 4.',
             'tracking_meta_pixel' => 'ID пікселя з Meta Events Manager.',
+            'google_ads_id' => 'AW-XXXXXXXXX з Google Ads → Інструменти → Конверсії → Тег.',
+            'google_ads_conversion_label' => 'Мітка конверсії після слеша в send_to (AW-XXX/label).',
+            'gmb_place_id' => 'Необовʼязково — Place ID Finder або посилання з Google Maps.',
+            'gmb_reviews_url' => 'Коротке посилання «Залишити відгук» з Google Business Profile.',
+            'gmb_map_embed' => 'Залиште порожнім — карта згенерується з адреси або координат.',
         ],
     ],
     'advanced' => [

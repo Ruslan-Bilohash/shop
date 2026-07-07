@@ -89,7 +89,11 @@ $seo_schemas = [
     ]),
 ];
 
+require_once __DIR__ . '/includes/google-marketing.php';
 require __DIR__ . '/includes/header.php';
+if (empty($flash)) {
+    sh_render_google_ads_begin_checkout($total, $settings);
+}
 ?>
 
 <div class="sh-container sh-checkout-page">
@@ -98,6 +102,11 @@ require __DIR__ . '/includes/header.php';
     <?php if ($flash): ?>
     <div class="sh-alert sh-alert-<?= htmlspecialchars($flash_type) ?>"><i class="fas fa-<?= $flash_type === 'success' ? 'check-circle' : 'exclamation-circle' ?>"></i> <?= htmlspecialchars($flash) ?></div>
     <?php if ($flash_type === 'success'): ?>
+    <?php
+    if ($placed_order) {
+        sh_render_google_ads_purchase_conversion($placed_order, $settings);
+    }
+    ?>
     <p>
         <?php if ($placed_order): ?>
         <a href="<?= htmlspecialchars(sh_invoice_public_url($placed_order)) ?>" class="sh-btn-primary" target="_blank" rel="noopener">
