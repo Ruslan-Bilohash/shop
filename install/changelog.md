@@ -2,6 +2,27 @@
 
 All notable changes to the Shop CMS demo repository are documented here.
 
+**Production version:** `includes/version.php` · **Full release history:** [bilohash.com/shop/site/#version](https://bilohash.com/shop/site/#version)
+
+## [1.7.5] — 2026-07-07
+
+### Added
+- **Store migration hub** — `admin/products-io.php` with platform tiles (WooCommerce, Shopify, OpenCart, PrestaShop, Rozetka, Prom.ua, Magento)
+- **Import auto-detect** and **file preview** before catalog write
+- Export formats: **Shopify**, **PrestaShop**, **Magento**, **Prom.ua**, **Google Merchant Center**, **Meta Catalog**
+- Import options: preserve SEO, skip images, prices/stock-only updates
+- Export filters: category, featured, in stock; grouped format picker
+
+### Changed
+- `product-io.php` — extended parsers, header normalisation for Ukrainian Prom.ua columns
+- Version badge **v1.7.5** — admin, product site, install packages (`includes/version.php`)
+
+## [1.7.4] — 2026-07-07
+
+### Added
+- Auto-install FTP request form on `demo-install.php`; owner panel (`admin/owner.php`); AI Security Scanner
+- Demo login autofill; ecosystem auto-install requests in owner panel
+
 ## [1.3.6] — 2026-07-06
 
 ### Added

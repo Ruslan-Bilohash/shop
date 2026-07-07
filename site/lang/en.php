@@ -71,7 +71,7 @@ return [
             ['q' => 'How do I order an online shop {in_country}?', 'a' => 'Open the order page or contact form with your niche, languages and payment providers. We reply with quote, timeline and optional MySQL / shipping scope.'],
             ['q' => 'Is Shop CMS only for Norway?', 'a' => 'The script is built in Norway with NOK demo, Vipps and Posten tracking — but we deploy for Ukraine, Scandinavia and wider Europe with local currency and SEO.'],
             ['q' => 'Can I start from the live demo?', 'a' => 'Yes. The demo at /shop/ shows catalog, cart, admin and checkout. We adapt that codebase — not a SaaS lock-in.'],
-            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.7.4 — same version in admin, product site and demo packages.'],
+            ['q' => 'Which version is in production?', 'a' => 'Current production release is v1.7.5 — same version in admin, product site and demo packages.'],
         ],
     ],
     'features_showcase' => [
@@ -258,7 +258,7 @@ return [
     ],
     'cta' => [
         'title' => 'Ready to order your online shop?',
-        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.7.4 and launch on your domain.',
+        'text'  => 'Tell us your niche {in_country} — fashion, electronics, food, B2B or marketplace. We adapt Shop CMS v1.7.5 and launch on your domain.',
         'btn'   => 'Order development',
     ],
     'crosslinks' => [
@@ -361,6 +361,13 @@ return [
         'back_to_product' => 'Back to product page',
     ],
     'changelog_items' => [
+        '1.7.5' => [
+            'Products Import/Export — migration hub for WooCommerce, Shopify, OpenCart, PrestaShop, Rozetka, Prom.ua, Magento',
+            'New exports: Shopify, PrestaShop, Magento, Prom.ua, Google Merchant Center, Meta Catalog',
+            'Import auto-detect CSV headers, file preview, preserve SEO / skip images / prices-only modes',
+            'Export filters: category, featured, in stock; grouped format picker in admin',
+            'Full i18n for products_io_page (NO, EN, UK, RU, SV, LT)',
+        ],
         '1.7.4' => [
             'Auto-install request form on demo-install.php — FTP deploy to your domain',
             'Owner panel (admin/owner.php) — BILOHASH subscription, domain and license quota',

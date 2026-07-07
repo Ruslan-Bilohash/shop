@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/mysql-migrate.php';
 
-const SH_INSTALL_VERSION = '1.7.4';
+const SH_INSTALL_VERSION = '1.7.5';
 
 $appRoot = __DIR__;
 $dataDir = $appRoot . '/data';
@@ -96,7 +96,22 @@ function sh_install_run(array $post, string $appRoot, string $dataDir, string $l
 
     sh_migrate_write_lock($lockFile, 'Fresh MySQL install');
 
-    return ['ok' => true, 'error' => '', 'admin_user' => $adminUser];
+    $licenseNote = '';
+    $licenseKey = trim((string) ($post['license_key'] ?? ''));
+    if ($licenseKey !== '') {
+        $licFile = $appRoot . '/includes/license-runtime.php';
+        if (is_file($licFile)) {
+            require_once $licFile;
+            $lic = sh_license_activate($licenseKey);
+            if ($lic['ok']) {
+                $licenseNote = 'license_ok';
+            } else {
+                $licenseNote = (string) ($lic['error'] ?? 'license_failed');
+            }
+        }
+    }
+
+    return ['ok' => true, 'error' => '', 'admin_user' => $adminUser, 'license_note' => $licenseNote];
 }
 
 $installed = sh_migrate_mysql_installed($dataDir);
@@ -174,6 +189,11 @@ $shopUrl = $base === '' ? '/' : $base . '/';
         <div class="alert alert-ok"><i class="fas fa-check-circle"></i> Установку завершено!</div>
         <p>Демо-дані імпортовано в MySQL.</p>
         <p><strong><?= sh_install_h((string) ($success['admin_user'] ?? 'admin')) ?></strong> / ваш пароль</p>
+        <?php if (($success['license_note'] ?? '') === 'license_ok'): ?>
+        <p class="hint"><i class="fas fa-key"></i> Ліцензію BHSHOP активовано — домен зареєстровано на bilohash.com.</p>
+        <?php elseif (($success['license_note'] ?? '') !== '' && ($success['license_note'] ?? '') !== 'license_ok'): ?>
+        <p class="hint" style="color:#fecaca"><i class="fas fa-exclamation-triangle"></i> Ліцензія не активована: <?= sh_install_h((string) $success['license_note']) ?>. Активуйте ключ в адмінці → Ліцензія.</p>
+        <?php endif; ?>
         <div class="links">
             <a class="link lp" href="<?= sh_install_h($shopUrl) ?>"><i class="fas fa-store"></i> Магазин</a>
             <a class="link lo" href="<?= sh_install_h($shopUrl . 'admin/') ?>"><i class="fas fa-lock"></i> Адмін</a>
@@ -212,6 +232,7 @@ $shopUrl = $base === '' ? '/' : $base . '/';
         <div class="grid g2">
             <div><label for="admin_user">Логін</label><input id="admin_user" name="admin_user" value="<?= sh_install_h($_POST['admin_user'] ?? 'admin') ?>" required></div>
             <div><label for="admin_pass">Пароль</label><input id="admin_pass" name="admin_pass" type="password" minlength="6" required autocomplete="new-password"></div>
+            <div style="grid-column:1/-1"><label for="license_key">Ключ ліцензії BHSHOP (необовʼязково)</label><input id="license_key" name="license_key" type="text" autocomplete="off" spellcheck="false" placeholder="BHSHOP.…" value="<?= sh_install_h($_POST['license_key'] ?? '') ?>"><p class="hint">Якщо вказати ключ — домен одразу зʼявиться в списку підключених установок.</p></div>
         </div>
         <button type="submit" class="btn" <?= $reqOk ? '' : 'disabled' ?>><i class="fas fa-rocket"></i> Встановити Shop CMS</button>
     </form>

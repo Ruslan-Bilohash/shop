@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/category-storage.php';
 
-/** @return array<string, array{label:string,ext:string,mime:string,delimiter?:string}> */
+/** @return array<string, array{label:string,ext:string,mime:string,delimiter?:string,import?:bool,export?:bool,group?:string}> */
 function sh_product_io_formats(): array
 {
     return [
@@ -10,38 +10,230 @@ function sh_product_io_formats(): array
             'label' => 'Shop CMS (JSON)',
             'ext'   => 'json',
             'mime'  => 'application/json; charset=utf-8',
+            'group' => 'native',
         ],
         'shop_csv' => [
             'label' => 'Shop CMS (CSV)',
             'ext'   => 'csv',
             'mime'  => 'text/csv; charset=utf-8',
             'delimiter' => ',',
+            'group' => 'native',
         ],
-        'rozetka_csv' => [
-            'label' => 'Rozetka (CSV)',
+        'woocommerce_csv' => [
+            'label' => 'WooCommerce / WordPress',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'delimiter' => ',',
+            'group' => 'platform',
+        ],
+        'shopify_csv' => [
+            'label' => 'Shopify',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'delimiter' => ',',
+            'group' => 'platform',
+        ],
+        'opencart_csv' => [
+            'label' => 'OpenCart',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'delimiter' => ',',
+            'group' => 'platform',
+        ],
+        'prestashop_csv' => [
+            'label' => 'PrestaShop',
             'ext'   => 'csv',
             'mime'  => 'text/csv; charset=utf-8',
             'delimiter' => ';',
+            'group' => 'platform',
         ],
-        'woocommerce_csv' => [
-            'label' => 'WooCommerce / WordPress (CSV)',
+        'magento_csv' => [
+            'label' => 'Magento / Adobe Commerce',
             'ext'   => 'csv',
             'mime'  => 'text/csv; charset=utf-8',
             'delimiter' => ',',
+            'group' => 'platform',
         ],
-        'opencart_csv' => [
-            'label' => 'OpenCart (CSV)',
+        'rozetka_csv' => [
+            'label' => 'Rozetka',
             'ext'   => 'csv',
             'mime'  => 'text/csv; charset=utf-8',
-            'delimiter' => ',',
+            'delimiter' => ';',
+            'group' => 'marketplace',
+        ],
+        'prom_ua_csv' => [
+            'label' => 'Prom.ua',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'delimiter' => ';',
+            'group' => 'marketplace',
         ],
         'generic_csv' => [
             'label' => 'Generic marketplace (CSV)',
             'ext'   => 'csv',
             'mime'  => 'text/csv; charset=utf-8',
             'delimiter' => ',',
+            'group' => 'marketplace',
+        ],
+        'google_merchant_csv' => [
+            'label' => 'Google Merchant Center',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'delimiter' => ',',
+            'group' => 'feeds',
+            'export' => true,
+            'import' => false,
+        ],
+        'facebook_catalog_csv' => [
+            'label' => 'Facebook / Meta Catalog',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'delimiter' => ',',
+            'group' => 'feeds',
+            'export' => true,
+            'import' => false,
+        ],
+        'auto' => [
+            'label' => 'Auto-detect (import)',
+            'ext'   => 'csv',
+            'mime'  => 'text/csv; charset=utf-8',
+            'group' => 'native',
+            'export' => false,
+            'import' => true,
         ],
     ];
+}
+
+/** @return array<string, list<string>> */
+function sh_product_io_format_groups(): array
+{
+    return [
+        'native'      => ['shop_json', 'shop_csv', 'auto'],
+        'platform'    => ['woocommerce_csv', 'shopify_csv', 'opencart_csv', 'prestashop_csv', 'magento_csv'],
+        'marketplace' => ['rozetka_csv', 'prom_ua_csv', 'generic_csv'],
+        'feeds'       => ['google_merchant_csv', 'facebook_catalog_csv'],
+    ];
+}
+
+/** @return list<string> */
+function sh_product_io_import_formats(): array
+{
+    $out = [];
+    foreach (sh_product_io_formats() as $key => $meta) {
+        if (($meta['import'] ?? true) !== false) {
+            $out[] = $key;
+        }
+    }
+    return $out;
+}
+
+/** @return list<string> */
+function sh_product_io_export_formats(): array
+{
+    $out = [];
+    foreach (sh_product_io_formats() as $key => $meta) {
+        if (($meta['export'] ?? true) !== false) {
+            $out[] = $key;
+        }
+    }
+    return $out;
+}
+
+function sh_product_io_merchant_price(array $product, array $settings): string
+{
+    $price = function_exists('sh_product_price') ? sh_product_price($product) : (int) ($product['price'] ?? 0);
+    $currency = strtoupper(trim((string) ($settings['site_currency'] ?? 'NOK'))) ?: 'NOK';
+    return $price . ' ' . $currency;
+}
+
+/** @param array<string, mixed> $opts */
+function sh_product_io_filter_products(array $products, array $opts): array
+{
+    $activeOnly = !empty($opts['active_only']);
+    $featuredOnly = !empty($opts['featured_only']);
+    $inStockOnly = !empty($opts['in_stock_only']);
+    $category = trim((string) ($opts['category'] ?? ''));
+
+    return array_values(array_filter($products, static function (array $p) use ($activeOnly, $featuredOnly, $inStockOnly, $category): bool {
+        if ($activeOnly && ($p['active'] ?? true) === false) {
+            return false;
+        }
+        if ($featuredOnly && empty($p['featured'])) {
+            return false;
+        }
+        if ($inStockOnly && (int) ($p['stock'] ?? 0) <= 0) {
+            return false;
+        }
+        if ($category !== '' && (string) ($p['category'] ?? '') !== $category) {
+            return false;
+        }
+        return true;
+    }));
+}
+
+function sh_product_io_detect_format(string $content): string
+{
+    $trim = ltrim($content);
+    if ($trim !== '' && ($trim[0] === '[' || $trim[0] === '{')) {
+        return 'shop_json';
+    }
+
+    $firstLine = mb_strtolower(trim(explode("\n", preg_replace('/^\xEF\xBB\xBF/', '', $content))[0] ?? ''), 'UTF-8');
+    if (str_contains($firstLine, 'назва_позиції') || str_contains($firstLine, 'nazva_pozitsiyi')) {
+        return 'prom_ua_csv';
+    }
+    if (str_contains($firstLine, 'variant sku') && str_contains($firstLine, 'handle')) {
+        return 'shopify_csv';
+    }
+
+    $parsed = sh_product_io_parse_csv($content, null);
+    $headers = $parsed['headers'];
+    if ($headers === []) {
+        return 'generic_csv';
+    }
+
+    $set = array_flip($headers);
+    $has = static function (string ...$keys) use ($set): bool {
+        foreach ($keys as $k) {
+            if (isset($set[$k])) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    if ($has('handle', 'variant_sku', 'body_html')) {
+        return 'shopify_csv';
+    }
+    if ($has('regular_price', 'type') || $has('sku', 'published', 'regular_price')) {
+        return 'woocommerce_csv';
+    }
+    if ($has('product_id', 'model', 'quantity')) {
+        return 'opencart_csv';
+    }
+    if ($has('price_tax_excluded', 'quantity', 'active')) {
+        return 'prestashop_csv';
+    }
+    if ($has('qty', 'sku', 'categories') && !$has('regular_price')) {
+        return 'magento_csv';
+    }
+    if ($has('vendor_code') || $has('available')) {
+        return 'rozetka_csv';
+    }
+    if ($has('nazva_pozitsiyi', 'nayavnist', 'posylannya_na_zobrazhennya')) {
+        return 'prom_ua_csv';
+    }
+    if ($has('image_link', 'google_product_category')) {
+        return 'google_merchant_csv';
+    }
+    if ($has('image_link', 'condition') && $has('availability', 'price')) {
+        return 'facebook_catalog_csv';
+    }
+    if ($has('name_en', 'name_no') || $has('long_desc_en')) {
+        return 'shop_csv';
+    }
+
+    return 'generic_csv';
 }
 
 function sh_product_io_slugify(string $text): string
@@ -136,9 +328,11 @@ function sh_product_io_localized_fill(string $value, string $sourceLang): array
 }
 
 /** @return list<array<string, mixed>> */
-function sh_product_io_export_rows(string $format, array $products, string $lang): array
+function sh_product_io_export_rows(string $format, array $products, string $lang, array $settings = []): array
 {
     $rows = [];
+    $settings = $settings !== [] ? $settings : (function_exists('sh_load_settings') ? sh_load_settings() : []);
+    $brand = trim((string) ($settings['store_name'] ?? 'BILOHASH'));
     foreach ($products as $product) {
         $id = (string) ($product['id'] ?? '');
         $name = sh_localized($product, 'name', $lang);
@@ -200,6 +394,109 @@ function sh_product_io_export_rows(string $format, array $products, string $lang
                     'description' => $long,
                 ];
                 break;
+            case 'shopify_csv':
+                $handle = $id;
+                $rows[] = [
+                    'Handle'                         => $handle,
+                    'Title'                          => $name,
+                    'Body (HTML)'                    => $long,
+                    'Vendor'                         => $brand,
+                    'Type'                           => $catLabel,
+                    'Tags'                           => $catLabel,
+                    'Published'                      => $active ? 'TRUE' : 'FALSE',
+                    'Option1 Name'                   => 'Title',
+                    'Option1 Value'                  => 'Default Title',
+                    'Variant SKU'                    => $sku,
+                    'Variant Grams'                  => '0',
+                    'Variant Inventory Tracker'      => 'shopify',
+                    'Variant Inventory Qty'          => (string) $stock,
+                    'Variant Inventory Policy'       => 'deny',
+                    'Variant Fulfillment Service'    => 'manual',
+                    'Variant Price'                  => (string) ($sale > 0 && $sale < $price ? $sale : $price),
+                    'Variant Compare At Price'       => $sale > 0 && $sale < $price ? (string) $price : '',
+                    'Variant Requires Shipping'      => 'TRUE',
+                    'Variant Taxable'                => 'TRUE',
+                    'Image Src'                      => $images[0] ?? '',
+                    'Image Position'                 => '1',
+                    'Status'                         => $active ? 'active' : 'draft',
+                ];
+                break;
+            case 'prestashop_csv':
+                $rows[] = [
+                    'ID'                   => $id,
+                    'Active'               => $active ? '1' : '0',
+                    'Name'                 => $name,
+                    'Categories'           => $catLabel,
+                    'Price tax excluded'   => (string) ($sale > 0 && $sale < $price ? $sale : $price),
+                    'Quantity'             => (string) $stock,
+                    'Description'          => $long,
+                    'Image URLs'           => $imageStr,
+                    'Reference'            => $sku,
+                ];
+                break;
+            case 'magento_csv':
+                $rows[] = [
+                    'sku'          => $sku,
+                    'name'         => $name,
+                    'price'        => (string) ($sale > 0 && $sale < $price ? $sale : $price),
+                    'qty'          => (string) $stock,
+                    'status'       => $active ? '1' : '2',
+                    'categories'   => $catLabel,
+                    'description'  => $long,
+                    'image'        => $images[0] ?? '',
+                    'special_price'=> $sale > 0 && $sale < $price ? (string) $sale : '',
+                ];
+                break;
+            case 'prom_ua_csv':
+                $rows[] = [
+                    'nazva_pozitsiyi'            => $name,
+                    'opis'                       => $long,
+                    'tsina'                      => (string) ($sale > 0 && $sale < $price ? $sale : $price),
+                    'nayavnist'                  => $stock > 0 && $active ? '+' : '-',
+                    'kilkist'                    => (string) $stock,
+                    'artikul'                    => $sku,
+                    'kategoriya'                 => $catLabel,
+                    'posylannya_na_zobrazhennya' => $images[0] ?? '',
+                ];
+                break;
+            case 'google_merchant_csv':
+            case 'facebook_catalog_csv':
+                $productUrl = function_exists('sh_product_canonical_url')
+                    ? sh_product_canonical_url($product, $lang)
+                    : sh_absolute_url(sh_url('product.php?id=' . rawurlencode($id) . ($lang !== 'no' ? '&lang=' . $lang : '')));
+                $imgUrl = $images[0] ?? '';
+                if ($imgUrl !== '' && function_exists('sh_absolute_url') && !preg_match('#^https?://#i', $imgUrl)) {
+                    $imgUrl = sh_absolute_url($imgUrl);
+                }
+                $merchantPrice = sh_product_io_merchant_price($product, $settings);
+                $availability = $stock > 0 && $active ? 'in stock' : 'out of stock';
+                if ($format === 'google_merchant_csv') {
+                    $rows[] = [
+                        'id'                      => $sku,
+                        'title'                   => $name,
+                        'description'             => $long,
+                        'link'                    => $productUrl,
+                        'image_link'              => $imgUrl,
+                        'availability'            => $availability,
+                        'price'                   => $merchantPrice,
+                        'brand'                   => $brand,
+                        'condition'               => 'new',
+                        'google_product_category' => $catLabel,
+                    ];
+                } else {
+                    $rows[] = [
+                        'id'            => $sku,
+                        'title'         => $name,
+                        'description'   => $long,
+                        'availability'  => $availability,
+                        'condition'     => 'new',
+                        'price'         => $merchantPrice,
+                        'link'          => $productUrl,
+                        'image_link'    => $imgUrl,
+                        'brand'         => $brand,
+                    ];
+                }
+                break;
             case 'generic_csv':
             case 'shop_csv':
                 $row = [
@@ -235,6 +532,12 @@ function sh_product_io_csv_headers(string $format): array
         'rozetka_csv' => ['vendor_code', 'name', 'price', 'old_price', 'category', 'stock', 'description', 'images', 'available', 'id'],
         'woocommerce_csv' => ['ID', 'Type', 'SKU', 'Name', 'Published', 'Regular price', 'Sale price', 'Categories', 'Short description', 'Description', 'Images', 'In stock?', 'Stock'],
         'opencart_csv' => ['product_id', 'model', 'name', 'price', 'quantity', 'status', 'image', 'category', 'description'],
+        'shopify_csv' => ['Handle', 'Title', 'Body (HTML)', 'Vendor', 'Type', 'Tags', 'Published', 'Option1 Name', 'Option1 Value', 'Variant SKU', 'Variant Grams', 'Variant Inventory Tracker', 'Variant Inventory Qty', 'Variant Inventory Policy', 'Variant Fulfillment Service', 'Variant Price', 'Variant Compare At Price', 'Variant Requires Shipping', 'Variant Taxable', 'Image Src', 'Image Position', 'Status'],
+        'prestashop_csv' => ['ID', 'Active', 'Name', 'Categories', 'Price tax excluded', 'Quantity', 'Description', 'Image URLs', 'Reference'],
+        'magento_csv' => ['sku', 'name', 'price', 'qty', 'status', 'categories', 'description', 'image', 'special_price'],
+        'prom_ua_csv' => ['nazva_pozitsiyi', 'opis', 'tsina', 'nayavnist', 'kilkist', 'artikul', 'kategoriya', 'posylannya_na_zobrazhennya'],
+        'google_merchant_csv' => ['id', 'title', 'description', 'link', 'image_link', 'availability', 'price', 'brand', 'condition', 'google_product_category'],
+        'facebook_catalog_csv' => ['id', 'title', 'description', 'availability', 'condition', 'price', 'link', 'image_link', 'brand'],
         'shop_csv', 'generic_csv' => array_merge(
             ['id', 'sku', 'category', 'price', 'sale_price', 'stock', 'active', 'featured', 'image', 'images'],
             array_reduce(array_keys(sh_langs()), static function (array $carry, string $code): array {
@@ -257,16 +560,26 @@ function sh_product_io_csv_row(array $headers, array $row): array
     return $line;
 }
 
-function sh_product_io_export_content(string $format, array $products, string $lang): string
+function sh_product_io_export_content(string $format, array $products, string $lang, array $opts = []): string
 {
     if ($format === 'shop_json') {
-        return json_encode(array_values($products), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?: '[]';
+        $out = array_values($products);
+        if (empty($opts['include_seo'])) {
+            $out = array_map(static function (array $p): array {
+                if (isset($p['seo'])) {
+                    unset($p['seo']);
+                }
+                return $p;
+            }, $out);
+        }
+        return json_encode($out, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) ?: '[]';
     }
 
     $formats = sh_product_io_formats();
     $delimiter = $formats[$format]['delimiter'] ?? ',';
     $headers = sh_product_io_csv_headers($format);
-    $rows = sh_product_io_export_rows($format, $products, $lang);
+    $settings = function_exists('sh_load_settings') ? sh_load_settings() : [];
+    $rows = sh_product_io_export_rows($format, $products, $lang, $settings);
 
     $fp = fopen('php://temp', 'r+');
     if ($fp === false) {
@@ -336,17 +649,26 @@ function sh_product_io_normalize_header(string $header): string
 {
     $h = mb_strtolower(trim($header), 'UTF-8');
     $map = [
-        'артикул' => 'vendor_code', 'vendor code' => 'vendor_code', 'sku' => 'sku', 'model' => 'sku',
+        'артикул' => 'vendor_code', 'artikul' => 'sku', 'vendor code' => 'vendor_code', 'sku' => 'sku', 'model' => 'sku',
+        'reference' => 'sku', 'variant sku' => 'sku', 'handle' => 'id',
         'назва' => 'name', 'name' => 'name', 'title' => 'name', 'product name' => 'name',
+        'nazva_pozitsiyi' => 'name', 'назва_позиції' => 'name',
         'ціна' => 'price', 'price' => 'price', 'regular price' => 'regular_price',
+        'price tax excluded' => 'price', 'variant price' => 'price', 'tsina' => 'price', 'цина' => 'price',
         'стара ціна' => 'old_price', 'old price' => 'old_price', 'sale price' => 'sale_price',
-        'категорія' => 'category', 'category' => 'category', 'categories' => 'category',
-        'кількість' => 'stock', 'stock' => 'stock', 'quantity' => 'stock', 'наявність' => 'stock',
+        'variant compare at price' => 'old_price', 'special_price' => 'sale_price',
+        'категорія' => 'category', 'category' => 'category', 'categories' => 'category', 'type' => 'category',
+        'kategoriya' => 'category', 'категория' => 'category',
+        'кількість' => 'stock', 'stock' => 'stock', 'quantity' => 'stock', 'qty' => 'stock',
+        'variant inventory qty' => 'stock', 'kilkist' => 'stock', 'кількість' => 'stock',
+        'наявність' => 'stock', 'nayavnist' => 'available', 'наявність' => 'available',
         'опис' => 'description', 'description' => 'description', 'short description' => 'short_description',
-        'зображення' => 'images', 'images' => 'images', 'image' => 'image',
+        'body (html)' => 'description', 'body_html' => 'description', 'opis' => 'description',
+        'зображення' => 'images', 'images' => 'images', 'image' => 'image', 'image src' => 'image',
+        'image urls' => 'images', 'image_link' => 'image', 'posylannya_na_zobrazhennya' => 'image',
         'посилання на зображення' => 'images', 'available' => 'available', 'published' => 'published',
-        'in stock?' => 'in_stock', 'status' => 'status', 'id' => 'id', 'product_id' => 'id',
-        'type' => 'type', 'featured' => 'featured', 'active' => 'active',
+        'in stock?' => 'in_stock', 'status' => 'status', 'active' => 'active', 'id' => 'id', 'product_id' => 'id',
+        'featured' => 'featured', 'availability' => 'available',
     ];
     if (isset($map[$h])) {
         return $map[$h];
@@ -391,8 +713,8 @@ function sh_product_io_rows_to_products(array $rows, string $format, string $sou
 /** @param array<string, string> $row */
 function sh_product_io_row_to_product(array $row, string $format, string $sourceLang, bool $fillAllLangs, array $usedIds): ?array
 {
-    $sku = trim($row['sku'] ?? $row['vendor_code'] ?? $row['model'] ?? '');
-    $name = trim($row['name'] ?? '');
+    $sku = trim($row['sku'] ?? $row['vendor_code'] ?? $row['model'] ?? $row['reference'] ?? '');
+    $name = trim($row['name'] ?? $row['title'] ?? '');
     if ($name === '' && $sku === '') {
         return null;
     }
@@ -400,7 +722,7 @@ function sh_product_io_row_to_product(array $row, string $format, string $source
         $name = $sku;
     }
 
-    $id = trim($row['id'] ?? '');
+    $id = trim($row['id'] ?? $row['handle'] ?? $row['product_id'] ?? '');
     if ($id === '' || !sh_product_id_valid($id)) {
         $id = sh_product_io_unique_id($sku !== '' ? $sku : $name, $usedIds);
     }
@@ -473,7 +795,13 @@ function sh_product_io_row_to_product(array $row, string $format, string $source
     }
 
     $published = strtolower(trim($row['published'] ?? $row['available'] ?? $row['status'] ?? $row['active'] ?? '1'));
-    $active = !in_array($published, ['0', 'no', 'false', 'draft', 'inactive'], true);
+    if (in_array($published, ['-', 'out of stock', 'out_of_stock'], true)) {
+        $active = false;
+    } elseif (in_array($published, ['+', 'in stock', 'in_stock'], true)) {
+        $active = true;
+    } else {
+        $active = !in_array($published, ['0', 'no', 'false', 'draft', 'inactive', '2'], true);
+    }
 
     return [
         'id'         => $id,
@@ -495,9 +823,14 @@ function sh_product_io_row_to_product(array $row, string $format, string $source
 /**
  * @return array{created:int,updated:int,skipped:int,errors:list<string>,total:int}
  */
-function sh_product_io_import_apply(array $importProducts, string $mode = 'merge'): array
+/** @param array<string, mixed> $opts */
+function sh_product_io_import_apply(array $importProducts, string $mode = 'merge', array $opts = []): array
 {
     $stats = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'errors' => [], 'total' => count($importProducts)];
+    $updatePricesOnly = !empty($opts['update_prices_only']);
+    $updateStockOnly = !empty($opts['update_stock_only']);
+    $skipImages = !empty($opts['skip_images']);
+    $preserveSeo = !empty($opts['preserve_seo']);
 
     if ($mode === 'replace') {
         if (!sh_save_products([])) {
@@ -533,8 +866,29 @@ function sh_product_io_import_apply(array $importProducts, string $mode = 'merge
 
         if ($match !== null) {
             $product['id'] = (string) ($match['id'] ?? $product['id']);
-            if (!empty($match['seo']) && empty($product['seo'])) {
-                $product['seo'] = $match['seo'];
+
+            if ($updateStockOnly) {
+                $product = array_merge($match, [
+                    'id'    => $product['id'],
+                    'stock' => $product['stock'] ?? $match['stock'] ?? 0,
+                ]);
+            } elseif ($updatePricesOnly) {
+                $product = array_merge($match, [
+                    'id'         => $product['id'],
+                    'price'      => $product['price'] ?? $match['price'] ?? 0,
+                    'sale_price' => $product['sale_price'] ?? $match['sale_price'] ?? 0,
+                    'stock'      => $product['stock'] ?? $match['stock'] ?? 0,
+                ]);
+            } else {
+                if ($skipImages) {
+                    $product['image'] = $match['image'] ?? '';
+                    $product['images'] = $match['images'] ?? [];
+                }
+                if ($preserveSeo && !empty($match['seo'])) {
+                    $product['seo'] = $match['seo'];
+                } elseif (!empty($match['seo']) && empty($product['seo'])) {
+                    $product['seo'] = $match['seo'];
+                }
             }
         }
 
@@ -560,6 +914,10 @@ function sh_product_io_import_apply(array $importProducts, string $mode = 'merge
 /** @return array{products:list<array<string,mixed>>,errors:list<string>} */
 function sh_product_io_parse_import(string $format, string $content, string $sourceLang, bool $fillAllLangs): array
 {
+    if ($format === 'auto') {
+        $format = sh_product_io_detect_format($content);
+    }
+
     if ($format === 'shop_json') {
         $decoded = json_decode($content, true);
         if (!is_array($decoded)) {

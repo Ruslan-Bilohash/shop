@@ -8,7 +8,7 @@ sh_admin_require();
 
 $format = trim($_GET['format'] ?? 'shop_json');
 $formats = sh_product_io_formats();
-if (!isset($formats[$format])) {
+if (!in_array($format, sh_product_io_export_formats(), true) || !isset($formats[$format])) {
     http_response_code(400);
     exit('Unknown format');
 }
@@ -18,13 +18,20 @@ if (!array_key_exists($lang, sh_langs())) {
     $lang = sh_site_default_lang();
 }
 
-$activeOnly = !empty($_GET['active_only']);
-$products = sh_load_products_raw();
-if ($activeOnly) {
-    $products = array_values(array_filter($products, static fn(array $p): bool => ($p['active'] ?? true) !== false));
-}
+$filterOpts = [
+    'active_only'   => !empty($_GET['active_only']),
+    'featured_only' => !empty($_GET['featured_only']),
+    'in_stock_only' => !empty($_GET['in_stock_only']),
+    'category'      => trim($_GET['category'] ?? ''),
+];
 
-$content = sh_product_io_export_content($format, $products, $lang);
+$exportOpts = [
+    'include_seo' => !empty($_GET['include_seo']),
+];
+
+$products = sh_product_io_filter_products(sh_load_products_raw(), $filterOpts);
+
+$content = sh_product_io_export_content($format, $products, $lang, $exportOpts);
 $ext = $formats[$format]['ext'];
 $filename = 'shop-products-' . $format . '-' . date('Y-m-d') . '.' . $ext;
 
