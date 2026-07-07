@@ -31,7 +31,8 @@ function sh_detect_lang(): string
             'secure'  => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
             'samesite'=> 'Lax',
         ]);
-        if ($chosen === 'no') {
+        $isAdmin = str_contains((string) ($_SERVER['SCRIPT_NAME'] ?? ''), '/admin/');
+        if ($chosen === 'no' && !$isAdmin) {
             $uri = $_SERVER['REQUEST_URI'] ?? '/';
             $parts = parse_url($uri);
             parse_str($parts['query'] ?? '', $q);
@@ -61,6 +62,31 @@ if (!is_file($lang_file)) {
 }
 $t_local = require $lang_file;
 $t = ($lang === 'en' || !is_array($en_t)) ? $t_local : array_replace_recursive($en_t, $t_local);
+
+// Full admin panel overlays (100% key coverage for no / ru / sv)
+if ($lang !== 'en') {
+    $adminOverlayFile = __DIR__ . '/../lang/admin/' . $lang . '.php';
+    if (is_file($adminOverlayFile)) {
+        $adminOverlay = require $adminOverlayFile;
+        if (is_array($adminOverlay)) {
+            $t['admin'] = array_replace_recursive($t['admin'] ?? [], $adminOverlay);
+        }
+    } elseif (in_array($lang, ['no', 'ru', 'sv'], true) && is_array($t_local['admin'] ?? null)) {
+        $t['admin'] = array_replace_recursive($t['admin'] ?? [], $t_local['admin']);
+    }
+    if (in_array($lang, ['no', 'ru', 'sv'], true) && !is_file($adminOverlayFile)) {
+        $ukFile = __DIR__ . '/../lang/uk.php';
+        if (is_file($ukFile)) {
+            $ukData = require $ukFile;
+            if (is_array($ukData['admin'] ?? null)) {
+                $t['admin'] = array_replace_recursive($ukData['admin'], $t['admin'] ?? []);
+            }
+        }
+        if (is_array($t_local['admin'] ?? null)) {
+            $t['admin'] = array_replace_recursive($t['admin'] ?? [], $t_local['admin']);
+        }
+    }
+}
 
 require_once __DIR__ . '/ecosystem-load.php';
 sh_require_ecosystem('ecosystem-i18n.php');

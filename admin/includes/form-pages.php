@@ -42,7 +42,8 @@ $isNew = !empty($_GET['new']) && $isCustom && trim((string) ($page['title']['en'
         </div>
     </div>
 
-    <div class="adm-card">
+    <div class="adm-pages-edit-layout<?= in_array($page_slug, ['privacy', 'cookies'], true) ? ' adm-pages-edit-layout--advisor' : '' ?>">
+    <div class="adm-card adm-pages-edit-main">
         <div class="adm-card-head adm-card-head--stack">
             <h2><i class="fas fa-<?= htmlspecialchars($defs[$page_slug]['icon'] ?? 'file') ?>"></i>
                 <?= htmlspecialchars(sh_settings_admin_label('service_page_edit', $ta)) ?>:
@@ -118,6 +119,30 @@ $isNew = !empty($_GET['new']) && $isCustom && trim((string) ($page['title']['en'
             </details>
             <?php endforeach; ?>
         </div>
+    </div>
+
+    <?php if (in_array($page_slug, ['privacy', 'cookies'], true)):
+        $pa = $ta['page_advisor'] ?? [];
+    ?>
+    <aside class="adm-card adm-page-advisor" id="shPageAdvisor"
+           data-api="<?= htmlspecialchars(sh_admin_url('api/ai-page-advisor.php')) ?>"
+           data-slug="<?= htmlspecialchars($page_slug) ?>"
+           data-lang="<?= htmlspecialchars($lang) ?>"
+           data-scanning="<?= htmlspecialchars($pa['scanning'] ?? 'Scanning…') ?>"
+           data-error="<?= htmlspecialchars($pa['error_generic'] ?? 'Request failed') ?>"
+           data-demo="<?= htmlspecialchars($pa['demo_badge'] ?? 'Demo mode') ?>">
+        <div class="adm-card-head">
+            <h2><i class="fas fa-user-shield"></i> <?= htmlspecialchars($pa['title'] ?? 'AI Page Advisor') ?></h2>
+        </div>
+        <div class="adm-card-body padded">
+            <p class="adm-help adm-help-compact"><?= htmlspecialchars($pa['help'] ?? 'Scan policy content and get GDPR improvement tips.') ?></p>
+            <button type="button" class="adm-btn adm-btn-primary adm-btn-sm" id="shPageAdvisorScan">
+                <i class="fas fa-magnifying-glass-chart"></i> <?= htmlspecialchars($pa['scan_btn'] ?? 'Scan & advise') ?>
+            </button>
+            <div id="shPageAdvisorResult" class="adm-pa-result" hidden></div>
+        </div>
+    </aside>
+    <?php endif; ?>
     </div>
 
     <div class="adm-form-actions adm-form-actions-sticky">

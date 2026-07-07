@@ -24,6 +24,13 @@ $shs_section_prefix = $shs_on_home ? '' : shs_url('index.php');
 </head>
 <body>
 
+<?php
+$shsBilling = dirname(__DIR__, 2) . '/includes/billing-pricing.php';
+if (is_file($shsBilling)) {
+    require_once $shsBilling;
+    sh_billing_render_site_banner($t, $lang);
+}
+?>
 <header class="shs-header" id="shsHeader">
     <div class="shs-header-inner">
         <a href="<?= shs_url('index.php') ?>" class="shs-logo">

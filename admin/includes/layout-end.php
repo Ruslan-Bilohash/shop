@@ -49,6 +49,34 @@
 <?php endif; ?>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-topbar.js')) ?>?v=1" defer></script>
 <script src="<?= htmlspecialchars(sh_asset('js/admin-flash.js')) ?>?v=1" defer></script>
+<?php
+$taWidget = $ta ?? ($t['admin'] ?? []);
+$aiWidget = is_array($taWidget['ai_agent_widget'] ?? null) ? $taWidget['ai_agent_widget'] : [];
+if (($admin_page ?? '') !== 'ai-agent' && ($aiWidget['enabled'] ?? true) !== false):
+?>
+<button type="button" class="adm-ai-fab" id="shAiAgentFab" aria-expanded="false" aria-controls="shAiAgentWidget" title="<?= htmlspecialchars($aiWidget['fab_title'] ?? 'AI Advisor') ?>">
+    <i class="fas fa-robot" aria-hidden="true"></i>
+</button>
+<div class="adm-ai-widget" id="shAiAgentWidget" hidden
+     data-api="<?= htmlspecialchars(sh_admin_url('api/ai-admin-agent.php')) ?>"
+     data-lang="<?= htmlspecialchars($lang ?? 'en') ?>"
+     data-thinking="<?= htmlspecialchars($aiWidget['thinking'] ?? 'Thinking…') ?>"
+     data-error="<?= htmlspecialchars($aiWidget['error_generic'] ?? 'Request failed') ?>"
+     data-demo="<?= htmlspecialchars($aiWidget['demo_badge'] ?? 'Demo') ?>"
+     data-placeholder="<?= htmlspecialchars($aiWidget['input_ph'] ?? 'Ask the AI advisor…') ?>">
+    <div class="adm-ai-widget-head">
+        <strong><i class="fas fa-robot"></i> <?= htmlspecialchars($aiWidget['title'] ?? 'AI Advisor') ?></strong>
+        <a href="<?= htmlspecialchars(sh_admin_url('ai-agent.php')) ?>" class="adm-ai-widget-expand"><?= htmlspecialchars($aiWidget['open_full'] ?? 'Open full') ?></a>
+    </div>
+    <div class="adm-ai-messages adm-ai-messages--widget" id="shAiWidgetMessages" aria-live="polite"></div>
+    <div id="shAiWidgetTips" class="adm-ai-widget-tips" hidden></div>
+    <form class="adm-ai-compose adm-ai-compose--widget" id="shAiWidgetForm">
+        <textarea id="shAiWidgetInput" rows="2" placeholder="<?= htmlspecialchars($aiWidget['input_ph'] ?? '') ?>"></textarea>
+        <button type="submit" class="adm-btn adm-btn-primary adm-btn-sm"><i class="fas fa-paper-plane"></i></button>
+    </form>
+</div>
+<script src="<?= htmlspecialchars(sh_asset('js/admin-ai-agent.js')) ?>?v=1" defer></script>
+<?php endif; ?>
 <script>
 (function () {
     var btn = document.getElementById('admMenuBtn');

@@ -1,0 +1,49 @@
+.adm-dd-page { display: flex; flex-direction: column; gap: 16px; }
+.adm-dd-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+@media (min-width: 720px) {
+    .adm-dd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.adm-dd-card {
+    border: 1px solid var(--adm-border, #e2e8f0);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+}
+.adm-dd-preview {
+    padding: 14px;
+    min-height: 180px;
+}
+.adm-dd-mock-header { display: flex; gap: 6px; margin-bottom: 10px; }
+.adm-dd-mock-header span {
+    width: 10px; height: 10px; border-radius: 50%; background: rgba(0,0,0,.15);
+}
+.adm-dd-mock-hero {
+    height: 48px; border-radius: 8px; margin-bottom: 10px;
+}
+.adm-dd-mock-products { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.adm-dd-mock-products div { height: 56px; border-radius: 6px; }
+
+.adm-dd--nordic .adm-dd-preview { background: #f8fafc; }
+.adm-dd--nordic .adm-dd-mock-hero { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.adm-dd--nordic .adm-dd-mock-products div { background: #fff; border: 1px solid #e2e8f0; }
+
+.adm-dd--dark .adm-dd-preview { background: #0f172a; }
+.adm-dd--dark .adm-dd-mock-header span { background: rgba(255,255,255,.25); }
+.adm-dd--dark .adm-dd-mock-hero { background: linear-gradient(90deg, #b45309, #fbbf24); }
+.adm-dd--dark .adm-dd-mock-products div { background: #1e293b; }
+
+.adm-dd--fresh .adm-dd-preview { background: #ecfdf5; }
+.adm-dd--fresh .adm-dd-mock-hero { background: linear-gradient(90deg, #059669, #34d399); border-radius: 16px; }
+.adm-dd--fresh .adm-dd-mock-products div { background: #fff; border-radius: 12px; }
+
+.adm-dd--bold .adm-dd-preview { background: #fef2f2; }
+.adm-dd--bold .adm-dd-mock-hero { background: linear-gradient(90deg, #dc2626, #f87171); }
+.adm-dd--bold .adm-dd-mock-products div { background: #fff; border: 2px solid #fecaca; }
+
+.adm-dd-meta { padding: 14px 16px 16px; border-top: 1px solid var(--adm-border, #e2e8f0); }
+.adm-dd-meta h3 { margin: 0 0 6px; font-size: 16px; }
+.adm-dd-meta p { margin: 0 0 12px; font-size: 13px; color: var(--adm-muted, #64748b); line-height: 1.45; }

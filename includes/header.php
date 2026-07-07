@@ -39,6 +39,10 @@ $sh_menu_cfg  = sh_menu_settings(sh_site_settings());
 <body class="<?= htmlspecialchars($body_class) ?>">
 
 <div class="sh-top-bar">
+    <?php
+    require_once __DIR__ . '/billing-pricing.php';
+    sh_billing_render_shop_banner($t, $lang);
+    ?>
     <div class="sh-demo-strip" role="status">
         <i class="fas fa-store" aria-hidden="true"></i>
         <span><?= htmlspecialchars($t['demo_strip']['text']) ?></span>

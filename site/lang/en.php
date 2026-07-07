@@ -7,6 +7,9 @@ return [
         'site_name'   => 'Shop CMS',
         'og_image_alt'=> 'Shop CMS — PHP e-commerce admin panel and product catalog demo',
     ],
+    'billing' => [
+        'text' => 'Shop CMS {monthly}/mo + BILOHASH AI API or {demo} demo requests · or {yearly}/yr — prices converted from EUR',
+    ],
     'nav' => [
         'features'    => 'Features',
         'screenshots' => 'Screenshots',

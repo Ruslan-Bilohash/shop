@@ -47,6 +47,34 @@ function sh_admin_sidebar_menu(): array
         'page' => 'news',
     ];
 
+    $menu[] = [
+        'id'   => 'google-analytics',
+        'type' => 'link',
+        'label_key' => 'google_analytics_menu',
+        'icon' => 'chart-line',
+        'url'  => 'settings-analytics.php',
+        'page' => 'settings',
+        'settings_tab' => 'analytics',
+    ];
+
+    $menu[] = [
+        'id'   => 'ai-agent',
+        'type' => 'link',
+        'label_key' => 'ai_agent_console',
+        'icon' => 'robot',
+        'url'  => 'ai-agent.php',
+        'page' => 'ai-agent',
+    ];
+
+    $menu[] = [
+        'id'   => 'design-demos',
+        'type' => 'link',
+        'label_key' => 'design_demos_console',
+        'icon' => 'swatchbook',
+        'url'  => 'design-demos.php',
+        'page' => 'design-demos',
+    ];
+
     $settingsOnlyGroups = ['shop', 'content', 'design', 'marketing', 'integrations', 'advanced'];
     foreach ($settingsOnlyGroups as $gkey) {
         if (!isset($groups[$gkey])) {
@@ -163,7 +191,11 @@ function sh_admin_sidebar_menu(): array
 function sh_admin_menu_item_active(array $item, string $adminPage, ?string $settingsTab): bool
 {
     if (!empty($item['page'])) {
-        return $adminPage === $item['page'];
+        $pageMatch = $adminPage === $item['page'];
+        if (!empty($item['settings_tab'])) {
+            return $pageMatch && ($settingsTab ?? '') === $item['settings_tab'];
+        }
+        return $pageMatch;
     }
     if (!empty($item['settings_tab'])) {
         return $adminPage === 'settings' && ($settingsTab ?? '') === $item['settings_tab'];

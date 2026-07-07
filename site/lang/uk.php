@@ -8,6 +8,9 @@ return array_replace_recursive($en, [
         'site_name'   => 'Shop CMS',
         'og_image_alt'=> 'Shop CMS — PHP e-commerce адмін-панель і демо каталогу товарів',
     ],
+    'billing' => [
+        'text' => 'Shop CMS {monthly}/міс + BILOHASH AI API або {demo} демо-запитів · або {yearly}/рік — ціни за курсом EUR',
+    ],
     'nav' => [
         'features'    => 'Можливості',
         'screenshots' => 'Скриншоти',

@@ -1375,6 +1375,198 @@ function sh_ai_security_recommendations(array $settings, array $checks, int $sco
     ];
 }
 
+/**
+ * Admin AI assistant — chat for shop owners and demo visitors.
+ *
+ * @param list<array{role:string,content:string}> $history
+ * @return array{ok:bool,demo:bool,reply:string,tips:list<array{title:string,detail:string}>,error:string}
+ */
+function sh_ai_admin_agent_reply(array $settings, string $message, array $history = [], string $lang = 'en'): array
+{
+    $message = trim($message);
+    if ($message === '') {
+        return ['ok' => false, 'demo' => false, 'reply' => '', 'tips' => [], 'error' => 'Message required'];
+    }
+
+    $lang = trim($lang) ?: 'en';
+    $demoTips = [
+        ['title' => 'Try AI SEO Agent', 'detail' => 'Open Consoles → AI SEO Agent to audit meta on every page.'],
+        ['title' => 'Privacy policy advisor', 'detail' => 'Edit Settings → Service pages → Privacy — click «Scan & advise» for GDPR tips.'],
+        ['title' => 'Enable live AI', 'detail' => 'Settings → AI — add Grok or OpenAI key for real responses instead of demo templates.'],
+    ];
+
+    if (!sh_ai_enabled($settings)) {
+        $replies = [
+            'no' => 'Demo-assistent: Jeg hjelper deg med Shop CMS. Spør om SEO, personvern, betalinger eller design. Aktiver AI-nøkkel i Innstillinger → AI for live svar.',
+            'uk' => 'Демо-радник: допомагаю з Shop CMS — SEO, політика конфіденційності, оплата, дизайн. Увімкніть AI у Налаштування → AI для живих відповідей.',
+            'ru' => 'Демо-советник: помогаю с Shop CMS — SEO, политика конфиденциальности, оплата, дизайн. Включите AI в Настройки → AI.',
+            'sv' => 'Demo-rådgivare: jag hjälper med Shop CMS — SEO, integritet, betalning, design. Aktivera AI under Inställningar → AI.',
+            default => 'Demo advisor: I help with Shop CMS — SEO, privacy policy, payments, design. Enable AI in Settings → AI for live answers.',
+        ];
+        $reply = $replies[$lang] ?? $replies['default'];
+        if (mb_strlen($message) > 20) {
+            $reply .= ' You asked: «' . mb_substr($message, 0, 120) . '» — in production the AI agent answers with shop-specific steps.';
+        }
+        return ['ok' => true, 'demo' => true, 'reply' => $reply, 'tips' => $demoTips, 'error' => ''];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $histLines = [];
+    foreach (array_slice($history, -6) as $h) {
+        if (!is_array($h)) {
+            continue;
+        }
+        $role = ($h['role'] ?? '') === 'assistant' ? 'Assistant' : 'User';
+        $histLines[] = $role . ': ' . mb_substr(trim((string) ($h['content'] ?? '')), 0, 400);
+    }
+    $histBlock = $histLines !== [] ? "Conversation:\n" . implode("\n", $histLines) . "\n\n" : '';
+
+    $prompt = $histBlock
+        . 'You are BILOHASH Shop CMS admin assistant. Reply in language "' . $lang . '". '
+        . 'Help shop owners and demo users: products, orders, SEO, privacy/GDPR pages, payments, design, AI API (€49/mo or €249/yr). '
+        . 'Be concise, actionable, friendly. User message: "' . mb_substr($message, 0, 600) . '". '
+        . 'Return ONLY valid JSON: {"reply":"…","tips":[{"title":"…","detail":"…"}]} — up to 3 tips.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 900, 'chat');
+    if (!$result['ok']) {
+        return sh_ai_admin_agent_reply(array_merge($settings, ['ai_enabled' => false]), $message, $history, $lang);
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return sh_ai_admin_agent_reply(array_merge($settings, ['ai_enabled' => false]), $message, $history, $lang);
+    }
+
+    $tips = [];
+    foreach (is_array($parsed['tips'] ?? null) ? $parsed['tips'] : [] as $tip) {
+        if (!is_array($tip)) {
+            continue;
+        }
+        $tips[] = [
+            'title'  => trim((string) ($tip['title'] ?? '')),
+            'detail' => trim((string) ($tip['detail'] ?? '')),
+        ];
+    }
+
+    return [
+        'ok'    => true,
+        'demo'  => false,
+        'reply' => trim((string) ($parsed['reply'] ?? '')),
+        'tips'  => array_slice(array_filter($tips, static fn($t) => $t['title'] !== ''), 0, 3),
+        'error' => '',
+    ];
+}
+
+/**
+ * Scan service page content (privacy, etc.) and suggest improvements.
+ *
+ * @return array{ok:bool,demo:bool,summary:string,suggestions:list<array{priority:string,title:string,detail:string}>,error:string}
+ */
+function sh_ai_page_advisor(array $settings, string $pageSlug, array $pageData, string $lang = 'en'): array
+{
+    $lang = trim($lang) ?: 'en';
+    $slug = strtolower(trim($pageSlug));
+    $title = trim((string) ($pageData['title'][$lang] ?? $pageData['title']['en'] ?? ''));
+    $content = trim(strip_tags((string) ($pageData['content'][$lang] ?? $pageData['content']['en'] ?? '')));
+    $metaTitle = trim((string) ($pageData['meta_title'][$lang] ?? ''));
+    $metaDesc = trim((string) ($pageData['meta_description'][$lang] ?? ''));
+
+    $ruleSuggestions = [];
+    if ($content === '') {
+        $ruleSuggestions[] = ['priority' => 'high', 'title' => 'Empty body', 'detail' => 'Add full policy text — data controller, purposes, legal basis, retention, rights.'];
+    }
+    if (mb_strlen($content) < 400) {
+        $ruleSuggestions[] = ['priority' => 'high', 'title' => 'Content too short', 'detail' => 'GDPR privacy policies typically need 600+ words covering collection, cookies, third parties and contact.'];
+    }
+    if ($metaTitle === '') {
+        $ruleSuggestions[] = ['priority' => 'medium', 'title' => 'Missing meta title', 'detail' => 'Add SEO title e.g. «Privacy policy — [Shop name]».'];
+    }
+    if ($metaDesc === '' || mb_strlen($metaDesc) < 80) {
+        $ruleSuggestions[] = ['priority' => 'medium', 'title' => 'Weak meta description', 'detail' => 'Write 120–160 chars summarizing data practices and user rights.'];
+    }
+    if ($slug === 'privacy') {
+        foreach (['controller', 'gdpr', 'cookie', 'retention', 'rights', 'contact'] as $kw) {
+            if (!preg_match('/' . preg_quote($kw, '/') . '/iu', $content)) {
+                $ruleSuggestions[] = [
+                    'priority' => 'medium',
+                    'title'    => 'Missing: ' . $kw,
+                    'detail'   => 'Privacy policy should mention ' . $kw . ' (or equivalent in ' . $lang . ').',
+                ];
+            }
+        }
+    }
+
+    if (!sh_ai_enabled($settings)) {
+        return [
+            'ok'          => true,
+            'demo'        => true,
+            'summary'     => 'Rule-based scan (' . count($ruleSuggestions) . ' findings). Enable AI in Settings → AI for deeper legal copy suggestions.',
+            'suggestions' => array_slice($ruleSuggestions, 0, 10),
+            'error'       => '',
+        ];
+    }
+
+    $ai = sh_ai_settings($settings);
+    $prompt = 'You are a GDPR/ePrivacy advisor for e-commerce. Page slug: ' . $slug . '. Language: ' . $lang . ". "
+        . 'Title: "' . mb_substr($title, 0, 120) . '". Meta title: "' . mb_substr($metaTitle, 0, 80) . '". '
+        . 'Meta description: "' . mb_substr($metaDesc, 0, 200) . '". '
+        . 'Body excerpt: "' . mb_substr($content, 0, 2500) . '". '
+        . 'Return ONLY JSON: {"summary":"…","suggestions":[{"priority":"high|medium|low","title":"…","detail":"…"}]} — max 8 items, advise in ' . $lang . '.';
+
+    $result = sh_ai_call_chat($ai, $prompt, 1200, 'seo');
+    if (!$result['ok']) {
+        return [
+            'ok'          => true,
+            'demo'        => true,
+            'summary'     => 'AI unavailable — showing rule-based scan.',
+            'suggestions' => array_slice($ruleSuggestions, 0, 10),
+            'error'       => $result['error'],
+        ];
+    }
+
+    $raw = $result['text'];
+    if (preg_match('/```(?:json)?\s*([\s\S]*?)```/i', $raw, $m)) {
+        $raw = trim($m[1]);
+    }
+    $parsed = json_decode($raw, true);
+    if (!is_array($parsed)) {
+        return [
+            'ok'          => true,
+            'demo'        => true,
+            'summary'     => 'Could not parse AI — rule-based scan shown.',
+            'suggestions' => array_slice($ruleSuggestions, 0, 10),
+            'error'       => '',
+        ];
+    }
+
+    $suggestions = [];
+    foreach (is_array($parsed['suggestions'] ?? null) ? $parsed['suggestions'] : [] as $s) {
+        if (!is_array($s)) {
+            continue;
+        }
+        $suggestions[] = [
+            'priority' => in_array($s['priority'] ?? '', ['high', 'medium', 'low'], true) ? $s['priority'] : 'medium',
+            'title'    => trim((string) ($s['title'] ?? '')),
+            'detail'   => trim((string) ($s['detail'] ?? '')),
+        ];
+    }
+    if ($suggestions === []) {
+        $suggestions = $ruleSuggestions;
+    }
+
+    return [
+        'ok'          => true,
+        'demo'        => false,
+        'summary'     => trim((string) ($parsed['summary'] ?? '')),
+        'suggestions' => array_slice(array_filter($suggestions, static fn($s) => $s['title'] !== ''), 0, 10),
+        'error'       => '',
+    ];
+}
+
 function sh_json_response(array $data, int $code = 200): void
 {
     http_response_code($code);

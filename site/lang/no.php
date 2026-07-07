@@ -8,6 +8,9 @@ return array_replace_recursive($en, [
         'site_name'   => 'Shop CMS',
         'og_image_alt'=> 'Shop CMS — PHP e-handel adminpanel og produktkatalog-demo',
     ],
+    'billing' => [
+        'text' => 'Shop CMS {monthly}/mnd + BILOHASH AI API eller {demo} demoforespørsler · eller {yearly}/år — priser omregnet fra EUR',
+    ],
     'nav' => [
         'order' => 'Bestill utvikling', 'features' => 'Funksjoner', 'screenshots' => 'Skjermbilder',
         'tech' => 'Teknologi', 'seo' => 'SEO', 'demo' => 'Live demo', 'version' => 'Versjon',

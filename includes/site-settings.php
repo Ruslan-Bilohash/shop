@@ -328,7 +328,7 @@ function sh_settings_tab_groups(): array
         'marketing' => [
             'label_key' => 'settings_group_marketing',
             'icon'      => 'bullhorn',
-            'tabs'      => ['seo', 'seo_analysis', 'analytics'],
+            'tabs'      => ['seo', 'seo_analysis'],
         ],
         'integrations' => [
             'label_key' => 'settings_group_integrations',

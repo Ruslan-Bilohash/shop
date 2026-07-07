@@ -11,7 +11,7 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
     <meta name="robots" content="noindex, nofollow">
     <title><?= htmlspecialchars($layout_title) ?> — <?= htmlspecialchars($ta['title_suffix'] ?? 'Shop CMS Admin') ?></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=33">
+    <link rel="stylesheet" href="<?= htmlspecialchars(sh_asset('css/admin.css')) ?>?v=34">
     <link rel="stylesheet" href="<?= htmlspecialchars(bh_cms_admin_settings_css_href()) ?>">
     <?php foreach (($extra_css ?? []) as $cssHref): ?>
     <link rel="stylesheet" href="<?= htmlspecialchars((string) $cssHref) ?>">
@@ -80,4 +80,6 @@ $current_lang_info = sh_langs()[$lang] ?? ['label' => strtoupper($lang), 'name' 
         <?php
         require_once __DIR__ . '/admin-flash.php';
         sh_admin_render_flash_toast(sh_admin_flash_resolve($ta), $ta);
+        require_once dirname(__DIR__, 2) . '/includes/billing-pricing.php';
+        sh_billing_render_admin_banner($ta, $lang);
         ?>
