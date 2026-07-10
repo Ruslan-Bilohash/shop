@@ -3,8 +3,8 @@
  * Shop CMS — single source of truth for script version.
  * Used on /shop/site/ and /shop/admin/ (must always match).
  */
-define('SH_VERSION', '1.7.6');
-define('SH_VERSION_DATE', '2026-07-07');
+define('SH_VERSION', '1.7.7');
+define('SH_VERSION_DATE', '2026-07-10');
 
 function sh_version(): string
 {
@@ -73,7 +73,7 @@ function sh_version_releases_public(): array
 
 function sh_public_style_version(): string
 {
-    return '37';
+    return '41';
 }
 
 function sh_public_script_version(): string

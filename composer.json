@@ -1,0 +1,37 @@
+{
+    "name": "bilohash/shop-cms",
+    "description": "BILOHASH Shop CMS — universal PHP e-commerce for fashion, electronics, B2B and marketplaces",
+    "type": "project",
+    "license": "proprietary",
+    "keywords": ["shop", "ecommerce", "cms", "php", "mysql", "bilohash"],
+    "homepage": "https://bilohash.com/shop/",
+    "support": {
+        "email": "info@bilohash.com",
+        "issues": "https://github.com/Ruslan-Bilohash/shop/issues",
+        "source": "https://github.com/Ruslan-Bilohash/shop"
+    },
+    "authors": [
+        {
+            "name": "BILOHASH",
+            "email": "info@bilohash.com",
+            "homepage": "https://bilohash.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pdo": "*",
+        "ext-pdo_mysql": "*"
+    },
+    "suggest": {
+        "ext-gd": "Product image thumbnails",
+        "ext-zip": "Import/export archives"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://composer.pkg.github.com/Ruslan-Bilohash/"
+        }
+    ]
+}
